@@ -14,12 +14,16 @@ dependencies:
   parallax_animation: ^0.0.3
   animate_do: ^4.2.0
   url_launcher: ^6.3.1
+  mobx: ^2.5.0
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^5.0.0
+  json_serializable: ^6.9.5
+  mobx_codegen: ^2.7.1
+  build_runner: ^2.4.15
 
 flutter:
 
@@ -60,3 +64,31 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          # Options configure how source code is generated for every
+          # @JsonSerializable-annotated class in the package.
+          #
+          # The default value for each is listed.
+          any_map: false
+          checked: false
+          constructor: ""
+          create_factory: true
+          create_constructor: true
+          create_field_map: true
+          create_per_field_to_json: false
+          create_to_json: true
+          disallow_unrecognized_keys: false
+          explicit_to_json: false
+          field_rename: none
+          generic_argument_factories: false
+          ignore_unannotated: false
+          include_if_null: true  
+
+mobx: 
+  name: "Slydy rub mobx"
+  description: 'minha descricao'
+  run: flutter pub run build_runner watch -d                

@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:congreso_evento/modules/home/sections/widgets/count_down_timer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 class InicioSection extends StatefulWidget {
   // Add a ScrollController to listen for scroll events
@@ -193,11 +194,8 @@ class _InicioSectionState extends State<InicioSection> {
                                               ),
                                               elevation: 10,
                                             ),
-                                            onPressed: () {
-                                              print(
-                                                'Botón INSCRÍBETE AHORA presionado',
-                                              );
-                                            },
+                                            onPressed: () => Modular.to
+                                                .pushNamed('/congresista/'),
                                             child: const Text(
                                               'INSCRÍBETE AHORA',
                                               style: TextStyle(
