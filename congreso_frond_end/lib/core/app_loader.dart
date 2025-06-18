@@ -84,11 +84,13 @@ class _AppLoaderState extends State<AppLoader>
               ),
             ),
             const SizedBox(height: 10), // Spacing below the progress indicator
-            const Text(
+            Text(
               'Cargando...', // Loading text
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.white.withOpacity(
+                  0.5,
+                ), // Semi-transparent white text
                 fontWeight: FontWeight.w500,
               ),
             ),

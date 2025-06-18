@@ -7,7 +7,7 @@ class ContactoSection extends StatelessWidget {
 
   void _launchWhatsApp() async {
     const url =
-        'https://wa.me/595973123456?text=Hola%20quiero%20más%20info%20del%20congreso';
+        'https://wa.me/595983043756?text=Hola%20quiero%20más%20info%20del%20congreso';
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     }
@@ -16,7 +16,7 @@ class ContactoSection extends StatelessWidget {
   void _launchEmail() async {
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
-      path: 'contacto@ivcusmi.com',
+      path: 'congresosudamericana@gmail.com',
       query: 'subject=Consulta Congreso IVCUSMI 2025',
     );
     await launchUrl(emailLaunchUri);
@@ -35,7 +35,7 @@ class ContactoSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text(
-            'CONTACTO',
+            '📞 CONTACTO',
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -44,7 +44,7 @@ class ContactoSection extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           const Text(
-            '¿Tenés dudas o querés más información?\nEscribinos por WhatsApp o Email.',
+            '¿Tenés dudas? Estamos para ayudarte.\nEscribinos o contactanos por los siguientes medios.',
             style: TextStyle(fontSize: 16, color: Colors.black87),
             textAlign: TextAlign.center,
           ),
@@ -89,6 +89,27 @@ class ContactoSection extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 32),
+          const Text(
+            '📍 Coordinación de Investigación Universitaria\nSede Saltos del Guairá',
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.black87,
+              fontWeight: FontWeight.w500,
+              height: 1.4,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            '📲 Seguinos en redes sociales: Facebook | Instagram',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 40),
           const Text(

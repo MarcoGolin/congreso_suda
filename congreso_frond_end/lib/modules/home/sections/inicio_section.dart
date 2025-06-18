@@ -132,40 +132,70 @@ class _InicioSectionState extends State<InicioSection> {
                                     const SizedBox(height: 10),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0,
+                                        horizontal: 5.0,
                                       ),
-                                      child: FittedBox(
-                                        fit: BoxFit.scaleDown,
-                                        child: Text(
-                                          'Estás a un paso de vivir la medicina desde otra perspectiva\nReserva tu lugar en el evento médico más esperado del año',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: isMobile ? 12 : 18,
-                                            color: Colors.black54,
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                      child: Text(
+                                        'Estás a un paso de vivir la medicina desde otra perspectiva\n'
+                                        'Reserva tu lugar en el evento médico más esperado del año',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: isMobile ? 12 : 18,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                          shadows: [
+                                            Shadow(
+                                              offset: Offset(0, 1),
+                                              blurRadius: 2,
+                                              color: Colors.black.withOpacity(
+                                                0.3,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 5),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0,
-                                      ),
-                                      child: FittedBox(
-                                        fit: BoxFit.scaleDown,
-                                        child: Text(
-                                          'SALTOS DEL GUAYRÁ - PARAGUAY',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: isMobile ? 12 : 18,
-                                            color: Colors.black54,
-                                            fontWeight: FontWeight.w600,
+
+                                    const SizedBox(height: 10),
+                                    CountdownTimer(targetDate: _targetDate),
+                                    const SizedBox(height: 10),
+
+                                    Text(
+                                      '📅 9, 10 y 11 de octubre de 2025',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: isMobile ? 12 : 18,
+                                        color: Colors.white,
+                                        shadows: [
+                                          Shadow(
+                                            offset: Offset(0, 1),
+                                            blurRadius: 2,
+                                            color: Colors.black.withOpacity(
+                                              0.3,
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
                                     ),
-                                    const SizedBox(height: 20),
+                                    Text(
+                                      '📍 Shopping Mall Mercosur, Saltos del Guairá, Paraguay',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: isMobile ? 12 : 18,
+                                        color: Colors.white,
+                                        shadows: [
+                                          Shadow(
+                                            offset: Offset(0, 1),
+                                            blurRadius: 2,
+                                            color: Colors.black.withOpacity(
+                                              0.3,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 30),
+
                                     FadeInUp(
                                       delay: const Duration(milliseconds: 700),
                                       child: Padding(
@@ -195,7 +225,11 @@ class _InicioSectionState extends State<InicioSection> {
                                               elevation: 10,
                                             ),
                                             onPressed: () => Modular.to
-                                                .pushNamed('/congresista/'),
+                                                .pushNamedAndRemoveUntil(
+                                                  '/congresista/',
+                                                  ModalRoute.withName('/'),
+                                                ),
+
                                             child: const Text(
                                               'INSCRÍBETE AHORA',
                                               style: TextStyle(
@@ -205,18 +239,6 @@ class _InicioSectionState extends State<InicioSection> {
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    CountdownTimer(targetDate: _targetDate),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      '9, 10 y 11 de octubre de 2025',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: isMobile ? 16 : 23,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ],
@@ -229,7 +251,6 @@ class _InicioSectionState extends State<InicioSection> {
                     ),
                   ),
                   FadeInUp(
-                    delay: const Duration(milliseconds: 900),
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 5, top: 5),
                       child: Wrap(

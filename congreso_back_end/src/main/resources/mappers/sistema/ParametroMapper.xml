@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="py.com.flextech.mapper.sistema.ParametroMapper">
+
+
+	<resultMap id="resultSimples" type="Parametro">
+		<id property="id" column="ID_PARAMETRO" />
+		<result property="dtUltModificacao" column="DT_ULT_MODIF" />
+		<result property="vlComisionRifaVendida" column="VL_COMISION_RIFA_VENDIDA" />
+		
+
+	</resultMap>
+	
+	<sql id="sqlDefault">
+		SELECT 
+		  P.*  
+		FROM
+		  sys_parametro p 
+	</sql>
+	
+	
+	<select id="findParametroByEmpresa" resultMap="resultSimples"
+		parameterType="hashMap">
+		<include refid="sqlDefault" />
+		 WHERE P.ID_EMPRESA = #{tenant} LIMIT 1
+	</select>
+
+</mapper>

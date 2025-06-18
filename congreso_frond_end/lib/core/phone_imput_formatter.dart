@@ -1,7 +1,5 @@
 import 'package:flutter/services.dart';
 
-import 'package:flutter/services.dart';
-
 class PhoneInputFormatter extends TextInputFormatter {
   int _countDigitsBeforeOffset(String text, int offset) {
     int count = 0;

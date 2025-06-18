@@ -1,3 +1,5 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:congreso_evento/core/header_section.dart';
 import 'package:flutter/material.dart';
 
 class DisertantesSection extends StatelessWidget {
@@ -5,108 +7,158 @@ class DisertantesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final disertantes = [
-      {
-        'nombre': 'Dra. María López',
-        'titulo': 'Médica Emergencista',
-        'especialidad': 'Experta en atención prehospitalaria',
-        'imagen': 'assets/disertantes/lopez.jpg',
-      },
-      {
-        'nombre': 'Crio. Juan Pérez',
-        'titulo': 'Instructor de RCP',
-        'especialidad': 'Capacitador en primeros auxilios',
-        'imagen': 'assets/disertantes/perez.jpg',
-      },
-      {
-        'nombre': 'Tte. Laura Gómez',
-        'titulo': 'Bombera Voluntaria',
-        'especialidad': 'Técnicas de rescate y trauma',
-        'imagen': 'assets/disertantes/gomez.jpg',
-      },
-    ];
+    final isMobile = MediaQuery.of(context).size.width < 800;
 
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 24),
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 40 : 80,
+        horizontal: 24,
+      ),
       width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text(
-            'DISERTANTES',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF002147),
+      child: FadeInUp(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1000),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const HeaderSection(title: '👨‍⚕ Disertantes'),
+                const SizedBox(height: 16),
+                const Text(
+                  'Mentes brillantes. Experiencias que inspiran.',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF0C4793),
+                    height: 1.6,
+                  ),
+                  textAlign: TextAlign.justify,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Los disertantes del IV CUSMI serán revelados muy pronto. Serán seleccionados por su impacto científico, su trayectoria profesional y su compromiso con la educación médica de calidad.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Montserrat',
+                    color: Colors.black87,
+                    height: 1.6,
+                  ),
+                  textAlign: TextAlign.justify,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  '👀 Próximamente: Lista oficial + agenda de temas.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Montserrat',
+                    color: Colors.black87,
+                    height: 1.6,
+                  ),
+                ),
+                const SizedBox(height: 40),
+
+                // Cards visibles cuando haya disertantes
+                Wrap(
+                  spacing: 20,
+                  runSpacing: 20,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    // Ejemplo de card de disertante (remplazar con lista real)
+                    _DisertanteCard(
+                      nombre: 'Dra. Ana López',
+                      especialidad: 'Pediatría',
+                      tema: 'Vacunación en edad escolar',
+                      imagenUrl: 'assets/images/disertante1.jpg',
+                    ),
+                    _DisertanteCard(
+                      nombre: 'Dr. Juan Martínez',
+                      especialidad: 'Neurología',
+                      tema: 'Nuevas terapias para epilepsia',
+                      imagenUrl: 'assets/images/disertante2.jpg',
+                    ),
+                    // Más disertantes...
+                  ],
+                ),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
-          Wrap(
-            spacing: 20,
-            runSpacing: 20,
-            alignment: WrapAlignment.center,
-            children: disertantes.map((disertante) {
-              return _buildCard(disertante);
-            }).toList(),
-          ),
-        ],
+        ),
       ),
     );
   }
+}
 
-  Widget _buildCard(Map<String, String> disertante) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween<double>(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 600),
-      curve: Curves.easeOut,
-      builder: (context, value, child) {
-        return Opacity(
-          opacity: value,
-          child: Transform.translate(
-            offset: Offset(0, (1 - value) * 20),
-            child: child,
-          ),
-        );
-      },
-      child: SizedBox(
-        width: 250,
-        child: Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Image.asset(
-                    disertante['imagen']!,
-                    height: 100,
-                    width: 100,
-                    fit: BoxFit.cover,
-                  ),
+// 🧑‍⚕ Widget card reutilizable
+class _DisertanteCard extends StatelessWidget {
+  final String nombre;
+  final String especialidad;
+  final String tema;
+  final String imagenUrl;
+
+  const _DisertanteCard({
+    required this.nombre,
+    required this.especialidad,
+    required this.tema,
+    required this.imagenUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 800;
+
+    return SizedBox(
+      width: isMobile ? double.infinity : 280,
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(60),
+                child: Image.asset(
+                  imagenUrl,
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  disertante['nombre']!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                nombre,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  fontFamily: 'Montserrat',
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  disertante['titulo']!,
-                  style: const TextStyle(color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                especialidad,
+                style: const TextStyle(
+                  color: Colors.black54,
+                  fontSize: 14,
+                  fontFamily: 'Montserrat',
                 ),
-                const SizedBox(height: 6),
-                Text(disertante['especialidad']!, textAlign: TextAlign.center),
-              ],
-            ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                tema,
+                style: const TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 14,
+                  color: Colors.black87,
+                  fontFamily: 'Montserrat',
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       ),

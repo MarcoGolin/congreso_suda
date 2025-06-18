@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="py.com.flextech.mapper.sistema.UsuarioMapper">
+
+
+
+	<resultMap id="resultSimples" type="Usuario">
+		<id property="id" column="ID_USUARIO" />
+		<result property="nome" column="NM_USUARIO" />
+		<result property="fcNacimiento" column="FC_NACIMIENTO" />
+		<result property="login" column="LOGIN" />
+		<result property="foto" column="FOTO" />
+		<result property="senha" column="SENHA" />
+		<result property="ativo" column="BO_ATIVO" />
+		<result property="administrador" column="BO_ADMINISTRADOR" />
+		<result property="gerencia" column="BO_GERENCIA" />
+		<result property="verSaldoHome" column="VER_SALDO_HOME" />
+	</resultMap>
+	
+	<resultMap id="resultCompleto" type="Usuario" extends="resultSimples">
+
+
+	</resultMap>
+	
+	
+
+	<sql id="sqlDefault">
+		SELECT 
+		  SYS_USUARIO.*,
+		  empresa.ID_EMPRESA,
+		  empresa.NM_EMPRESA,
+		  empresa.RUC,
+		  empresa.TELEFONE,
+		  empresa.ENDERECO,
+		  empresa.CIDADE,
+		  empresa.DT_VENCIMENTO,
+		  empresa.VL_MENSUALIDAD,
+		  empresa.BO_ATIVO AS empresaAtivo,
+		  empresa.ACTIVIDAD_ECONOMICA,
+		  empresa.PROPIETARIO,
+		  empresa.FACEBOOK_LINK
+		FROM
+		  SYS_USUARIO 
+		  INNER JOIN sys_empresa empresa 
+		    ON empresa.ID_EMPRESA = sys_usuario.ID_EMPRESA 
+	</sql>
+	
+	<select id="findByConditionSimples" resultMap="resultSimples"
+		parameterType="hashMap">
+		<include refid="sqlDefault" />
+		 where (${condition}) 
+		 AND SYS_USUARIO.ID_EMPRESA = #{tenant} 
+		 ORDER BY SYS_USUARIO.ID_USUARIO DESC
+	</select>
+
+	<select id="findByEmailAndSenha" resultMap="resultCompleto">
+		<include refid="sqlDefault"/>
+		WHERE empresa.BO_ATIVO IS TRUE 
+		AND  UPPER(LOGIN) = UPPER(#{login}) 
+		AND SENHA = #{senha} 
+		AND SYS_USUARIO.BO_ATIVO = true  
+		LIMIT 1
+	</select>
+
+	<select id="findByLogin" resultMap="resultCompleto">
+		<include refid="sqlDefault"/>
+		WHERE empresa.BO_ATIVO IS TRUE AND  UPPER(LOGIN) = UPPER(#{login}) AND SYS_USUARIO.BO_ATIVO = true limit 1
+	</select>
+	
+	<select id="findByNomeAtivo" resultMap="resultCompleto">
+		<include refid="sqlDefault"/>
+		WHERE UPPER(NM_USUARIO) like UPPER(${nome}) AND ID_EMPRESA = #{tenant} AND SYS_USUARIO.BO_ATIVO = TRUE  ORDER BY NM_USUARIO
+	</select>
+	
+	<select id="findAllAtivos" resultMap="resultCompleto">
+		<include refid="sqlDefault"/>
+		WHERE ID_EMPRESA = #{tenant} AND SYS_USUARIO.BO_ATIVO = TRUE  ORDER BY NM_USUARIO
+	</select>
+	
+	<select id="findById" resultMap="resultCompleto">
+		<include refid="sqlDefault"/>
+	  	WHERE SYS_USUARIO.ID_USUARIO = #{id} LIMIT 1
+	</select>
+	
+	<select id="findUsuariosPendienteArreglo" resultMap="resultSimples">
+		SELECT 
+		  u.* 
+		FROM
+		  sys_usuario u 
+		  INNER JOIN rf_rifa_asignado ra 
+		    ON ra.ID_USUARIO_ASIGNADO = u.ID_USUARIO 
+		    AND DATE(ra.FECHA_SORTEO) = CURRENT_DATE() 
+		    AND ra.BO_CANCELADO = FALSE 
+		WHERE u.ID_EMPRESA = #{tenant}  
+		  AND U.BO_ATIVO = TRUE 
+		  AND u.NM_USUARIO LIKE ${nombre}
+		  AND u.ID_USUARIO NOT IN 
+		  (SELECT 
+		    ar.ID_VENDEDOR 
+		  FROM
+		    fn_arreglo_vendedor ar 
+		  WHERE ar.ID_EMPRESA = #{tenant}  
+		    AND DATE(ar.FECHA_SORTEO) = CURRENT_DATE())
+	</select>
+
+</mapper>

@@ -1,11 +1,15 @@
-import 'package:congreso_evento/modules/home/sections/agenda_section.dart';
-import 'package:congreso_evento/modules/home/sections/contenido_section.dart';
-import 'package:congreso_evento/modules/home/sections/disertantes_section.dart';
+import 'package:congreso_evento/core/web_helper/web_helper_stub.dart'
+    if (dart.library.html) 'package:congreso_evento/core/web_helper/web_helper.dart';
 import 'package:congreso_evento/modules/home/sections/inicio_section.dart';
-import 'package:congreso_evento/modules/home/sections/precio_section.dart';
+import 'package:congreso_evento/modules/home/sections/ligas_academicas_section.dart';
+import 'package:congreso_evento/modules/home/sections/lugar_evento_section.dart';
+import 'package:congreso_evento/modules/home/sections/precio_ceritifcado_section.dart';
+import 'package:congreso_evento/modules/home/sections/sobre_section.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 import 'sections/contacto_section.dart';
+import 'sections/trabajos_cientrificos_section.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,9 +22,14 @@ class _HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
 
   final GlobalKey _inicioSectionKey = GlobalKey();
-  final GlobalKey _contenidoSectionKey = GlobalKey();
-  final GlobalKey _agendaSectionKey = GlobalKey();
+  final GlobalKey _sobreSectionKey = GlobalKey();
+  // final GlobalKey _agendaSectionKey = GlobalKey();
   final GlobalKey _disertantesSectionKey = GlobalKey();
+  final GlobalKey _trabajosCientificosSectionKey = GlobalKey();
+  final GlobalKey _ligasAcademicasSectionKey = GlobalKey();
+  final GlobalKey _lugarEventoSectionKey = GlobalKey();
+  final GlobalKey _reconocimientosApoyoSectionKey = GlobalKey();
+
   final GlobalKey _precioSectionKey = GlobalKey();
   final GlobalKey _contactoSectionKey = GlobalKey();
 
@@ -31,11 +40,27 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    bloquearBotonAtrasNavegador();
+    final args = Modular.args.queryParams;
+    debugPrint("Args: $args");
+    if (args.containsKey('codigoKape')) {
+      debugPrint('Codigo Kape: ${args['codigoKape']?.trim()}');
+    } else {
+      debugPrint('Codigo Kape no encontrado');
+    }
+    if (args.containsKey('codigoInfluencer')) {
+      debugPrint('Codigo Influencer: ${args['codigoInfluencer']?.trim()}');
+    } else {
+      debugPrint('Codigo Influencer no encontrado');
+    }
+
     _sectionKeys = {
       'Inicio': _inicioSectionKey,
-      'Contenido': _contenidoSectionKey,
-      'Agenda': _agendaSectionKey,
-      'Disertantes': _disertantesSectionKey,
+      'Sobre': _sobreSectionKey,
+      'Lugar': _lugarEventoSectionKey,
+      // 'Disertantes': _disertantesSectionKey,
+      'Trabajos': _trabajosCientificosSectionKey,
+      'Ligas': _ligasAcademicasSectionKey,
       'Precios': _precioSectionKey,
       'Contacto': _contactoSectionKey,
     };
@@ -43,20 +68,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleScroll() {
-    final RenderBox? inicioRenderBox =
+    final RenderBox? inicioBox =
         _inicioSectionKey.currentContext?.findRenderObject() as RenderBox?;
+    if (inicioBox == null) return;
 
-    if (inicioRenderBox == null) return;
+    final offsetTop = inicioBox.localToGlobal(Offset.zero).dy;
+    final offsetBottom = offsetTop + inicioBox.size.height;
+    final screenHeight = MediaQuery.of(context).size.height;
 
-    final bool isInicioSectionFullyVisible =
-        inicioRenderBox.localToGlobal(Offset.zero).dy >= -5;
+    // Verifica si cualquier parte del widget está visible en pantalla
+    final bool isInicioVisible = offsetBottom > 0 && offsetTop < screenHeight;
 
-    final bool newTransparencyState =
-        _scrollController.offset < 100 && isInicioSectionFullyVisible;
-
-    if (_isAppBarTransparent != newTransparencyState) {
+    if (_isAppBarTransparent != isInicioVisible) {
       setState(() {
-        _isAppBarTransparent = newTransparencyState;
+        _isAppBarTransparent = isInicioVisible;
       });
     }
   }
@@ -88,11 +113,16 @@ class _HomePageState extends State<HomePage> {
     final isMobile = MediaQuery.of(context).size.width < 600;
     final Color textColor = const Color(0xFF0C4793);
 
+    //cambiar color de appBar de acuerdo al scroll section
+    final appBarColor = _isAppBarTransparent
+        ? Colors.transparent
+        : Colors.white;
+
     return Scaffold(
       backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: appBarColor,
         elevation: 0,
         iconTheme: IconThemeData(color: textColor),
         title: AnimatedDefaultTextStyle(
@@ -107,22 +137,80 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: isMobile
             ? null
-            : _sectionKeys.keys
-                  .map(
-                    (sectionName) => TextButton(
-                      onPressed: () => _navigateToSection(sectionName),
-                      child: AnimatedDefaultTextStyle(
-                        duration: const Duration(milliseconds: 300),
-                        style: TextStyle(
-                          color: textColor,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.w500,
-                        ),
-                        child: Text(sectionName),
-                      ),
+            : [
+                TextButton(
+                  onPressed: () => _navigateToSection('Inicio'),
+                  child: Text(
+                    'Inicio',
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 17,
+                      fontFamily: 'Montserrat',
                     ),
-                  )
-                  .toList(),
+                  ),
+                ),
+                PopupMenuButton<String>(
+                  onSelected: (value) => _navigateToSection(value),
+                  tooltip: 'El Congreso',
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Text(
+                      'El Congreso',
+                      style: TextStyle(color: textColor),
+                    ),
+                  ),
+                  itemBuilder: (_) => const [
+                    PopupMenuItem(value: 'Sobre', child: Text('Sobre')),
+                    PopupMenuItem(
+                      value: 'Lugar',
+                      child: Text('Lugar del evento'),
+                    ),
+                  ],
+                ),
+                PopupMenuButton<String>(
+                  onSelected: (value) => _navigateToSection(value),
+                  tooltip: 'Actividades',
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Text(
+                      'Actividades',
+                      style: TextStyle(color: textColor),
+                    ),
+                  ),
+                  itemBuilder: (_) => const [
+                    PopupMenuItem(
+                      value: 'Disertantes',
+                      child: Text('Disertantes'),
+                    ),
+                    PopupMenuItem(
+                      value: 'Trabajos',
+                      child: Text('Trabajos científicos'),
+                    ),
+                    PopupMenuItem(
+                      value: 'Ligas',
+                      child: Text('Ligas académicas'),
+                    ),
+                  ],
+                ),
+                TextButton(
+                  onPressed: () => _navigateToSection('Precios'),
+                  child: Text(
+                    'Precios',
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 17,
+                      fontFamily: 'Montserrat',
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => _navigateToSection('Contacto'),
+                  child: Text(
+                    '📞 Contacto',
+                    style: TextStyle(color: textColor),
+                  ),
+                ),
+              ],
       ),
       drawer: isMobile
           ? Drawer(
@@ -140,12 +228,19 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  for (String sectionName in _sectionKeys.keys)
+                  for (var entry in [
+                    'Inicio',
+                    'Sobre',
+                    'Lugar',
+                    // 'Disertantes',
+                    'Trabajos',
+                    'Ligas',
+                    'Precios',
+                    'Contacto',
+                  ])
                     ListTile(
-                      title: Text(sectionName),
-                      onTap: () {
-                        _navigateToSection(sectionName);
-                      },
+                      title: Text(entry),
+                      onTap: () => _navigateToSection(entry),
                     ),
                 ],
               ),
@@ -162,31 +257,22 @@ class _HomePageState extends State<HomePage> {
             height: MediaQuery.of(context).size.height,
             child: InicioSection(scrollController: _scrollController),
           ),
+          SizedBox(key: _sobreSectionKey, child: const SobreSection()),
           SizedBox(
-            key: _contenidoSectionKey,
-            height: MediaQuery.of(context).size.height,
-            child: const ContenidoSection(),
+            key: _lugarEventoSectionKey,
+            child: const LugarEventoSection(),
           ),
           SizedBox(
-            key: _agendaSectionKey,
-            height: MediaQuery.of(context).size.height,
-            child: const AgendaSection(),
+            key: _trabajosCientificosSectionKey,
+            child:
+                const TrabajosCientificosSection(), // Placeholder for Trabajos Científicos
           ),
           SizedBox(
-            key: _disertantesSectionKey,
-            height: MediaQuery.of(context).size.height,
-            child: const DisertantesSection(),
+            key: _ligasAcademicasSectionKey,
+            child: const LigasAcademicasSection(),
           ),
-          SizedBox(
-            key: _precioSectionKey,
-            height: MediaQuery.of(context).size.height,
-            child: const PrecioSection(),
-          ),
-          SizedBox(
-            key: _contactoSectionKey,
-            height: MediaQuery.of(context).size.height,
-            child: const ContactoSection(),
-          ),
+          SizedBox(key: _precioSectionKey, child: const PrecioSection()),
+          SizedBox(key: _contactoSectionKey, child: const ContactoSection()),
         ],
       ),
     );
