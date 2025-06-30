@@ -61,6 +61,7 @@ abstract class CongresistaRegistroCtrlBase with Store {
           pais: pais,
         ),
       );
+
       final data = response.data;
       final code = response.code;
       final message = response.message;

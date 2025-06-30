@@ -2,18 +2,20 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthGuard extends RouteGuard {
-  AuthGuard() : super(redirectTo: '/login_page');
+  AuthGuard() : super(redirectTo: '/auth_loader');
 
   @override
   Future<bool> canActivate(String path, ModularRoute route) async {
-    final isLogged = await _checkAuth();
-    return isLogged;
-  }
-
-  Future<bool> _checkAuth() async {
     final storage = const FlutterSecureStorage();
-    // Por ejemplo: verificás si hay un token válido en SharedPreferences
-    final token = await storage.read(key: 'jwttoken');
-    return token != null && token.isNotEmpty;
+
+    final fromLoader = await storage.read(key: 'from_loader') == 'true';
+
+    if (fromLoader) {
+      await storage.delete(key: 'from_loader');
+      return true;
+    }
+
+    await storage.write(key: 'redirect_path', value: path);
+    return false;
   }
 }

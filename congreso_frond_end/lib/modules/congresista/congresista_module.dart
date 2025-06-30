@@ -1,3 +1,4 @@
+import 'package:congreso_evento/core_module.dart';
 import 'package:congreso_evento/modules/congresista/congresista_repository.dart';
 import 'package:congreso_evento/modules/congresista/congresista_service.dart';
 import 'package:congreso_evento/modules/congresista/pages/congresista_registro_ctrl.dart';
@@ -11,6 +12,9 @@ class CongresistaModule extends Module {
     i.addLazySingleton(CongresistaService.new);
     i.addLazySingleton(CongresistaRepository.new);
   }
+
+  @override
+  List<Module> get imports => [CoreModule()];
 
   @override
   void routes(r) {

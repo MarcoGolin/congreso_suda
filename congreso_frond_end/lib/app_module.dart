@@ -1,5 +1,6 @@
 import 'package:congreso_evento/core_module.dart';
 import 'package:congreso_evento/modules/auth/auth_guard.dart';
+import 'package:congreso_evento/modules/auth/pages/login/auth/auth_loader_page.dart';
 import 'package:congreso_evento/modules/auth/pages/login/login_page.dart';
 import 'package:congreso_evento/modules/congresista/congresista_module.dart';
 import 'package:congreso_evento/modules/home/home_page.dart';
@@ -28,5 +29,6 @@ class AppModule extends Module {
       guards: [AuthGuard()],
       transition: TransitionType.rightToLeft,
     );
+    r.child('/auth_loader', child: (_) => const AuthLoaderPage());
   }
 }

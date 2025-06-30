@@ -1,6 +1,6 @@
+import 'package:congreso_evento/core/inputs/text_field_celular.dart';
 import 'package:congreso_evento/core/loader_overlau.dart';
 import 'package:congreso_evento/core/models/global_state_class.dart';
-import 'package:congreso_evento/core/phone_imput_formatter.dart'; // Asegúrate de que esta ruta sea correcta
 import 'package:congreso_evento/modules/congresista/pages/congresista_registro_ctrl.dart';
 import 'package:congreso_evento/modules/congresista/pages/success_screen_view.dart';
 import 'package:flutter/foundation.dart';
@@ -29,8 +29,6 @@ class _CongresistaRegistroPageState extends State<CongresistaRegistroPage> {
 
   final _formKey = GlobalKey<FormState>();
 
-  String? _rowError; // This will hold the error message for the row
-
   var _obscureText = true; // Variable to toggle password visibility
 
   bool _aceptaTerminos = false;
@@ -45,26 +43,7 @@ class _CongresistaRegistroPageState extends State<CongresistaRegistroPage> {
   String? _selectedSemestre;
   String? _selectedSeccion;
 
-  String _selectedCountryCodePrefix = '+595'; // Valor inicial para Paraguay
-  String _selectedCountryHintText =
-      'Ej. +595 9XX XXX XXX'; // Hint inicial para Paraguay
-  int _phoneMaxLength =
-      16; // Longitud máxima inicial para Paraguay (+595 9XX XXX XXX)
-
-  final List<Map<String, String>> _countryOptions = [
-    {
-      'code': '+595',
-      'name': 'Paraguay',
-      'hint': 'Ej. +595 9XX XXX XXX',
-      'maxLength': '16',
-    }, // 4 (code) + 1 (space) + 3 (9XX) + 1 (space) + 3 (XXX) + 1 (space) + 3 (XXX) = 16
-    {
-      'code': '+55',
-      'name': 'Brasil',
-      'hint': 'Ej. +55 DD 9XXXX-XXXX',
-      'maxLength': '17',
-    }, // 3 (code) + 1 (space) + 2 (DD) + 1 (space) + 5 (9XXXX) + 1 (hyphen) + 4 (XXXX) = 17
-  ];
+  String _selectedCountryCodePrefix = '+595';
 
   late ReactionDisposer _rctDspr;
 
@@ -192,11 +171,6 @@ Para más información sobre nuestras prácticas de privacidad, podés escribirn
       }
     });
 
-    telefoneController.text = _selectedCountryCodePrefix;
-    // Move cursor to the end of the prefix
-    telefoneController.selection = TextSelection.fromPosition(
-      TextPosition(offset: _selectedCountryCodePrefix.length),
-    );
     _focusNodes[0].requestFocus();
 
     if (kDebugMode) {
@@ -234,9 +208,6 @@ Para más información sobre nuestras prácticas de privacidad, podés escribirn
     // Manually validate the phone field before calling _formKey.currentState!.validate()
     // to ensure _rowError is updated before overall form validation.
     // Also validate the country dropdown explicitly.
-    _validarTelefono(telefoneController.text);
-    _validarCountryDropdown(_selectedCountryCodePrefix);
-
     if (_formKey.currentState!.validate()) {
       final Future<void> registrationFuture = _ctrl.saveCongresista(
         nombreCompleto: nomeController.text,
@@ -343,191 +314,18 @@ Para más información sobre nuestras prácticas de privacidad, podés escribirn
                                 focusNode: _focusNodes[3],
                                 index: 3,
                               ),
-                              // Phone number group (Country Dropdown + Phone TextField)
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: 12.0,
-                                ), // Apply padding to the whole row
-                                child: Stack(
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          width: 110,
-                                          child: DropdownButtonFormField<String>(
-                                            value: _selectedCountryCodePrefix,
-                                            decoration: _inputDecoration
-                                                .copyWith(
-                                                  labelText: 'País',
-                                                  contentPadding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 8.0,
-                                                        vertical: 12.0,
-                                                      ),
-                                                ),
-                                            items: _countryOptions.map((
-                                              country,
-                                            ) {
-                                              return DropdownMenuItem<String>(
-                                                value: country['code'],
-                                                child: Text(
-                                                  country['name']!,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _selectedCountryCodePrefix =
-                                                    value!;
-                                                final selectedOption =
-                                                    _countryOptions.firstWhere(
-                                                      (element) =>
-                                                          element['code'] ==
-                                                          value,
-                                                    );
-                                                _selectedCountryHintText =
-                                                    selectedOption['hint']!;
-                                                _phoneMaxLength = int.parse(
-                                                  selectedOption['maxLength']!,
-                                                );
 
-                                                telefoneController.text =
-                                                    _selectedCountryCodePrefix;
-                                                // Move cursor to the end of the prefix
-                                                telefoneController.selection =
-                                                    TextSelection.fromPosition(
-                                                      TextPosition(
-                                                        offset:
-                                                            _selectedCountryCodePrefix
-                                                                .length,
-                                                      ),
-                                                    );
-                                              });
-                                              // Re-validate the phone input group on country change
-                                              _validarTelefono(
-                                                telefoneController.text,
-                                              );
-                                              _formKey.currentState!.validate();
-                                              _focusNodes[4]
-                                                  .requestFocus(); // Move focus to phone field
-                                            },
-                                            validator: (value) {
-                                              if (_rowError != null) {
-                                                return ' '; // Return non-null to trigger red border
-                                              }
-                                              // If no error, return null to indicate valid selection
-                                              // This validator triggers red border if _rowError exists
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 8,
-                                        ), // Spacing between Dropdown and TextField
-                                        Expanded(
-                                          child: TextFormField(
-                                            controller: telefoneController,
-                                            keyboardType: TextInputType.phone,
-                                            focusNode: _focusNodes[4],
-                                            textInputAction: TextInputAction
-                                                .next, // Set to next, as it's part of a logical group
-                                            inputFormatters: [
-                                              PhoneInputFormatter(),
-                                              LengthLimitingTextInputFormatter(
-                                                _phoneMaxLength,
-                                              ),
-                                            ],
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black87,
-                                            ),
-                                            decoration: _inputDecoration.copyWith(
-                                              labelText:
-                                                  "Teléfono", // Label for phone field
-                                              hintText:
-                                                  _selectedCountryHintText, // Dynamic hint
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                    vertical: 12.0,
-                                                    horizontal: 16.0,
-                                                  ), // Ensure consistent padding
-                                            ),
-                                            onChanged: (value) {
-                                              // Update maxLength and hint based on typed prefix
-                                              if (value.startsWith('+595')) {
-                                                setState(() {
-                                                  _phoneMaxLength = 16;
-                                                  _selectedCountryHintText =
-                                                      'Ej. +595 9XX XXX XXX';
-                                                  _selectedCountryCodePrefix =
-                                                      '+595'; // Sync dropdown
-                                                });
-                                              } else if (value.startsWith(
-                                                '+55',
-                                              )) {
-                                                setState(() {
-                                                  _phoneMaxLength = 17;
-                                                  _selectedCountryHintText =
-                                                      'Ej. +55 DD 9XXXX-XXXX';
-                                                  _selectedCountryCodePrefix =
-                                                      '+55'; // Sync dropdown
-                                                });
-                                              } else {
-                                                // If the prefix doesn't match or is deleted, revert to default Paraguay
-                                                if (value.isEmpty ||
-                                                    !value.startsWith('+')) {
-                                                  setState(() {
-                                                    _selectedCountryCodePrefix =
-                                                        '+595';
-                                                    _selectedCountryHintText =
-                                                        'Ej. +595 9XX XXX XXX';
-                                                    _phoneMaxLength = 16;
-                                                  });
-                                                }
-                                              }
-                                              // Call _validarTelefono to update _rowError and trigger red border
-                                              _validarTelefono(value);
-                                              _formKey.currentState!
-                                                  .validate(); // Revalidate form
-                                            },
-                                            validator: (value) {
-                                              // If _rowError is set by _validarTelefono, trigger red border without a new message
-                                              if (_rowError != null) {
-                                                return ' '; // Return non-null but non-displayable string for border
-                                              }
-                                              return null;
-                                            },
-                                            onFieldSubmitted: (_) {
-                                              FocusScope.of(
-                                                context,
-                                              ).requestFocus(_focusNodes[5]);
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    if (_rowError != null)
-                                      Positioned(
-                                        left: 15,
-                                        bottom: 0,
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            _rowError!,
-                                            style: const TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
+                              TextFieldCelular(
+                                telefoneController: telefoneController,
+                                onChanged: (nrTelefono, selectedCountryCodePrefix) {
+                                  // Call _validarTelefono to update _rowError and trigger red border
+                                  setState(() {
+                                    _selectedCountryCodePrefix =
+                                        selectedCountryCodePrefix ?? '+595';
+                                  });
+
+                                  _formKey.currentState!.validate();
+                                },
                               ),
                               // Institución
                               _buildTextField(
@@ -856,38 +654,6 @@ Para más información sobre nuestras prácticas de privacidad, podés escribirn
     if (value == null || value.isEmpty) return 'Campo requerido';
     if (value != senhaController.text) return 'Las contraseñas no coinciden';
     return null;
-  }
-
-  // New validator for the country dropdown
-  String? _validarCountryDropdown(String? value) {
-    // This validator is called by _validarTelefono to ensure the dropdown also gets a red border
-    // if the phone number as a whole is invalid.
-    return _rowError != null
-        ? ' '
-        : null; // Return non-null to trigger red border
-  }
-
-  String? _validarTelefono(String? value) {
-    // Use setState here to update the UI (specifically the _rowError text)
-    setState(() {
-      if (value == null || value.isEmpty) {
-        _rowError = 'Campo requerido';
-      } else {
-        final paraguayRegex = RegExp(r'^\+595\s9\d{2}\s\d{3}\s\d{3}$');
-        final brasilRegex = RegExp(r'^\+55\s\d{2}\s9\d{4}-\d{4}$');
-
-        if (paraguayRegex.hasMatch(value) || brasilRegex.hasMatch(value)) {
-          _rowError = null; // Clear the row error if valid
-        } else {
-          _rowError = 'Ej. PY: +595 9XX XXX XXX o BR: +55 DD 9XXXX-XXXX';
-        }
-      }
-    });
-
-    // This return value is used by the TextFormField's validator to trigger the red border.
-    // We return null if the text is valid, or a non-empty string (like ' ') if _rowError is active,
-    // which makes the border red without adding another error message directly below the field.
-    return ' ';
   }
 
   String? _validarNumerico(String? value) {

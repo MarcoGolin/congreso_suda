@@ -46,9 +46,7 @@ class AuthRepository {
 
       await storage.write(key: 'jwttoken', value: data.jwttoken);
       await storage.write(key: 'usuario', value: data.usuario!.id.toString());
-      if (recordarPassword) {
-        await storage.write(key: 'password', value: data.usuario!.senha);
-      }
+      await storage.write(key: 'password', value: data.usuario!.senha);
       await storage.write(key: 'email', value: data.usuario!.email);
       await storage.write(key: 'recordar', value: recordarPassword.toString());
     } on Exception catch (e) {

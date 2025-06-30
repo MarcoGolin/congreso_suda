@@ -1,5 +1,9 @@
+import 'package:congreso_evento/modules/trabajo_cientifico/pages/widgets/trabajo_cientifico_pagina_coautor.dart';
+import 'package:congreso_evento/modules/trabajo_cientifico/pages/widgets/trabajo_cientifico_pagina_detalles.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+
+import 'widgets/trabajo_cientifico_pagina_autor.dart';
 
 class TrabajoCientificoRegistro extends StatefulWidget {
   const TrabajoCientificoRegistro({super.key});
@@ -10,9 +14,11 @@ class TrabajoCientificoRegistro extends StatefulWidget {
 }
 
 class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
-  int _currentStep = 0;
   final _formKey = GlobalKey<FormState>();
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
   bool _aceptaDeclaracion = false;
+  bool _formIsValid = false;
 
   final _autorNombre = TextEditingController();
   final _autorEmail = TextEditingController();
@@ -20,7 +26,6 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
 
   final _coautoresNombre = TextEditingController();
   final _coautoresEmail = TextEditingController();
-  final _filiacion = TextEditingController();
 
   final _tituloTrabajo = TextEditingController();
   final _resumen = TextEditingController();
@@ -29,6 +34,23 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
 
   PlatformFile? _archivoWord;
   PlatformFile? _archivoPdf;
+
+  final _autorFormKey = GlobalKey<FormState>();
+
+  final List<Map<String, dynamic>> _coautores = [
+    {
+      'nombre': TextEditingController(),
+      'email': TextEditingController(),
+      'filiacion': null, // valor seleccionado en el dropdown
+      'filiacionOtro':
+          TextEditingController(), // para texto libre si selecciona "Otros"
+    },
+  ];
+
+  final List<String> _filiacionesDisponibles = [
+    'Universidad Sudamericana, Facultad de Ciencias de la Salud, Saltos del Guairá, Paraguay',
+    'Otros',
+  ];
 
   final _modalidades = [
     'Artículo original de investigación',
@@ -84,17 +106,47 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
     }
   }
 
-  InputDecoration _inputStyle(String label) => InputDecoration(
-    labelText: label,
-    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-    filled: true,
-    fillColor: const Color(0xFFF9FAFB),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-  );
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _autorNombre.dispose();
+    _autorEmail.dispose();
+    _autorTelefono.dispose();
+
+    _coautoresNombre.dispose();
+    _coautoresEmail.dispose();
+
+    _tituloTrabajo.dispose();
+    _resumen.dispose();
+
+    _pageController.dispose();
+
+    // Dispose de todos los controladores de coautores
+    for (final coautor in _coautores) {
+      (coautor['nombre'] as TextEditingController).dispose();
+      (coautor['email'] as TextEditingController).dispose();
+      (coautor['filiacionOtro'] as TextEditingController).dispose();
+    }
+
+    // Limpieza de variables no controladas
+    _archivoWord = null;
+    _archivoPdf = null;
+    _modalidad = null;
+    _area = null;
+
+    _formKey.currentState?.reset();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final textColor = const Color(0xFF0C4793);
+    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Stack(
       children: [
@@ -105,231 +157,168 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
           ),
         ),
         Scaffold(
-          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
             iconTheme: IconThemeData(color: textColor),
-            title: const Text(
-              'Registro de Trabajo Científico',
-              style: TextStyle(
-                color: Color(0xFF0C4793),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
           ),
+          extendBodyBehindAppBar: true,
+          backgroundColor: Colors.transparent,
+
           body: Center(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 15.0,
+                vertical: 15,
+              ),
               child: Card(
-                color: Colors.white.withOpacity(0.95),
+                elevation: 8,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
+                color: Colors.white.withOpacity(0.95),
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Stepper(
-                      currentStep: _currentStep,
-                      onStepContinue: () {
-                        if (_currentStep < 4) {
-                          setState(() => _currentStep++);
-                        } else {
-                          _enviarFormulario();
-                        }
-                      },
-                      onStepCancel: () {
-                        if (_currentStep > 0) {
-                          setState(() => _currentStep--);
-                        }
-                      },
-                      controlsBuilder: (context, details) => Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
                         children: [
-                          TextButton(
-                            onPressed: details.onStepCancel,
-                            child: const Text('Atrás'),
+                          const SizedBox(height: 20),
+                          const Text(
+                            'Carga de Trabajo Científico',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF0C4793),
+                            ),
                           ),
-                          ElevatedButton(
-                            onPressed: details.onStepContinue,
-                            child: Text(
-                              _currentStep == 4 ? 'Enviar' : 'Siguiente',
+                          const SizedBox(height: 10),
+                          Expanded(
+                            child: PageView(
+                              controller: _pageController,
+                              physics: const NeverScrollableScrollPhysics(),
+                              children: [
+                                TrabajoCientificoPaginaAutor(
+                                  formKey: _autorFormKey,
+                                  autorNombreTXTCTRL: _autorNombre,
+                                  autorEmailTXTCTRL: _autorEmail,
+                                  autorTelefonoTXTCTRL: _autorTelefono,
+                                  onChanged: () {
+                                    _checkValidForm(); // 👈 recalcula si el botón debe estar habilitado
+                                  },
+                                ),
+                                TrabajoCientificoPaginaCoautor(
+                                  coautores: _coautores,
+                                  filiacionesDisponibles:
+                                      _filiacionesDisponibles,
+                                  onFiliacionChanged: (v, index) {
+                                    setState(() {
+                                      _coautores[index]['filiacion'] = v;
+                                    });
+                                  },
+                                  onRemoveCoautor: (index) {
+                                    setState(() {
+                                      _coautores.removeAt(index);
+                                    });
+                                  },
+                                  addNuevoCoautor: () => setState(() {
+                                    _coautores.add({
+                                      'nombre': TextEditingController(),
+                                      'email': TextEditingController(),
+                                      'filiacion': null,
+                                      'filiacionOtro': TextEditingController(),
+                                    });
+                                  }),
+                                ),
+                                TrabajoCientificoPaginaDetalles(
+                                  tituloTrabajo: _tituloTrabajo,
+                                  resumen: _resumen,
+                                  modalidad: _modalidad,
+                                  area: _area,
+                                  modalidades: _modalidades,
+                                  areas: _areas,
+                                  onModadilidadChanged: (v) {
+                                    setState(() => _modalidad = v);
+                                  },
+                                  onAreaChanged: (v) {
+                                    setState(() => _area = v);
+                                  },
+                                ),
+                                _paginaArchivos(),
+                                _paginaDeclaracion(),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 10,
+                            ),
+                            child: Row(
+                              children: [
+                                if (_currentPage > 0)
+                                  TextButton(
+                                    onPressed: () {
+                                      FocusScope.of(
+                                        context,
+                                      ).unfocus(); // cerrar teclado
+                                      setState(() => _currentPage--);
+                                      _pageController.animateToPage(
+                                        _currentPage,
+                                        duration: const Duration(
+                                          milliseconds: 300,
+                                        ),
+                                        curve: Curves.easeInOut,
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: const Text(
+                                        'Atrás'
+                                        ' ',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Color(0xFF0C4793),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                const Spacer(),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
+                                    backgroundColor: const Color(0xFF0C4793),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  onPressed: _formIsValid
+                                      ? _validarYAvanzar
+                                      : null,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      _currentPage == 4
+                                          ? 'Enviar'
+                                          : 'Siguiente',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                      steps: [
-                        Step(
-                          title: const Text('Autor principal'),
-                          content: Column(
-                            children: [
-                              TextFormField(
-                                controller: _autorNombre,
-                                decoration: _inputStyle('Nombre completo'),
-                                validator: (v) => v == null || v.isEmpty
-                                    ? 'Campo requerido'
-                                    : null,
-                              ),
-                              const SizedBox(height: 10),
-                              TextFormField(
-                                controller: _autorEmail,
-                                decoration: _inputStyle('Correo electrónico'),
-                                validator: (v) => v == null || !v.contains('@')
-                                    ? 'Email inválido'
-                                    : null,
-                              ),
-                              const SizedBox(height: 10),
-                              TextFormField(
-                                controller: _autorTelefono,
-                                decoration: _inputStyle('Teléfono (WhatsApp)'),
-                                validator: (v) => v == null || v.length < 8
-                                    ? 'Número inválido'
-                                    : null,
-                              ),
-                            ],
-                          ),
-                          isActive: _currentStep >= 0,
-                        ),
-                        Step(
-                          title: const Text('Coautores'),
-                          content: Column(
-                            children: [
-                              TextFormField(
-                                controller: _coautoresNombre,
-                                decoration: _inputStyle(
-                                  'Nombres coautores (opcional)',
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              TextFormField(
-                                controller: _coautoresEmail,
-                                decoration: _inputStyle(
-                                  'Correos coautores (opcional)',
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              TextFormField(
-                                controller: _filiacion,
-                                decoration: _inputStyle(
-                                  'Filiación institucional',
-                                ),
-                                validator: (v) => v == null || v.isEmpty
-                                    ? 'Campo requerido'
-                                    : null,
-                              ),
-                            ],
-                          ),
-                          isActive: _currentStep >= 1,
-                        ),
-                        Step(
-                          title: const Text('Detalles del trabajo'),
-                          content: Column(
-                            children: [
-                              TextFormField(
-                                controller: _tituloTrabajo,
-                                decoration: _inputStyle('Título del trabajo'),
-                                validator: (v) => v == null || v.isEmpty
-                                    ? 'Campo requerido'
-                                    : null,
-                              ),
-                              const SizedBox(height: 10),
-                              DropdownButtonFormField<String>(
-                                value: _modalidad,
-                                decoration: _inputStyle('Modalidad'),
-                                items: _modalidades
-                                    .map(
-                                      (m) => DropdownMenuItem(
-                                        value: m,
-                                        child: Text(m),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (v) =>
-                                    setState(() => _modalidad = v),
-                                validator: (v) => v == null
-                                    ? 'Seleccione una modalidad'
-                                    : null,
-                              ),
-                              const SizedBox(height: 10),
-                              DropdownButtonFormField<String>(
-                                value: _area,
-                                decoration: _inputStyle('Área temática'),
-                                items: _areas
-                                    .map(
-                                      (a) => DropdownMenuItem(
-                                        value: a,
-                                        child: Text(a),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (v) => setState(() => _area = v),
-                                validator: (v) => v == null
-                                    ? 'Seleccione un área temática'
-                                    : null,
-                              ),
-                              const SizedBox(height: 10),
-                              TextFormField(
-                                controller: _resumen,
-                                maxLines: 5,
-                                decoration: _inputStyle(
-                                  'Resumen breve (opcional)',
-                                ),
-                              ),
-                            ],
-                          ),
-                          isActive: _currentStep >= 2,
-                        ),
-                        Step(
-                          title: const Text('Subida de archivos'),
-                          content: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ElevatedButton(
-                                onPressed: _seleccionarArchivoWord,
-                                child: Text(
-                                  _archivoWord == null
-                                      ? 'Subir archivo Word (.docx) *'
-                                      : 'Archivo Word: ${_archivoWord!.name}',
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              ElevatedButton(
-                                onPressed: _seleccionarArchivoPdf,
-                                child: Text(
-                                  _archivoPdf == null
-                                      ? 'Subir archivo PDF (opcional)'
-                                      : 'Archivo PDF: ${_archivoPdf!.name}',
-                                ),
-                              ),
-                            ],
-                          ),
-                          isActive: _currentStep >= 3,
-                        ),
-                        Step(
-                          title: const Text('Declaración'),
-                          content: Column(
-                            children: [
-                              const Text(
-                                'Declaro que el trabajo enviado es original, no ha sido publicado ni enviado a ningún otro evento o revista, y que todos los autores han aprobado esta versión del manuscrito.',
-                                style: TextStyle(fontSize: 14),
-                              ),
-                              CheckboxListTile(
-                                value: _aceptaDeclaracion,
-                                onChanged: (v) => setState(
-                                  () => _aceptaDeclaracion = v ?? false,
-                                ),
-                                title: const Text(
-                                  'Acepto la declaración de originalidad',
-                                ),
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                              ),
-                            ],
-                          ),
-                          isActive: _currentStep >= 4,
-                        ),
-                      ],
                     ),
                   ),
                 ),
@@ -339,5 +328,89 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
         ),
       ],
     );
+  }
+
+  Widget _paginaArchivos() => ListView(
+    padding: const EdgeInsets.fromLTRB(0, 8, 0, 16), // 👈 ajustá como necesites
+    children: [
+      ElevatedButton(
+        onPressed: _seleccionarArchivoWord,
+        child: Text(
+          _archivoWord == null
+              ? 'Subir archivo Word (.docx) *'
+              : 'Archivo Word: ${_archivoWord!.name}',
+        ),
+      ),
+      const SizedBox(height: 10),
+      ElevatedButton(
+        onPressed: _seleccionarArchivoPdf,
+        child: Text(
+          _archivoPdf == null
+              ? 'Subir archivo PDF (opcional)'
+              : 'Archivo PDF: ${_archivoPdf!.name}',
+        ),
+      ),
+    ],
+  );
+
+  Widget _paginaDeclaracion() => ListView(
+    padding: const EdgeInsets.fromLTRB(0, 8, 0, 16), // 👈 ajustá como necesites
+    children: [
+      const Text(
+        'Declaro que el trabajo enviado es original, no ha sido publicado ni enviado a ningún otro evento o revista, y que todos los autores han aprobado esta versión del manuscrito.',
+        style: TextStyle(fontSize: 14),
+      ),
+      CheckboxListTile(
+        value: _aceptaDeclaracion,
+        onChanged: (v) => setState(() => _aceptaDeclaracion = v ?? false),
+        title: const Text('Acepto la declaración de originalidad'),
+        controlAffinity: ListTileControlAffinity.leading,
+      ),
+    ],
+  );
+
+  void _validarYAvanzar() {
+    FocusScope.of(context).unfocus();
+
+    if (_currentPage < 4) {
+      setState(() => _currentPage++);
+      _pageController.animateToPage(
+        _currentPage,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+      _checkValidForm(); // 👈 recalcula si el botón debe estar habilitado
+    } else {
+      _enviarFormulario();
+    }
+  }
+
+  void _checkValidForm() {
+    // Solo valida los campos visibles según la página actual
+    bool isValid = false;
+    switch (_currentPage) {
+      case 0: // Página autor
+        isValid = _autorFormKey.currentState?.validate() ?? false;
+        break;
+      case 1: // Coautores
+        isValid = true; // O validación personalizada
+        break;
+      case 2: // Detalles del trabajo
+        isValid =
+            _tituloTrabajo.text.isNotEmpty &&
+            _resumen.text.isNotEmpty &&
+            _modalidad != null &&
+            _area != null;
+        break;
+      case 3: // Archivos
+        isValid = _archivoWord != null;
+        break;
+      case 4: // Declaración
+        isValid = _aceptaDeclaracion;
+        break;
+    }
+    setState(() {
+      _formIsValid = isValid;
+    });
   }
 }

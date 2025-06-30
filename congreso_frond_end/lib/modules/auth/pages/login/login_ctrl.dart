@@ -1,6 +1,8 @@
 import 'package:congreso_evento/core/exception/service_exception.dart';
 import 'package:congreso_evento/modules/auth/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobx/mobx.dart';
 
 part 'login_ctrl.g.dart';
@@ -18,8 +20,9 @@ enum AuthStatus {
 
 abstract class LoginCtrlBase with Store {
   final AuthService service;
+  final FlutterSecureStorage storage;
 
-  LoginCtrlBase(this.service);
+  LoginCtrlBase(this.service, this.storage);
 
   @readonly
   AuthStatus _status = AuthStatus.initial;
@@ -55,8 +58,20 @@ abstract class LoginCtrlBase with Store {
         return;
       }
 
+      // final storage = const FlutterSecureStorage();
+      // Por ejemplo: verificás si hay un token válido en SharedPreferences
+      // final token = await storage.read(key: 'jwttoken');
+
       // _message = 'Autenticado con éxito';
       // _status = StatusEnumGlobal.success;
+
+      final redirectPath = await storage.read(key: 'redirect_path') ?? '/';
+
+      Modular.to.pushNamedAndRemoveUntil(
+        redirectPath,
+        ModalRoute.withName('/'), // mantiene solo el home como ruta previa
+      );
+
       return;
     } on ServiceException catch (e) {
       // _message = e.message;

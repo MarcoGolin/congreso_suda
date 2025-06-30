@@ -32,16 +32,31 @@ class PhoneInputFormatter extends TextInputFormatter {
 
     String cleaned = newValue.text.replaceAll(RegExp(r'[^\d+]'), '');
 
+    bool cursorToEnd = false;
+
+    if (cleaned.startsWith('098')) {
+      cleaned = '+59598${cleaned.substring(3)}';
+      cursorToEnd = true;
+    } else if (cleaned.startsWith('98')) {
+      cleaned = '+59598${cleaned.substring(2)}';
+      cursorToEnd = true;
+    } else if (cleaned.startsWith('0')) {
+      cleaned = '+595${cleaned.substring(1)}';
+      cursorToEnd = true;
+    } else if (cleaned.startsWith('9')) {
+      cleaned = '+5959${cleaned.substring(1)}';
+      cursorToEnd = true;
+    }
     // Forzar '+' si comienza con código de país sin él
-    if (cleaned.startsWith('595')) {
-      cleaned = '+$cleaned';
-    } else if (cleaned.startsWith('55')) {
+    if (cleaned.startsWith('595') ||
+        cleaned.startsWith('55') ||
+        cleaned.startsWith('54')) {
       cleaned = '+$cleaned';
     }
 
     // Mantener un solo '+' al inicio
     if (cleaned.startsWith('+')) {
-      cleaned = '+' + cleaned.substring(1).replaceAll('+', '');
+      cleaned = '+${cleaned.substring(1).replaceAll('+', '')}';
     } else {
       cleaned = cleaned.replaceAll('+', '');
     }
@@ -81,7 +96,7 @@ class PhoneInputFormatter extends TextInputFormatter {
       }
     } else if (cleaned.startsWith('+55')) {
       buffer.write('+55');
-      String digits = digitsOnly.substring(2); // eliminar '55'
+      String digits = digitsOnly.substring(2);
 
       if (digits.isNotEmpty) {
         buffer.write(' ');
@@ -109,20 +124,55 @@ class PhoneInputFormatter extends TextInputFormatter {
         buffer.write('-');
         buffer.write(digits);
       }
+    } else if (cleaned.startsWith('+54')) {
+      buffer.write('+54');
+      String digits = digitsOnly.substring(2); // solo dígitos después de +54
+
+      if (digits.isNotEmpty) {
+        buffer.write(' ');
+        if (digits.length >= 3) {
+          buffer.write(digits.substring(0, 3)); // prefijo como 911
+          digits = digits.substring(3);
+        } else {
+          buffer.write(digits);
+          digits = '';
+        }
+      }
+
+      if (digits.isNotEmpty) {
+        buffer.write(' ');
+        if (digits.length >= 3) {
+          buffer.write(digits.substring(0, 3));
+          digits = digits.substring(3);
+        } else {
+          buffer.write(digits);
+          digits = '';
+        }
+      }
+
+      if (digits.isNotEmpty) {
+        buffer.write(' ');
+        buffer.write(digits);
+      }
     } else {
-      // Número no reconocido, devolver texto plano sin formateo
       return TextEditingValue(
         text: cleaned,
         selection: TextSelection.collapsed(offset: cleaned.length),
       );
     }
-
     final formatted = buffer.toString();
-    final newOffset = _findOffsetForDigits(formatted, digitsBeforeCursor);
+
+    // Evitar que se pase del largo del texto
+    final clampedOffset = cursorToEnd
+        ? formatted.length
+        : _findOffsetForDigits(
+            formatted,
+            digitsBeforeCursor,
+          ).clamp(0, formatted.length);
 
     return TextEditingValue(
       text: formatted,
-      selection: TextSelection.collapsed(offset: newOffset),
+      selection: TextSelection.collapsed(offset: clampedOffset),
     );
   }
 }

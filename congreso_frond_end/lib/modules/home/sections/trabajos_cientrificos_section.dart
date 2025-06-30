@@ -3,9 +3,16 @@ import 'package:congreso_evento/core/header_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-class TrabajosCientificosSection extends StatelessWidget {
+class TrabajosCientificosSection extends StatefulWidget {
   const TrabajosCientificosSection({super.key});
 
+  @override
+  State<TrabajosCientificosSection> createState() =>
+      _TrabajosCientificosSectionState();
+}
+
+class _TrabajosCientificosSectionState
+    extends State<TrabajosCientificosSection> {
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 800;
@@ -105,10 +112,12 @@ class TrabajosCientificosSection extends StatelessWidget {
                             ),
                             elevation: 10,
                           ),
-                          onPressed: () => Modular.to.pushNamedAndRemoveUntil(
-                            '/trabajo_cientifico/',
-                            ModalRoute.withName('/'),
-                          ),
+                          onPressed: () {
+                            Modular.to.pushNamedAndRemoveUntil(
+                              '/trabajo_cientifico/',
+                              ModalRoute.withName('/'),
+                            );
+                          },
 
                           child: const Text(
                             'Enviar trabajo científico',
