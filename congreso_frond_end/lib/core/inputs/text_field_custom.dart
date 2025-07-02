@@ -53,10 +53,7 @@ class TextFieldCustom extends StatelessWidget {
           hintText: hintText,
         ),
         inputFormatters: inputFormatters,
-        validator:
-            validator ??
-            (value) =>
-                (value == null || value.isEmpty) ? 'Campo requerido' : null,
+        validator: validator,
         style: const TextStyle(fontSize: 14, color: Colors.black87),
         onChanged: onChanged,
         onFieldSubmitted: onFieldSubmitted,

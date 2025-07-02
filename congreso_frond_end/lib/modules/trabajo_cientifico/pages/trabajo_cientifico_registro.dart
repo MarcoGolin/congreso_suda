@@ -1,7 +1,13 @@
+import 'dart:io';
+
+import 'package:congreso_evento/modules/trabajo_cientifico/models/coautor.dart';
+import 'package:congreso_evento/modules/trabajo_cientifico/models/trabajo_cientifico.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/pages/widgets/trabajo_cientifico_pagina_coautor.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/pages/widgets/trabajo_cientifico_pagina_detalles.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'widgets/trabajo_cientifico_pagina_autor.dart';
 
@@ -14,28 +20,33 @@ class TrabajoCientificoRegistro extends StatefulWidget {
 }
 
 class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
-  final _formKey = GlobalKey<FormState>();
   final PageController _pageController = PageController();
   int _currentPage = 0;
   bool _aceptaDeclaracion = false;
   bool _formIsValid = false;
 
-  final _autorNombre = TextEditingController();
+  final _autorNombreTXTCTRL = TextEditingController();
   final _autorEmail = TextEditingController();
   final _autorTelefono = TextEditingController();
 
   final _coautoresNombre = TextEditingController();
   final _coautoresEmail = TextEditingController();
 
-  final _tituloTrabajo = TextEditingController();
+  final _tituloTrabajoTXTCTRL = TextEditingController();
   final _resumen = TextEditingController();
   String? _modalidad;
   String? _area;
 
-  PlatformFile? _archivoWord;
-  PlatformFile? _archivoPdf;
+  String? _archivoWord;
+  String? _nameArchivoWord;
+  String? _archivoPdf;
+  String? _nameArchivoPdf;
 
   final _autorFormKey = GlobalKey<FormState>();
+  final _coautorFormKey = GlobalKey<FormState>();
+  final _detallesFormKey = GlobalKey<FormState>();
+
+  final supabase = Supabase.instance.client;
 
   final List<Map<String, dynamic>> _coautores = [
     {
@@ -74,7 +85,15 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
       allowedExtensions: ['doc', 'docx'],
     );
     if (result != null && result.files.isNotEmpty) {
-      setState(() => _archivoWord = result.files.first);
+      final path = result.files.first;
+      final fileName =
+          'trabajos_cientificos/${_tituloTrabajoTXTCTRL.text}/${result.files.first.name}';
+      var filePath = await sendToSupabase(fileName, path);
+      setState(() {
+        _archivoWord = filePath;
+        _nameArchivoWord = fileName;
+      });
+      _checkValidForm();
     }
   }
 
@@ -84,43 +103,125 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
       allowedExtensions: ['pdf'],
     );
     if (result != null && result.files.isNotEmpty) {
-      setState(() => _archivoPdf = result.files.first);
+      final path = result.files.first;
+      final fileName =
+          'trabajos_cientificos/${_tituloTrabajoTXTCTRL.text}/${result.files.first.name}';
+      var filePath = await sendToSupabase(fileName, path);
+      setState(() {
+        _archivoPdf = filePath;
+        _nameArchivoPdf = fileName;
+      });
+      _checkValidForm();
     }
   }
 
-  void _enviarFormulario() {
-    if (_formKey.currentState!.validate() &&
-        _archivoWord != null &&
-        _aceptaDeclaracion) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Formulario enviado correctamente')),
-      );
+  Future<String> sendToSupabase(String fileName, PlatformFile path) async {
+    var filePath = '';
+    File? file;
+    if (kIsWeb) {
+      filePath = await supabase.storage
+          .from('comercial_sas')
+          .uploadBinary(fileName, path.bytes!);
     } else {
-      if (_archivoWord == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Debes subir el archivo Word obligatorio'),
-          ),
-        );
-      }
+      file = File(path.path!);
+      final bytes = await file.readAsBytes();
+      filePath = await supabase.storage
+          .from('comercial_sas')
+          .uploadBinary(fileName, bytes);
     }
+    return filePath;
+  }
+
+  void _enviarFormulario() {
+    final trabajo = TrabajoCientifico(
+      autorNombre: _autorNombreTXTCTRL.text,
+      autorEmail: _autorEmail.text,
+      autorTelefono: _autorTelefono.text,
+      coautores: _coautores.map((coautor) {
+        return Coautor(
+          filiacion: coautor['filiacion'] ?? '',
+          nombre: coautor['nombre'].text,
+          email: coautor['email'].text,
+          filiacionOtro: coautor['filiacionOtro'].text.isNotEmpty
+              ? coautor['filiacionOtro'].text
+              : null,
+        );
+      }).toList(),
+      titulo: _tituloTrabajoTXTCTRL.text,
+      resumen: _resumen.text,
+      modalidad: _modalidad ?? '',
+      area: _area ?? '',
+      archivoWordUrl: _archivoWord ?? '',
+      archivoPdfUrl: _archivoPdf,
+      aceptaDeclaracion: _aceptaDeclaracion,
+    );
+
+    debugPrint(trabajo.toJson().toString());
   }
 
   @override
   void initState() {
+    _capitalizarTexto(_autorNombreTXTCTRL);
+    _capitalizarTexto(_tituloTrabajoTXTCTRL);
+
+    for (final coautor in _coautores) {
+      _capitalizarTexto(coautor['nombre'] as TextEditingController);
+    }
+
+    if (kDebugMode) {
+      _autorNombreTXTCTRL.text = 'Juan Pérez';
+      _autorEmail.text = 'juanperez@gmail.com';
+      _autorTelefono.text = '+595 981 234 567';
+
+      //cargar datos coautores
+      _coautores[0]['nombre'].text = 'María López';
+      _coautores[0]['email'].text = 'marialopez@gmail.com';
+      _coautores[0]['filiacion'] =
+          'Universidad Sudamericana, Facultad de Ciencias de la Salud, Saltos del Guairá, Paraguay';
+      _coautores[0]['filiacionOtro'].text = '';
+
+      _tituloTrabajoTXTCTRL.text = 'Estudio sobre la salud infantil';
+      _resumen.text =
+          'Este es un resumen del trabajo científico que se está presentando.';
+      _modalidad = _modalidades[0]; // Artículo original de investigación
+      _area = _areas[0]; // Pediatría
+    }
+
     super.initState();
+  }
+
+  void _capitalizarTexto(TextEditingController controller) {
+    controller.addListener(() {
+      final text = controller.text;
+      if (text.isNotEmpty) {
+        final capitalizedText = text
+            .split(' ')
+            .map(
+              (word) => word.isNotEmpty
+                  ? word[0].toUpperCase() + word.substring(1).toLowerCase()
+                  : '',
+            )
+            .join(' ');
+        if (capitalizedText != text) {
+          controller.value = TextEditingValue(
+            text: capitalizedText,
+            selection: TextSelection.collapsed(offset: capitalizedText.length),
+          );
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
-    _autorNombre.dispose();
+    _autorNombreTXTCTRL.dispose();
     _autorEmail.dispose();
     _autorTelefono.dispose();
 
     _coautoresNombre.dispose();
     _coautoresEmail.dispose();
 
-    _tituloTrabajo.dispose();
+    _tituloTrabajoTXTCTRL.dispose();
     _resumen.dispose();
 
     _pageController.dispose();
@@ -138,7 +239,9 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
     _modalidad = null;
     _area = null;
 
-    _formKey.currentState?.reset();
+    _autorFormKey.currentState?.reset();
+    _coautorFormKey.currentState?.reset();
+    _detallesFormKey.currentState?.reset();
 
     super.dispose();
   }
@@ -182,143 +285,143 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 500),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          const Text(
-                            'Carga de Trabajo Científico',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF0C4793),
-                            ),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Carga de Trabajo Científico',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF0C4793),
                           ),
-                          const SizedBox(height: 10),
-                          Expanded(
-                            child: PageView(
-                              controller: _pageController,
-                              physics: const NeverScrollableScrollPhysics(),
-                              children: [
-                                TrabajoCientificoPaginaAutor(
-                                  formKey: _autorFormKey,
-                                  autorNombreTXTCTRL: _autorNombre,
-                                  autorEmailTXTCTRL: _autorEmail,
-                                  autorTelefonoTXTCTRL: _autorTelefono,
-                                  onChanged: () {
-                                    _checkValidForm(); // 👈 recalcula si el botón debe estar habilitado
-                                  },
-                                ),
-                                TrabajoCientificoPaginaCoautor(
-                                  coautores: _coautores,
-                                  filiacionesDisponibles:
-                                      _filiacionesDisponibles,
-                                  onFiliacionChanged: (v, index) {
-                                    setState(() {
-                                      _coautores[index]['filiacion'] = v;
-                                    });
-                                  },
-                                  onRemoveCoautor: (index) {
-                                    setState(() {
-                                      _coautores.removeAt(index);
-                                    });
-                                  },
-                                  addNuevoCoautor: () => setState(() {
-                                    _coautores.add({
-                                      'nombre': TextEditingController(),
-                                      'email': TextEditingController(),
-                                      'filiacion': null,
-                                      'filiacionOtro': TextEditingController(),
-                                    });
-                                  }),
-                                ),
-                                TrabajoCientificoPaginaDetalles(
-                                  tituloTrabajo: _tituloTrabajo,
-                                  resumen: _resumen,
-                                  modalidad: _modalidad,
-                                  area: _area,
-                                  modalidades: _modalidades,
-                                  areas: _areas,
-                                  onModadilidadChanged: (v) {
-                                    setState(() => _modalidad = v);
-                                  },
-                                  onAreaChanged: (v) {
-                                    setState(() => _area = v);
-                                  },
-                                ),
-                                _paginaArchivos(),
-                                _paginaDeclaracion(),
-                              ],
-                            ),
+                        ),
+                        const SizedBox(height: 10),
+                        Expanded(
+                          child: PageView(
+                            controller: _pageController,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: [
+                              TrabajoCientificoPaginaAutor(
+                                formKey: _autorFormKey,
+                                autorNombreTXTCTRL: _autorNombreTXTCTRL,
+                                autorEmailTXTCTRL: _autorEmail,
+                                autorTelefonoTXTCTRL: _autorTelefono,
+                                onChanged: () {
+                                  _checkValidForm(); // 👈 recalcula si el botón debe estar habilitado
+                                },
+                              ),
+                              TrabajoCientificoPaginaCoautor(
+                                coautores: _coautores,
+                                filiacionesDisponibles: _filiacionesDisponibles,
+                                onFiliacionChanged: (v, index) {
+                                  setState(() {
+                                    _coautores[index]['filiacion'] = v;
+                                  });
+                                },
+                                onRemoveCoautor: (index) {
+                                  setState(() {
+                                    _coautores.removeAt(index);
+                                  });
+                                },
+                                addNuevoCoautor: () => setState(() {
+                                  _coautores.add({
+                                    'nombre': TextEditingController(),
+                                    'email': TextEditingController(),
+                                    'filiacion': null,
+                                    'filiacionOtro': TextEditingController(),
+                                  });
+                                }),
+                              ),
+                              TrabajoCientificoPaginaDetalles(
+                                formKey: _detallesFormKey,
+                                tituloTrabajo: _tituloTrabajoTXTCTRL,
+                                resumen: _resumen,
+                                modalidad: _modalidad,
+                                area: _area,
+                                modalidades: _modalidades,
+                                areas: _areas,
+                                onModadilidadChanged: (v) {
+                                  setState(() => _modalidad = v);
+                                  _checkValidForm();
+                                },
+                                onAreaChanged: (v) {
+                                  setState(() => _area = v);
+                                  _checkValidForm();
+                                },
+                                onChanged: () {
+                                  _checkValidForm(); // 👈 recalcula si el botón debe estar habilitado
+                                },
+                              ),
+                              _paginaArchivos(),
+                              _paginaDeclaracion(),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 10,
-                            ),
-                            child: Row(
-                              children: [
-                                if (_currentPage > 0)
-                                  TextButton(
-                                    onPressed: () {
-                                      FocusScope.of(
-                                        context,
-                                      ).unfocus(); // cerrar teclado
-                                      setState(() => _currentPage--);
-                                      _pageController.animateToPage(
-                                        _currentPage,
-                                        duration: const Duration(
-                                          milliseconds: 300,
-                                        ),
-                                        curve: Curves.easeInOut,
-                                      );
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: const Text(
-                                        'Atrás'
-                                        ' ',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Color(0xFF0C4793),
-                                        ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 10,
+                          ),
+                          child: Row(
+                            children: [
+                              if (_currentPage > 0)
+                                TextButton(
+                                  onPressed: () {
+                                    FocusScope.of(
+                                      context,
+                                    ).unfocus(); // cerrar teclado
+                                    setState(() => _currentPage--);
+                                    _pageController.animateToPage(
+                                      _currentPage,
+                                      duration: const Duration(
+                                        milliseconds: 300,
                                       ),
-                                    ),
-                                  ),
-                                const Spacer(),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 16,
-                                    ),
-                                    backgroundColor: const Color(0xFF0C4793),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  onPressed: _formIsValid
-                                      ? _validarYAvanzar
-                                      : null,
+                                      curve: Curves.easeInOut,
+                                    );
+                                  },
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      _currentPage == 4
-                                          ? 'Enviar'
-                                          : 'Siguiente',
-                                      style: const TextStyle(
+                                    child: const Text(
+                                      'Atrás'
+                                      ' ',
+                                      style: TextStyle(
                                         fontSize: 16,
-                                        color: Colors.white,
+                                        color: Color(0xFF0C4793),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              const Spacer(),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  backgroundColor: const Color(0xFF0C4793),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: _formIsValid
+                                    ? _validarYAvanzar
+                                    : null,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    _currentPage == 4 ? 'Enviar' : 'Siguiente',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -338,7 +441,7 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
         child: Text(
           _archivoWord == null
               ? 'Subir archivo Word (.docx) *'
-              : 'Archivo Word: ${_archivoWord!.name}',
+              : 'Archivo Word: $_nameArchivoWord',
         ),
       ),
       const SizedBox(height: 10),
@@ -347,7 +450,7 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
         child: Text(
           _archivoPdf == null
               ? 'Subir archivo PDF (opcional)'
-              : 'Archivo PDF: ${_archivoPdf!.name}',
+              : 'Archivo PDF: $_nameArchivoPdf',
         ),
       ),
     ],
@@ -362,7 +465,10 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
       ),
       CheckboxListTile(
         value: _aceptaDeclaracion,
-        onChanged: (v) => setState(() => _aceptaDeclaracion = v ?? false),
+        onChanged: (v) {
+          setState(() => _aceptaDeclaracion = v ?? false);
+          _checkValidForm(); // 👈 recalcula si el botón debe estar habilitado
+        },
         title: const Text('Acepto la declaración de originalidad'),
         controlAffinity: ListTileControlAffinity.leading,
       ),
@@ -393,17 +499,15 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
         isValid = _autorFormKey.currentState?.validate() ?? false;
         break;
       case 1: // Coautores
-        isValid = true; // O validación personalizada
+        isValid = true;
         break;
       case 2: // Detalles del trabajo
-        isValid =
-            _tituloTrabajo.text.isNotEmpty &&
-            _resumen.text.isNotEmpty &&
-            _modalidad != null &&
-            _area != null;
+        isValid = _detallesFormKey.currentState?.validate() ?? false;
         break;
       case 3: // Archivos
-        isValid = _archivoWord != null;
+        isValid =
+            _archivoWord !=
+            null; // Verifica si se subió el archivo Word y se aceptó la declaración
         break;
       case 4: // Declaración
         isValid = _aceptaDeclaracion;

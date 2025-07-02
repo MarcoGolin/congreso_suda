@@ -7,8 +7,14 @@ class Coautor {
   final String nombre;
   final String email;
   final String? filiacion;
+  final String? filiacionOtro;
 
-  Coautor(this.filiacion, {required this.nombre, required this.email});
+  Coautor({
+    required this.nombre,
+    required this.email,
+    this.filiacion,
+    this.filiacionOtro,
+  });
 
   factory Coautor.fromJson(Map<String, dynamic> json) =>
       _$CoautorFromJson(json);
