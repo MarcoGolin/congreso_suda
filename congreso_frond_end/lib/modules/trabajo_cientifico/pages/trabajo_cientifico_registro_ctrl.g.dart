@@ -36,8 +36,8 @@ mixin _$TrabajoCientificoRegistroCtrl
   );
 
   @override
-  Future<void> save() {
-    return _$saveAsyncAction.run(() => super.save());
+  Future<void> save(TrabajoCientifico trabajo) {
+    return _$saveAsyncAction.run(() => super.save(trabajo));
   }
 
   late final _$TrabajoCientificoRegistroCtrlBaseActionController =

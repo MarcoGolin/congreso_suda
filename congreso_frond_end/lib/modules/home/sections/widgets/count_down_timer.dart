@@ -68,7 +68,7 @@ class CountdownTimerState extends State<CountdownTimer> {
       width: isMobile ? 60 : 80, // Adjust width as needed
       height: isMobile ? 60 : 80, // Adjust height as needed
       decoration: BoxDecoration(
-        color: const Color(0xFF00AFBC),
+        color: const Color(0xFF387f4d),
         // color: const Color(0xFF0C4793), // Adjust color to match your design
         borderRadius: BorderRadius.circular(10), // Adjust border radius
       ),

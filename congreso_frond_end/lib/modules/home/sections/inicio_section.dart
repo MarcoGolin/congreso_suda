@@ -32,10 +32,9 @@ class _InicioSectionState extends State<InicioSection> {
   }
 
   void _updateParallaxOffset() {
-    final parallaxFactor = 0.3;
+    final parallaxFactor = 1.0; // 0 = imagen fija
     final newOffset = widget.scrollController.offset * parallaxFactor;
 
-    // Solo actualiza si el cambio es mayor a un umbral para evitar muchos rebuilds
     if ((newOffset - _backgroundOffset).abs() > 0.5) {
       setState(() {
         _backgroundOffset = newOffset;
@@ -50,39 +49,34 @@ class _InicioSectionState extends State<InicioSection> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        double logoWidth = isMobile
-            ? constraints.maxWidth * 0.3
-            : constraints.maxWidth * 0.15;
-        if (logoWidth > 150) logoWidth = 150;
+        double logoWidth = isMobile ? 300 : constraints.maxWidth * 0.50;
+        // if (logoWidth > 150) logoWidth = 150;
 
         return Stack(
           fit: StackFit.expand,
           children: [
             // Fondo con parallax
-            Transform.translate(
-              offset: Offset(0, _backgroundOffset),
-              child: Image.asset(
-                'assets/imagenes/fondo/fondo_inicio.jpg',
-                fit: BoxFit.cover,
-                height:
-                    constraints.maxHeight +
-                    100, // Para que no haya huecos al mover
-                width: constraints.maxWidth,
+            // White filter with opacity
+            // Fondo con parallax
+            Positioned.fill(
+              child: Transform.translate(
+                offset: Offset(
+                  0,
+                  _backgroundOffset,
+                ), // mover en sentido inverso si querés efecto suave
+                child: Image.asset(
+                  'assets/imagenes/fondo/fondo.webp',
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-            // White filter with opacity
-            Positioned.fill(
-              child: Container(color: Colors.white.withOpacity(0.2)),
-            ),
-
             // Main content (Logo, Text, CTA, Countdown, University Logos)
             Container(
               alignment: Alignment.center,
               width: size.width,
               height: size.height,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(
                     flex: isMobile ? 8 : 7,
@@ -93,55 +87,83 @@ class _InicioSectionState extends State<InicioSection> {
                           horizontal: isMobile ? 20 : 40,
                           vertical: 20,
                         ),
-                        child: Flex(
-                          direction: isMobile ? Axis.vertical : Axis.horizontal,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Flexible(
-                              flex: isMobile ? 0 : 2,
-                              child: FadeInLeft(
-                                delay: const Duration(milliseconds: 300),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      'assets/imagenes/logo/logo_congreso_solo.png',
-                                      width: logoWidth,
+                        child: FadeInLeft(
+                          delay: const Duration(milliseconds: 300),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Wrap(
+                                alignment: WrapAlignment.center,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 500,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 5.0,
                                     ),
-                                    const SizedBox(height: 20),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0,
-                                      ),
-                                      child: FittedBox(
-                                        fit: BoxFit.scaleDown,
-                                        child: Text(
-                                          'IV CONGRESO INTERNACIONAL\nUNIVERSIDAD SUDAMERICANA\n"MEDICINA INTERDISCIPLINARIA"',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: isMobile ? 18 : 28,
-                                            fontWeight: FontWeight.w900,
-                                            color: const Color(0xFF0C4793),
-                                            height: 1.2,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Visibility(
+                                          visible: !isMobile,
+                                          replacement: Image.asset(
+                                            'assets/imagenes/logo/logo_congreso.png',
+                                            width: logoWidth,
+                                            fit: BoxFit.fitWidth,
+                                          ),
+                                          child: Image.asset(
+                                            'assets/imagenes/logo/logo_congreso_largo.png',
+                                            width: logoWidth,
+                                            fit: BoxFit.fitWidth,
                                           ),
                                         ),
-                                      ),
+                                        Text(
+                                          'Estás a un paso de vivir la medicina desde otra perspectiva\n'
+                                          'Reserva tu lugar en el evento médico más esperado del año',
+                                          style: TextStyle(
+                                            fontSize: isMobile ? 12 : 35,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            shadows: [
+                                              Shadow(
+                                                offset: Offset(0, 1),
+                                                blurRadius: 2,
+                                                color: Colors.black.withOpacity(
+                                                  0.3,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Visibility(
+                                          replacement: const SizedBox(
+                                            height: 20,
+                                          ),
+                                          visible: !isMobile,
+                                          child: Image.asset(
+                                            // 'assets/imagenes/logo/unisud_investigacion.png',
+                                            'assets/imagenes/logo/unisud_investigacion_verde.png',
+                                            width: 400,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(height: 10),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 5.0,
-                                      ),
-                                      child: Text(
-                                        'Estás a un paso de vivir la medicina desde otra perspectiva\n'
-                                        'Reserva tu lugar en el evento médico más esperado del año',
+                                  ),
+
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      CountdownTimer(targetDate: _targetDate),
+                                      const SizedBox(height: 10),
+
+                                      Text(
+                                        '📅 9, 10 y 11 de octubre de 2025',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontSize: isMobile ? 12 : 18,
                                           color: Colors.white,
-                                          fontWeight: FontWeight.w500,
                                           shadows: [
                                             Shadow(
                                               offset: Offset(0, 1),
@@ -153,120 +175,95 @@ class _InicioSectionState extends State<InicioSection> {
                                           ],
                                         ),
                                       ),
-                                    ),
-
-                                    const SizedBox(height: 10),
-                                    CountdownTimer(targetDate: _targetDate),
-                                    const SizedBox(height: 10),
-
-                                    Text(
-                                      '📅 9, 10 y 11 de octubre de 2025',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: isMobile ? 12 : 18,
-                                        color: Colors.white,
-                                        shadows: [
-                                          Shadow(
-                                            offset: Offset(0, 1),
-                                            blurRadius: 2,
-                                            color: Colors.black.withOpacity(
-                                              0.3,
+                                      Text(
+                                        '📍 Shopping Mall Mercosur, Saltos del Guairá, Paraguay',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: isMobile ? 12 : 18,
+                                          color: Colors.white,
+                                          shadows: [
+                                            Shadow(
+                                              offset: Offset(0, 1),
+                                              blurRadius: 2,
+                                              color: Colors.black.withOpacity(
+                                                0.3,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Text(
-                                      '📍 Shopping Mall Mercosur, Saltos del Guairá, Paraguay',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: isMobile ? 12 : 18,
-                                        color: Colors.white,
-                                        shadows: [
-                                          Shadow(
-                                            offset: Offset(0, 1),
-                                            blurRadius: 2,
-                                            color: Colors.black.withOpacity(
-                                              0.3,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-
-                                    const SizedBox(height: 30),
-
-                                    FadeInUp(
-                                      delay: const Duration(milliseconds: 700),
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: isMobile ? 20 : 50,
+                                          ],
                                         ),
-                                        child: SizedBox(
-                                          width: 400,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: const Color(
-                                                0xFF0C4793,
-                                              ),
-                                              foregroundColor: Colors.white,
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: isMobile ? 20 : 40,
-                                                vertical: isMobile ? 15 : 20,
-                                              ),
-                                              textStyle: TextStyle(
-                                                fontSize: isMobile ? 18 : 22,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                              ),
-                                              elevation: 10,
-                                            ),
-                                            onPressed: () => Modular.to
-                                                .pushNamedAndRemoveUntil(
-                                                  '/congresista/',
-                                                  ModalRoute.withName('/'),
+                                      ),
+
+                                      const SizedBox(height: 15),
+
+                                      FadeInUp(
+                                        delay: const Duration(
+                                          milliseconds: 700,
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: isMobile ? 20 : 50,
+                                          ),
+                                          child: SizedBox(
+                                            width: 400,
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: const Color(
+                                                  0xFF387f4d,
                                                 ),
-
-                                            child: const Text(
-                                              'INSCRÍBETE AHORA',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
+                                                foregroundColor: Colors.white,
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: isMobile
+                                                      ? 20
+                                                      : 40,
+                                                  vertical: isMobile ? 15 : 20,
+                                                ),
+                                                textStyle: TextStyle(
+                                                  fontSize: isMobile ? 18 : 22,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
+                                                elevation: 10,
                                               ),
-                                              textAlign: TextAlign.center,
+                                              onPressed: () => Modular.to
+                                                  .pushNamedAndRemoveUntil(
+                                                    '/congresista/',
+                                                    ModalRoute.withName('/'),
+                                                  ),
+
+                                              child: const Text(
+                                                'INSCRÍBETE AHORA',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                      Visibility(
+                                        replacement: const SizedBox(height: 20),
+                                        visible: isMobile,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 20,
+                                          ),
+                                          child: Image.asset(
+                                            'assets/imagenes/logo/unisud_investigacion_verde.png',
+                                            width: 140,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  FadeInUp(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 5, top: 5),
-                      child: Wrap(
-                        spacing: isMobile ? 20 : 50,
-                        runSpacing: isMobile ? 20 : 50,
-                        alignment: WrapAlignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/imagenes/logo/suda_logo_largo_blanco.png',
-                            width: isMobile ? 140 : 200,
-                          ),
-                          Image.asset(
-                            'assets/imagenes/logo/suda_inv_logo_largo_blanco.png',
-                            width: isMobile ? 140 : 200,
-                          ),
-                        ],
                       ),
                     ),
                   ),

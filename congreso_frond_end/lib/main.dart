@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'IVCUSMI 2025',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Montserrat',
         textTheme: const TextTheme(

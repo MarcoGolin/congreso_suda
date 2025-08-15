@@ -1,15 +1,58 @@
 import 'dart:io';
 
+import 'package:congreso_evento/core/loader_overlau.dart';
+import 'package:congreso_evento/core/models/global_state_class.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/models/coautor.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/models/trabajo_cientifico.dart';
+import 'package:congreso_evento/modules/trabajo_cientifico/pages/trabajo_cientifico_registro_ctrl.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/pages/widgets/trabajo_cientifico_pagina_coautor.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/pages/widgets/trabajo_cientifico_pagina_detalles.dart';
+import 'package:congreso_evento/modules/trabajo_cientifico/pages/widgets/trabajo_cientifico_success_screen_view.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mobx/mobx.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'widgets/trabajo_cientifico_pagina_autor.dart';
+
+String _stripDiacriticsBasic(String s) {
+  const from = 'áàäâãÁÀÄÂÃéèëêÉÈËÊíìïîÍÌÏÎóòöôõÓÒÖÔÕúùüûÚÙÜÛñÑçÇ';
+  const to = 'aaaaaAAAAAeeeeEEEEiiiiIIIIoooooOOOOOuuuuUUUUnNcC';
+  return s.split('').map((ch) {
+    final i = from.indexOf(ch);
+    return i >= 0 ? to[i] : ch;
+  }).join();
+}
+
+String _sanitizeForStorage(String input) {
+  final s = _stripDiacriticsBasic(input);
+  return s
+      .trim()
+      .replaceAll(
+        RegExp(r'[\\?#\[\]@!$&\()*+,;=]'),
+        '_',
+      ) // símbolos conflictivos
+      .replaceAll(RegExp(r'\s+'), '_') // espacios -> _
+      .replaceAll(RegExp(r'/+'), '/') // colapsar slashes
+      .replaceAll('..', '.') // evitar ".."
+      .replaceAll(RegExp(r'^/+|/+$'), ''); // sin slash al inicio/fin
+}
+
+String _contentTypeFor(String fileName) {
+  final ext = fileName.split('.').last.toLowerCase();
+  switch (ext) {
+    case 'pdf':
+      return 'application/pdf';
+    case 'doc':
+      return 'application/msword';
+    case 'docx':
+      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    default:
+      return 'application/octet-stream';
+  }
+}
 
 class TrabajoCientificoRegistro extends StatefulWidget {
   const TrabajoCientificoRegistro({super.key});
@@ -20,7 +63,10 @@ class TrabajoCientificoRegistro extends StatefulWidget {
 }
 
 class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
-  final PageController _pageController = PageController();
+  final _ctrl = Modular.get<TrabajoCientificoRegistroCtrl>();
+  final LoadingOverlay _loadingOverlay =
+      LoadingOverlay(); // Instancia del overlay
+  final _pageController = PageController();
   int _currentPage = 0;
   bool _aceptaDeclaracion = false;
   bool _formIsValid = false;
@@ -48,6 +94,11 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
 
   final supabase = Supabase.instance.client;
 
+  late ReactionDisposer _rctDsp;
+
+  var _loadingWord = false;
+  var _loadingPdf = false;
+
   final List<Map<String, dynamic>> _coautores = [
     {
       'nombre': TextEditingController(),
@@ -55,6 +106,19 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
       'filiacion': null, // valor seleccionado en el dropdown
       'filiacionOtro':
           TextEditingController(), // para texto libre si selecciona "Otros"
+    },
+    {
+      'nombre': TextEditingController(),
+      'email': TextEditingController(),
+      'filiacion': null,
+      'filiacionOtro': TextEditingController(),
+    },
+
+    {
+      'nombre': TextEditingController(),
+      'email': TextEditingController(),
+      'filiacion': null,
+      'filiacionOtro': TextEditingController(),
     },
   ];
 
@@ -80,56 +144,99 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
   ];
 
   Future<void> _seleccionarArchivoWord() async {
+    setState(() => _loadingWord = true);
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['doc', 'docx'],
+      withData: kIsWeb, // asegura bytes en web
     );
+
+    String? filePath;
+    String? fileName;
+
     if (result != null && result.files.isNotEmpty) {
-      final path = result.files.first;
-      final fileName =
-          'trabajos_cientificos/${_tituloTrabajoTXTCTRL.text}/${result.files.first.name}';
-      var filePath = await sendToSupabase(fileName, path);
-      setState(() {
-        _archivoWord = filePath;
-        _nameArchivoWord = fileName;
-      });
-      _checkValidForm();
+      final picked = result.files.first;
+      final titulo = _sanitizeForStorage(_tituloTrabajoTXTCTRL.text);
+      final original = _sanitizeForStorage(picked.name);
+      final epoch = DateTime.now().millisecondsSinceEpoch;
+
+      final key = 'trabajos_cientificos/$titulo/$epoch/$original';
+      filePath = await sendToSupabase(key, picked);
+      fileName = picked.name;
     }
+
+    setState(() {
+      _archivoWord = filePath;
+      _nameArchivoWord = fileName;
+      _loadingWord = false;
+    });
+    _checkValidForm();
   }
 
   Future<void> _seleccionarArchivoPdf() async {
+    setState(() => _loadingPdf = true);
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf'],
+      withData: kIsWeb, // asegura bytes en web
     );
+
+    String? filePath;
+    String? fileName;
+
     if (result != null && result.files.isNotEmpty) {
-      final path = result.files.first;
-      final fileName =
-          'trabajos_cientificos/${_tituloTrabajoTXTCTRL.text}/${result.files.first.name}';
-      var filePath = await sendToSupabase(fileName, path);
-      setState(() {
-        _archivoPdf = filePath;
-        _nameArchivoPdf = fileName;
-      });
-      _checkValidForm();
+      final picked = result.files.first;
+      final titulo = _sanitizeForStorage(_tituloTrabajoTXTCTRL.text);
+      final original = _sanitizeForStorage(picked.name);
+      final epoch = DateTime.now().millisecondsSinceEpoch;
+
+      final key = 'trabajos_cientificos/$titulo/$epoch/$original';
+      filePath = await sendToSupabase(key, picked);
+      fileName = picked.name;
     }
+
+    setState(() {
+      _archivoPdf = filePath;
+      _nameArchivoPdf = fileName;
+      _loadingPdf = false;
+    });
+    _checkValidForm();
   }
 
-  Future<String> sendToSupabase(String fileName, PlatformFile path) async {
-    var filePath = '';
-    File? file;
+  Future<String> sendToSupabase(String key, PlatformFile file) async {
+    final contentType = _contentTypeFor(file.name);
+
+    late final String uploadedKey;
     if (kIsWeb) {
-      filePath = await supabase.storage
-          .from('comercial_sas')
-          .uploadBinary(fileName, path.bytes!);
+      // En web, asegurate de usar bytes; withData:true arriba
+      final bytes = file.bytes!;
+      uploadedKey = await supabase.storage
+          .from('congreso')
+          .uploadBinary(
+            key,
+            bytes,
+            fileOptions: FileOptions(
+              upsert: true,
+              cacheControl: '3600',
+              contentType: contentType,
+            ),
+          );
     } else {
-      file = File(path.path!);
-      final bytes = await file.readAsBytes();
-      filePath = await supabase.storage
-          .from('comercial_sas')
-          .uploadBinary(fileName, bytes);
+      final f = File(file.path!);
+      final bytes = await f.readAsBytes();
+      uploadedKey = await supabase.storage
+          .from('congreso')
+          .uploadBinary(
+            key,
+            bytes,
+            fileOptions: FileOptions(
+              upsert: true,
+              cacheControl: '3600',
+              contentType: contentType,
+            ),
+          );
     }
-    return filePath;
+    return uploadedKey; // devuelve la key subida
   }
 
   void _enviarFormulario() {
@@ -155,8 +262,9 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
       archivoPdfUrl: _archivoPdf,
       aceptaDeclaracion: _aceptaDeclaracion,
     );
+    final Future<void> registrationFuture = _ctrl.save(trabajo);
 
-    debugPrint(trabajo.toJson().toString());
+    _loadingOverlay.show(context, registrationFuture);
   }
 
   @override
@@ -170,15 +278,29 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
 
     if (kDebugMode) {
       _autorNombreTXTCTRL.text = 'Juan Pérez';
-      _autorEmail.text = 'juanperez@gmail.com';
+      _autorEmail.text = 'marcogolin60@gmail.com';
       _autorTelefono.text = '+595 981 234 567';
 
       //cargar datos coautores
-      _coautores[0]['nombre'].text = 'María López';
-      _coautores[0]['email'].text = 'marialopez@gmail.com';
+      _coautores[0]['nombre'].text = 'Jose López';
+      _coautores[0]['email'].text = 'marcogolin60@gmail.com';
       _coautores[0]['filiacion'] =
           'Universidad Sudamericana, Facultad de Ciencias de la Salud, Saltos del Guairá, Paraguay';
       _coautores[0]['filiacionOtro'].text = '';
+
+      //cargar datos coautores
+      _coautores[1]['nombre'].text = 'Eduardo López';
+      _coautores[1]['email'].text = 'marcogolin60@gmail.com';
+      _coautores[1]['filiacion'] =
+          'Universidad Sudamericana, Facultad de Ciencias de la Salud, Saltos del Guairá, Paraguay';
+      _coautores[1]['filiacionOtro'].text = '';
+
+      //cargar datos coautores
+      _coautores[2]['nombre'].text = 'María López';
+      _coautores[2]['email'].text = 'marcogolin60@gmail.com';
+      _coautores[2]['filiacion'] =
+          'Universidad Sudamericana, Facultad de Ciencias de la Salud, Saltos del Guairá, Paraguay';
+      _coautores[2]['filiacionOtro'].text = '';
 
       _tituloTrabajoTXTCTRL.text = 'Estudio sobre la salud infantil';
       _resumen.text =
@@ -187,6 +309,26 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
       _area = _areas[0]; // Pediatría
     }
 
+    _rctDsp = reaction((_) => _ctrl.stateClass, (state) {
+      switch (state.status) {
+        case StatusEnumGlobal.success:
+          _loadingOverlay.hide();
+          setState(() => _currentPage++);
+          _pageController.animateToPage(
+            _currentPage,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+          break;
+        case StatusEnumGlobal.error:
+          _loadingOverlay.hide();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          );
+          break;
+        default:
+      }
+    });
     super.initState();
   }
 
@@ -226,6 +368,8 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
 
     _pageController.dispose();
 
+    _rctDsp();
+
     // Dispose de todos los controladores de coautores
     for (final coautor in _coautores) {
       (coautor['nombre'] as TextEditingController).dispose();
@@ -248,14 +392,14 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = const Color(0xFF0C4793);
+    final textColor = const Color(0xFF387f4d);
     final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Stack(
       children: [
         Positioned.fill(
           child: Image.asset(
-            'assets/imagenes/fondo/fondo_inicio.jpg',
+            'assets/imagenes/fondo/fondo.jpg',
             fit: BoxFit.cover,
           ),
         ),
@@ -288,13 +432,13 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
                     child: Column(
                       children: [
                         const SizedBox(height: 20),
-                        const Text(
+                        Text(
                           'Carga de Trabajo Científico',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF0C4793),
+                            color: textColor,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -356,6 +500,7 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
                               ),
                               _paginaArchivos(),
                               _paginaDeclaracion(),
+                              TrabajoCientificoSuccessScreenView(),
                             ],
                           ),
                         ),
@@ -366,7 +511,7 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
                           ),
                           child: Row(
                             children: [
-                              if (_currentPage > 0)
+                              if (_currentPage > 0 && _currentPage != 5)
                                 TextButton(
                                   onPressed: () {
                                     FocusScope.of(
@@ -388,36 +533,39 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
                                       ' ',
                                       style: TextStyle(
                                         fontSize: 16,
-                                        color: Color(0xFF0C4793),
+                                        color: Color(0xFF387f4d),
                                       ),
                                     ),
                                   ),
                                 ),
                               const Spacer(),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 16,
+                              if (_currentPage != 5)
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
+                                    backgroundColor: textColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
                                   ),
-                                  backgroundColor: const Color(0xFF0C4793),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                onPressed: _formIsValid
-                                    ? _validarYAvanzar
-                                    : null,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    _currentPage == 4 ? 'Enviar' : 'Siguiente',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white,
+                                  onPressed: _formIsValid
+                                      ? _validarYAvanzar
+                                      : null,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      _currentPage == 4
+                                          ? 'Enviar'
+                                          : 'Siguiente',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
                             ],
                           ),
                         ),
@@ -438,20 +586,36 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
     children: [
       ElevatedButton(
         onPressed: _seleccionarArchivoWord,
-        child: Text(
-          _archivoWord == null
-              ? 'Subir archivo Word (.docx) *'
-              : 'Archivo Word: $_nameArchivoWord',
-        ),
+        child: _loadingWord
+            ? Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              )
+            : Text(
+                _archivoWord == null
+                    ? 'Subir archivo Word (.docx) *'
+                    : 'Archivo Word: $_nameArchivoWord',
+              ),
       ),
       const SizedBox(height: 10),
       ElevatedButton(
         onPressed: _seleccionarArchivoPdf,
-        child: Text(
-          _archivoPdf == null
-              ? 'Subir archivo PDF (opcional)'
-              : 'Archivo PDF: $_nameArchivoPdf',
-        ),
+        child: _loadingPdf
+            ? Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              )
+            : Text(
+                _archivoPdf == null
+                    ? 'Subir archivo PDF (opcional)'
+                    : 'Archivo PDF: $_nameArchivoPdf',
+              ),
       ),
     ],
   );
@@ -506,8 +670,8 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
         break;
       case 3: // Archivos
         isValid =
-            _archivoWord !=
-            null; // Verifica si se subió el archivo Word y se aceptó la declaración
+            (_archivoWord !=
+            null); // Verifica si se subió el archivo Word y se aceptó la declaración
         break;
       case 4: // Declaración
         isValid = _aceptaDeclaracion;

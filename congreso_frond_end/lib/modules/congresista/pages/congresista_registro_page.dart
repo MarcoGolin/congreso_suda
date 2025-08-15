@@ -2,7 +2,7 @@ import 'package:congreso_evento/core/inputs/text_field_celular.dart';
 import 'package:congreso_evento/core/loader_overlau.dart';
 import 'package:congreso_evento/core/models/global_state_class.dart';
 import 'package:congreso_evento/modules/congresista/pages/congresista_registro_ctrl.dart';
-import 'package:congreso_evento/modules/congresista/pages/success_screen_view.dart';
+import 'package:congreso_evento/modules/congresista/pages/congresista_success_screen_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,31 +50,62 @@ class _CongresistaRegistroPageState extends State<CongresistaRegistroPage> {
   final PageController _pageController = PageController();
 
   final String _terminosTexto = '''
-🔐 Políticas de Privacidad – IV CIUSMI 2025
+📜 Bases y Condiciones de Participación
 
-La presente política de privacidad describe cómo se recopila, utiliza y protege la información personal proporcionada por los usuarios que se registren o interactúen con el sitio web del IV Congreso Internacional de la Universidad Sudamericana: Medicina Interdisciplinaria, organizado por la Coordinación de Investigación Universitaria de la Universidad Sudamericana sede Saltos del Guairá.
+IV Congreso Internacional de la Universidad Sudamericana: Medicina Interdisciplinaria
 
-1. Recopilación de datos
-Durante el proceso de inscripción, recopilamos los siguientes datos personales: nombre completo, documento de identidad, institución de procedencia, carrera/semestre, correo electrónico y número de teléfono. Estos datos son necesarios para la organización del evento, la gestión de certificados y la emisión de comprobantes.
+📅 10, 11 y 12 de octubre de 2025
+📍 Shopping Mall Mercosur, Saltos del Guairá
 
-2. Uso de la información
-La información proporcionada será utilizada únicamente para fines relacionados con el congreso, tales como:
-• Confirmación de inscripción
-• Acreditación y generación de credenciales
-• Envío de certificados digitales
-• Comunicación de novedades y recordatorios
+1. Naturaleza del evento
+El congreso es una actividad académica organizada por la Coordinación de Investigación Universitaria de la Universidad Sudamericana Sede Saltos del Guairá, orientada a promover el intercambio científico, la formación interdisciplinaria y la participación activa de estudiantes, docentes e investigadores del área de la salud.
 
-No compartimos ni vendemos los datos personales con terceros ajenos a la organización.
+2. Preinscripción e inscripción
+•	La preinscripción se realiza exclusivamente a través del formulario oficial del congreso.
+•	La inscripción se confirma únicamente una vez realizado el pago presencial ante personal autorizado por el Comité Organizador en la Universidad Sudamericana.
+•	El Comité Organizador no se responsabiliza por pagos realizados a terceros no autorizados.
+•	Los cupos son limitados y se adjudican según orden de confirmación.
 
-3. Protección de datos
+3. Control de participación y acreditación
+•	Durante todo el evento se realizará un sistema de acreditación obligatorio mediante check-in y check-out, escaneando la credencial del participante al ingresar y salir de cada jornada o actividad.
+•	El escaneo será realizado exclusivamente por el staff del evento.
+•	En caso de ausencia de alguno de estos registros (check-in o check-out) sin justificación válida, la participación en ese día podrá ser invalidada, afectando la cantidad de horas extracurriculares (investigación y extensión) reflejadas en el certificado.
+•	Esta medida busca fomentar la participación total y activa durante todo el congreso.
+
+4. Certificados
+•	Los certificados serán emitidos en formato digital y estarán disponibles al finalizar el evento.
+•	Serán válidos únicamente para los participantes que:
+	• Hayan completado su inscripción y acreditación.
+	• Participen en las actividades según el sistema de control establecido.
+	• Cumplan con el porcentaje mínimo de asistencia requerido.
+	• Los certificados detallarán las horas de participación en investigación y/o extensión, según la cantidad de actividades efectivamente acreditadas.
+	• No se reimprimirán certificados por errores en los datos si fueron ingresados incorrectamente por el participante.
+
+5. Uso de imagen
+Con su participación, el/la inscripto/a autoriza el uso de su imagen (fotos y videos) capturados durante el evento, con fines institucionales, académicos o de difusión, sin fines comerciales.
+
+6. Compromiso del participante
+•	El participante se compromete a respetar las normas del evento, el reglamento interno y las instrucciones del comité organizador.
+•	No se permitirá el ingreso de personas no registradas ni la cesión de credenciales.
+•	El Comité Organizador se reserva el derecho de admisión y permanencia dentro del evento en caso de conductas inadecuadas o que interfieran con el normal desarrollo de las actividades.
+
+7. Información oficial
+Las actualizaciones sobre el congreso (cronograma, actividades, pagos, entrega de kits, etc.) serán comunicadas únicamente a través de los siguientes canales oficiales:
+•	Página web del evento
+•	Redes sociales institucionales
+•	Grupos institucionales de estudiantes
+•	Coordinación de Investigación Universitaria, Universidad Sudamericana, Saltos del Guairá
+
+8. Protección de datos
 La información personal es almacenada en plataformas seguras y será eliminada de nuestras bases de datos una vez concluido el evento y entregados todos los certificados correspondientes.
 
-4. Consentimiento
-Al inscribirse, el usuario acepta esta política de privacidad y autoriza el uso de sus datos para los fines mencionados.
 
-5. Contacto
+9. Contacto
 Para más información sobre nuestras prácticas de privacidad, podés escribirnos a:
-📧 congresosudamericana@gmail.com
+📧 consultas@congresounisud.com
+
+✅ Declaración de aceptación
+Al completar y enviar el formulario de preinscripción, el/la participante declara haber leído, comprendido y aceptado todas las cláusulas de las presentes Bases y Condiciones de Participación del IV CIUSMI 2025.
 ''';
 
   @override
@@ -228,15 +259,16 @@ Para más información sobre nuestras prácticas de privacidad, podés escribirn
 
   @override
   Widget build(BuildContext context) {
-    final Color textColor = const Color(0xFF0C4793);
+    final Color textColor = const Color(0xFF387f4d);
     return Stack(
       children: [
         Positioned.fill(
           child: Image.asset(
-            'assets/imagenes/fondo/fondo_inicio.jpg',
+            'assets/imagenes/fondo/fondo.jpg',
             fit: BoxFit.cover,
           ),
         ),
+
         Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.transparent,
@@ -269,13 +301,13 @@ Para más información sobre nuestras prácticas de privacidad, podés escribirn
                           key: _formKey,
                           child: ListView(
                             children: [
-                              const Text(
+                              Text(
                                 'Registro de Participante',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF0C4793),
+                                  color: textColor,
                                 ),
                               ),
                               const SizedBox(height: 24),
@@ -421,6 +453,7 @@ Para más información sobre nuestras prácticas de privacidad, podés escribirn
                                 ),
                               ),
                               CheckboxListTile(
+                                activeColor: textColor,
                                 contentPadding: EdgeInsets.zero,
                                 title: GestureDetector(
                                   onTap: () {
@@ -481,7 +514,7 @@ Para más información sobre nuestras prácticas de privacidad, podés escribirn
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 16,
                                       ),
-                                      backgroundColor: const Color(0xFF0C4793),
+                                      backgroundColor: textColor,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),

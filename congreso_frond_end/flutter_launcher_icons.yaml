@@ -1,0 +1,15 @@
+# flutter pub run flutter_launcher_icons
+flutter_launcher_icons:
+  image_path: "assets/imagenes/logo/logo_congreso_solo.png"
+
+  web:
+    generate: true
+    image_path: "assets/imagenes/logo/logo_congreso_solo.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+
+  windows:
+    generate: true
+    image_path: "assets/imagenes/logo/logo_congreso_solo.png"
+    icon_size: 48 # min:48, max:256, default: 48
+

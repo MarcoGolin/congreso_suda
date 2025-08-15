@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Hostname {
-  static String urlBaseProd = "login.flexpdv.app";
-  static String apiProd = "/comercial/api";
+  static String urlBaseProd = "www.congresounisud.com";
+  static String apiProd = "/congreso/api";
   static int portaProd = 8444;
 
   //--------------------------------------------------------------------------------------

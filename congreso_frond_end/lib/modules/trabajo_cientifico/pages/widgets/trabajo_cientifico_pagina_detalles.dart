@@ -45,7 +45,7 @@ class TrabajoCientificoPaginaDetalles extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF0C4793),
+              color: Color(0xFF387f4d),
             ),
           ),
           const SizedBox(height: 5),

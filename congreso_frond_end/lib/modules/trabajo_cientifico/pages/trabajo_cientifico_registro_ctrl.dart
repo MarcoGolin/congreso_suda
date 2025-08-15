@@ -1,5 +1,7 @@
 import 'package:congreso_evento/core/exception/service_exception.dart';
 import 'package:congreso_evento/core/models/global_state_class.dart';
+import 'package:congreso_evento/modules/trabajo_cientifico/models/trabajo_cientifico.dart';
+import 'package:congreso_evento/modules/trabajo_cientifico/trabajo_cientifico_service.dart';
 import 'package:mobx/mobx.dart';
 
 part 'trabajo_cientifico_registro_ctrl.g.dart';
@@ -8,7 +10,8 @@ class TrabajoCientificoRegistroCtrl = TrabajoCientificoRegistroCtrlBase
     with _$TrabajoCientificoRegistroCtrl;
 
 abstract class TrabajoCientificoRegistroCtrlBase with Store {
-  TrabajoCientificoRegistroCtrlBase();
+  final TrabajoCientificoService service;
+  TrabajoCientificoRegistroCtrlBase(this.service);
 
   @readonly
   GlobalStateClass _stateClass = GlobalStateClass(
@@ -22,39 +25,20 @@ abstract class TrabajoCientificoRegistroCtrlBase with Store {
   }
 
   @action
-  Future<void> save() async {
+  Future<void> save(TrabajoCientifico trabajo) async {
     try {
-      changeStatus('Guardando congresista...', StatusEnumGlobal.loading);
-      // Simular un proceso de guardado
+      changeStatus('Guardando trabajo...', StatusEnumGlobal.loading);
+      final response = await service.save(trabajo);
 
-      // final response = await service.save(
-      //   Usuario(
-      //     nombreCompleto: nombreCompleto,
-      //     email: email,
-      //     senha: senha,
-      //     telefono: telefone,
-      //     institucion: institucion,
-      //     registroAcademico: registroAcademico,
-      //     semestre: semestre,
-      //     seccion: seccion,
-      //     pais: pais,
-      //   ),
-      // );
       // final data = response.data;
-      // final code = response.code;
-      // final message = response.message;
+      final code = response.code;
+      final message = response.message;
 
-      // if (code != 200) {
-      //   changeStatus(message, StatusEnumGlobal.errorDialog);
-      //   return;
-      // }
-
-      // debugPrint('Congresista guardado: ${data?.toJson()}');
-
-      changeStatus(
-        'Congresista guardado exitosamente',
-        StatusEnumGlobal.success,
-      );
+      if (code != 200) {
+        changeStatus(message, StatusEnumGlobal.errorDialog);
+        return;
+      }
+      changeStatus('Trabajo guardado correctamente', StatusEnumGlobal.success);
     } on ServiceException catch (e) {
       changeStatus(e.message, StatusEnumGlobal.error);
     }

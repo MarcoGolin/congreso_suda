@@ -3,10 +3,12 @@ import 'package:congreso_evento/core/web_helper/web_helper_stub.dart'
 import 'package:congreso_evento/modules/home/sections/inicio_section.dart';
 import 'package:congreso_evento/modules/home/sections/ligas_academicas_section.dart';
 import 'package:congreso_evento/modules/home/sections/lugar_evento_section.dart';
-import 'package:congreso_evento/modules/home/sections/precio_ceritifcado_section.dart';
 import 'package:congreso_evento/modules/home/sections/sobre_section.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:yaml/yaml.dart';
 
 import 'sections/contacto_section.dart';
 import 'sections/trabajos_cientrificos_section.dart';
@@ -24,18 +26,20 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey _inicioSectionKey = GlobalKey();
   final GlobalKey _sobreSectionKey = GlobalKey();
   // final GlobalKey _agendaSectionKey = GlobalKey();
-  final GlobalKey _disertantesSectionKey = GlobalKey();
+  // final GlobalKey _disertantesSectionKey = GlobalKey();
   final GlobalKey _trabajosCientificosSectionKey = GlobalKey();
   final GlobalKey _ligasAcademicasSectionKey = GlobalKey();
   final GlobalKey _lugarEventoSectionKey = GlobalKey();
-  final GlobalKey _reconocimientosApoyoSectionKey = GlobalKey();
+  // final GlobalKey _reconocimientosApoyoSectionKey = GlobalKey();
 
-  final GlobalKey _precioSectionKey = GlobalKey();
+  // final GlobalKey _precioSectionKey = GlobalKey();
   final GlobalKey _contactoSectionKey = GlobalKey();
 
   late final Map<String, GlobalKey> _sectionKeys;
 
   bool _isAppBarTransparent = true;
+
+  var _version = '';
 
   @override
   void initState() {
@@ -61,10 +65,25 @@ class _HomePageState extends State<HomePage> {
       // 'Disertantes': _disertantesSectionKey,
       'Trabajos': _trabajosCientificosSectionKey,
       'Ligas': _ligasAcademicasSectionKey,
-      'Precios': _precioSectionKey,
+      // 'Precios': _precioSectionKey,
       'Contacto': _contactoSectionKey,
     };
     _scrollController.addListener(_handleScroll);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      var y = await rootBundle.loadString("pubspec.yaml");
+      String nrBuild = loadYaml(y)["version"];
+
+      setState(() {
+        _version = 'V: $nrBuild';
+      });
+    });
+
+    if (kIsWeb) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        cierraPreLoader();
+      });
+    }
   }
 
   void _handleScroll() {
@@ -111,7 +130,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
-    final Color textColor = const Color(0xFF0C4793);
+    final Color textColor = const Color(0xFF73c165);
 
     //cambiar color de appBar de acuerdo al scroll section
     final appBarColor = _isAppBarTransparent
@@ -119,7 +138,8 @@ class _HomePageState extends State<HomePage> {
         : Colors.white;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      //  background: rgba(255,255,255,.06);
+      backgroundColor: const Color(0xFF121A14),
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: appBarColor,
@@ -133,119 +153,123 @@ class _HomePageState extends State<HomePage> {
             color: textColor,
             fontSize: 24,
           ),
-          child: const Text('IVCUSMI 2025'),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('IVCUSMI 2025'),
+              Text(_version, style: TextStyle(fontSize: 8, color: Colors.grey)),
+            ],
+          ),
         ),
-        actions: isMobile
-            ? null
-            : [
-                TextButton(
-                  onPressed: () => _navigateToSection('Inicio'),
-                  child: Text(
-                    'Inicio',
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 17,
-                      fontFamily: 'Montserrat',
-                    ),
-                  ),
-                ),
-                PopupMenuButton<String>(
-                  onSelected: (value) => _navigateToSection(value),
-                  tooltip: 'El Congreso',
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: Text(
-                      'El Congreso',
-                      style: TextStyle(color: textColor),
-                    ),
-                  ),
-                  itemBuilder: (_) => const [
-                    PopupMenuItem(value: 'Sobre', child: Text('Sobre')),
-                    PopupMenuItem(
-                      value: 'Lugar',
-                      child: Text('Lugar del evento'),
-                    ),
-                  ],
-                ),
-                PopupMenuButton<String>(
-                  onSelected: (value) => _navigateToSection(value),
-                  tooltip: 'Actividades',
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: Text(
-                      'Actividades',
-                      style: TextStyle(color: textColor),
-                    ),
-                  ),
-                  itemBuilder: (_) => const [
-                    PopupMenuItem(
-                      value: 'Disertantes',
-                      child: Text('Disertantes'),
-                    ),
-                    PopupMenuItem(
-                      value: 'Trabajos',
-                      child: Text('Trabajos científicos'),
-                    ),
-                    PopupMenuItem(
-                      value: 'Ligas',
-                      child: Text('Ligas académicas'),
-                    ),
-                  ],
-                ),
-                TextButton(
-                  onPressed: () => _navigateToSection('Precios'),
-                  child: Text(
-                    'Precios',
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 17,
-                      fontFamily: 'Montserrat',
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => _navigateToSection('Contacto'),
-                  child: Text(
-                    '📞 Contacto',
-                    style: TextStyle(color: textColor),
-                  ),
-                ),
-              ],
+        // actions: isMobile
+        //     ? null
+        //     : [
+        //         TextButton(
+        //           onPressed: () => _navigateToSection('Inicio'),
+        //           child: Text(
+        //             'Inicio',
+        //             style: TextStyle(
+        //               color: textColor,
+        //               fontSize: 17,
+        //               fontFamily: 'Montserrat',
+        //             ),
+        //           ),
+        //         ),
+        //         PopupMenuButton<String>(
+        //           onSelected: (value) => _navigateToSection(value),
+        //           tooltip: 'El Congreso',
+        //           child: Padding(
+        //             padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        //             child: Text(
+        //               'El Congreso',
+        //               style: TextStyle(color: textColor),
+        //             ),
+        //           ),
+        //           itemBuilder: (_) => const [
+        //             PopupMenuItem(value: 'Sobre', child: Text('Sobre')),
+        //             PopupMenuItem(
+        //               value: 'Lugar',
+        //               child: Text('Lugar del evento'),
+        //             ),
+        //           ],
+        //         ),
+        //         PopupMenuButton<String>(
+        //           onSelected: (value) => _navigateToSection(value),
+        //           tooltip: 'Actividades',
+        //           child: Padding(
+        //             padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        //             child: Text(
+        //               'Actividades',
+        //               style: TextStyle(color: textColor),
+        //             ),
+        //           ),
+        //           itemBuilder: (_) => const [
+        //             PopupMenuItem(
+        //               value: 'Disertantes',
+        //               child: Text('Disertantes'),
+        //             ),
+        //             PopupMenuItem(
+        //               value: 'Trabajos',
+        //               child: Text('Trabajos científicos'),
+        //             ),
+        //             PopupMenuItem(
+        //               value: 'Ligas',
+        //               child: Text('Ligas académicas'),
+        //             ),
+        //           ],
+        //         ),
+        //         TextButton(
+        //           onPressed: () => _navigateToSection('Precios'),
+        //           child: Text(
+        //             'Precios',
+        //             style: TextStyle(
+        //               color: textColor,
+        //               fontSize: 17,
+        //               fontFamily: 'Montserrat',
+        //             ),
+        //           ),
+        //         ),
+        //         TextButton(
+        //           onPressed: () => _navigateToSection('Contacto'),
+        //           child: Text(
+        //             '📞 Contacto',
+        //             style: TextStyle(color: textColor),
+        //           ),
+        //         ),
+        //       ],
       ),
-      drawer: isMobile
-          ? Drawer(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  const DrawerHeader(
-                    decoration: BoxDecoration(color: Color(0xFF0C4793)),
-                    child: Text(
-                      'IVCUSMI 2025',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  for (var entry in [
-                    'Inicio',
-                    'Sobre',
-                    'Lugar',
-                    // 'Disertantes',
-                    'Trabajos',
-                    'Ligas',
-                    'Precios',
-                    'Contacto',
-                  ])
-                    ListTile(
-                      title: Text(entry),
-                      onTap: () => _navigateToSection(entry),
-                    ),
-                ],
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(color: textColor),
+              child: Text(
+                'IVCUSMI 2025',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            )
-          : null,
+            ),
+            for (var entry in [
+              'Inicio',
+              'Sobre',
+              'Lugar',
+              // 'Disertantes',
+              'Trabajos',
+              'Ligas',
+              // 'Precios',
+              'Contacto',
+            ])
+              ListTile(
+                title: Text(entry),
+                onTap: () => _navigateToSection(entry),
+              ),
+          ],
+        ),
+      ),
       body: ListView(
         padding: EdgeInsets.zero,
         controller: _scrollController,
@@ -271,7 +295,7 @@ class _HomePageState extends State<HomePage> {
             key: _ligasAcademicasSectionKey,
             child: const LigasAcademicasSection(),
           ),
-          SizedBox(key: _precioSectionKey, child: const PrecioSection()),
+          // SizedBox(key: _precioSectionKey, child: const PrecioSection()),
           SizedBox(key: _contactoSectionKey, child: const ContactoSection()),
         ],
       ),

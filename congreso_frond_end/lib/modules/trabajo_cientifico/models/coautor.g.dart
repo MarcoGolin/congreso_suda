@@ -7,6 +7,7 @@ part of 'coautor.dart';
 // **************************************************************************
 
 Coautor _$CoautorFromJson(Map<String, dynamic> json) => Coautor(
+  id: (json['id'] as num?)?.toInt(),
   nombre: json['nombre'] as String,
   email: json['email'] as String,
   filiacion: json['filiacion'] as String?,
@@ -14,6 +15,7 @@ Coautor _$CoautorFromJson(Map<String, dynamic> json) => Coautor(
 );
 
 Map<String, dynamic> _$CoautorToJson(Coautor instance) => <String, dynamic>{
+  'id': instance.id,
   'nombre': instance.nombre,
   'email': instance.email,
   'filiacion': instance.filiacion,

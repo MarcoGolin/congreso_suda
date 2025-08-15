@@ -1,38 +1,184 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
 
-  <!-- iOS meta tags & icons -->
+  <title>IVCUSMI 2025 · Congreso de Medicina en Saltos del Guairá · UNISUD</title>
+  <meta name="description" content="Participá del IVCUSMI 2025: congreso de medicina organizado por la UNISUD en Saltos del Guairá, Paraguay. 9–11 de octubre de 2025. Charlas, talleres y networking médico.">
+  <meta name="keywords" content="IVCUSMI, UNISUD, congreso de medicina, evento médico, Saltos del Guairá, Paraguay, salud, ciencias de la salud">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="https://congresounisud.com/">
+
+  <!-- Theming / PWA -->
+  <meta name="theme-color" content="#121a14">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="congreso_evento">
+  <meta name="apple-mobile-web-app-title" content="IVCUSMI 2025">
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>congreso_evento</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Open Graph -->
+  <meta property="og:locale" content="es_PY">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="UNISUD">
+  <meta property="og:title" content="IVCUSMI 2025 · Congreso de Medicina · UNISUD">
+  <meta property="og:description" content="9, 10 y 11 de octubre de 2025 · Saltos del Guairá, Paraguay. Sumate al congreso médico de la UNISUD.">
+  <meta property="og:url" content="https://congresounisud.com/">
+  <meta property="og:image" content="https://congresounisud.com/assets/imagenes/logo/logo_congreso_solo.png">
+  <meta property="og:image:alt" content="IVCUSMI 2025 - UNISUD">
+  <meta property="og:image:type" content="image/jpeg">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="IVCUSMI 2025 · Congreso de Medicina · UNISUD">
+  <meta name="twitter:description" content="9–11 de octubre de 2025 · Saltos del Guairá, Paraguay. Charlas, talleres y networking médico.">
+  <meta name="twitter:image" content="https://congresounisud.com/assets/imagenes/logo/logo_congreso_solo.png">
+
+  <!-- Preload de activos críticos -->
+  <link rel="preload" as="image" href="assets/imagenes/logo/logo_congreso_largo.png" fetchpriority="high">
+  <!-- Si tenés versión WebP del fondo, mejor -->
+  <link rel="preload" as="image" href="assets/imagenes/fondo/fondo_liviano.webp" fetchpriority="high">
+
+  <!-- Datos estructurados (Evento) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    "name": "IVCUSMI 2025",
+    "description": "Congreso de medicina organizado por la UNISUD en Saltos del Guairá, Paraguay. Conferencias, talleres y networking.",
+    "startDate": "2025-10-09T09:00:00-03:00",
+    "endDate": "2025-10-11T18:00:00-03:00",
+    "eventStatus": "https://schema.org/EventScheduled",
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+    "image": ["https://congresounisud.com/assets/imagenes/og/ivcusmi-2025.jpg"],
+    "location": {
+      "@type": "Place",
+      "name": "Shopping Mall Mercosur",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Saltos del Guairá",
+        "addressRegion": "Canindeyú",
+        "addressCountry": "PY"
+      }
+    },
+    "organizer": {
+      "@type": "Organization",
+      "name": "UNISUD",
+      "url": "https://congresounisud.com/"
+    }
+  }
+  </script>
+
+  <!-- CSS crítico inline: preloader -->
+  <style>
+    /* Evita flash blanco y desplazamiento mientras carga */
+    html, body { height: 100%; margin: 0; background: #121a14; }
+    body.preload-lock { overflow: hidden; }
+
+    /* Preloader full-screen */
+    #preloader {
+      position: fixed; inset: 0; z-index: 99999;
+      display: grid; place-items: center;
+      opacity: 1; transition: opacity .28s ease;
+      background:
+        radial-gradient(1200px 800px at 50% -10%, #2e6b40 0%, #121a14 60%);
+    }
+    /* Fondo opcional blur (usá un archivo MUY liviano) */
+    #preloader::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: url("assets/imagenes/fondo/fondo_liviano.webp") center/cover no-repeat;
+      filter: brightness(.9);
+      opacity: .55;
+    }
+    .splash-card {
+      position: relative;
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+      padding: 24px 28px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,.38);
+    }
+    .splash-card img { width: 220px; height: auto; }
+    .spinner {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 4px solid rgba(255,255,255,.25);
+      border-top-color: #fff;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Accesibilidad: oculta si preloader se remueve */
+    #preloader[aria-hidden="true"] { display: none; }
+  </style>
 </head>
-<body>
-  <script src="flutter_bootstrap.js" async></script>
+<body class="preload-lock">
+  <!-- Preloader accesible -->
+  <div id="preloader" role="status" aria-live="polite" aria-busy="true">
+    <div class="splash-card">
+      <img src="assets/imagenes/logo/logo_congreso_largo.png" alt="IVCUSMI 2025">
+      <div class="spinner" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <!-- Bootstrap de Flutter -->
+  <script src="flutter_bootstrap.js" defer></script>
+
+  <!-- Remueve el preloader en el primer frame de Flutter (rápido) -->
+<script>
+  (function () {
+    const pre = document.getElementById('preloader');
+    const start = performance.now();
+
+    // Fade & remove con mínimo visible
+    function fadeOutAndRemove(minVisibleMs) {
+      const elapsed = performance.now() - start;
+      const wait = Math.max(0, (minVisibleMs || 700) - elapsed); // min 700ms de splash
+      setTimeout(() => {
+        if (!pre) return;
+        pre.style.opacity = '0';
+        setTimeout(() => {
+          pre.setAttribute('aria-hidden', 'true');
+          pre.remove();
+          document.body.classList.remove('preload-lock');
+        }, 320);
+      }, wait);
+    }
+
+    // 1) Señal primaria: cuando Flutter (tu código) diga que está listo
+    window.addEventListener('app-ready', () => fadeOutAndRemove(700));
+
+    // 2) Fallback: 150ms DESPUÉS del primer frame de Flutter (da tiempo a Material/primer build)
+    window.addEventListener('flutter-first-frame', () => {
+      // solo si aún no se disparó app-ready
+      if (document.getElementById('preloader')) {
+        setTimeout(() => fadeOutAndRemove(700), 150);
+      }
+    });
+
+    // 3) Safety timeout: si nada llegó, apagá a los 6s
+    setTimeout(() => {
+      if (document.getElementById('preloader')) fadeOutAndRemove(700);
+    }, 6000);
+
+    // Precalienta la imagen de fondo liviana (opcional)
+    const hero = new Image();
+    hero.src = 'assets/imagenes/fondo/fondo_liviano.webp';
+  })();
+</script>
+
+  <noscript>
+    <style>#preloader{display:none!important}</style>
+    Necesitás habilitar JavaScript para ver este sitio.
+  </noscript>
 </body>
 </html>

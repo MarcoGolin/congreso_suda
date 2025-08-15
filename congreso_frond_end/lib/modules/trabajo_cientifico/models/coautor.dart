@@ -4,12 +4,14 @@ part 'coautor.g.dart';
 
 @JsonSerializable()
 class Coautor {
+  final int? id;
   final String nombre;
   final String email;
   final String? filiacion;
   final String? filiacionOtro;
 
   Coautor({
+    this.id,
     required this.nombre,
     required this.email,
     this.filiacion,

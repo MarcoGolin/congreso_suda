@@ -7,3 +7,8 @@ void bloquearBotonAtrasNavegador() {
     html.window.history.replaceState(null, '', '/');
   });
 }
+
+void cierraPreLoader() {
+  // Podés retrasarlo hasta que terminen tus cargas iniciales si querés
+  html.window.dispatchEvent(html.CustomEvent('app-ready'));
+}

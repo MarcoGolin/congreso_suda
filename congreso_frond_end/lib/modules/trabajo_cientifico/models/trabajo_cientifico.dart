@@ -8,6 +8,8 @@ part 'trabajo_cientifico.g.dart';
 @DateTimeConverter()
 @JsonSerializable(explicitToJson: true)
 class TrabajoCientifico {
+  final int? id;
+  final DateTime? fechaRegistro;
   final String autorNombre;
   final String autorEmail;
   final String autorTelefono;
@@ -18,9 +20,11 @@ class TrabajoCientifico {
   final String? resumen;
   final String archivoWordUrl;
   final String? archivoPdfUrl;
-  final bool aceptaDeclaracion;
+  final bool? aceptaDeclaracion;
 
   TrabajoCientifico({
+    this.id,
+    this.fechaRegistro,
     required this.autorNombre,
     required this.autorEmail,
     required this.autorTelefono,
@@ -31,7 +35,7 @@ class TrabajoCientifico {
     this.resumen,
     required this.archivoWordUrl,
     this.archivoPdfUrl,
-    required this.aceptaDeclaracion,
+    this.aceptaDeclaracion,
   });
 
   factory TrabajoCientifico.fromJson(Map<String, dynamic> json) =>

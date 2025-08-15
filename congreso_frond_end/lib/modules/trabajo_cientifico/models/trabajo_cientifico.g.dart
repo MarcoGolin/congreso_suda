@@ -8,6 +8,11 @@ part of 'trabajo_cientifico.dart';
 
 TrabajoCientifico _$TrabajoCientificoFromJson(Map<String, dynamic> json) =>
     TrabajoCientifico(
+      id: (json['id'] as num?)?.toInt(),
+      fechaRegistro: _$JsonConverterFromJson<String, DateTime>(
+        json['fechaRegistro'],
+        const DateTimeConverter().fromJson,
+      ),
       autorNombre: json['autorNombre'] as String,
       autorEmail: json['autorEmail'] as String,
       autorTelefono: json['autorTelefono'] as String,
@@ -22,11 +27,16 @@ TrabajoCientifico _$TrabajoCientificoFromJson(Map<String, dynamic> json) =>
       resumen: json['resumen'] as String?,
       archivoWordUrl: json['archivoWordUrl'] as String,
       archivoPdfUrl: json['archivoPdfUrl'] as String?,
-      aceptaDeclaracion: json['aceptaDeclaracion'] as bool,
+      aceptaDeclaracion: json['aceptaDeclaracion'] as bool?,
     );
 
 Map<String, dynamic> _$TrabajoCientificoToJson(TrabajoCientifico instance) =>
     <String, dynamic>{
+      'id': instance.id,
+      'fechaRegistro': _$JsonConverterToJson<String, DateTime>(
+        instance.fechaRegistro,
+        const DateTimeConverter().toJson,
+      ),
       'autorNombre': instance.autorNombre,
       'autorEmail': instance.autorEmail,
       'autorTelefono': instance.autorTelefono,
@@ -39,3 +49,13 @@ Map<String, dynamic> _$TrabajoCientificoToJson(TrabajoCientifico instance) =>
       'archivoPdfUrl': instance.archivoPdfUrl,
       'aceptaDeclaracion': instance.aceptaDeclaracion,
     };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) => json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) => value == null ? null : toJson(value);

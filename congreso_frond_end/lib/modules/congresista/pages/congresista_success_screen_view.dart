@@ -10,16 +10,16 @@ class SuccessScreenView extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 900;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           FadeInDown(
             child: Image.asset(
               'assets/imagenes/logo/logo_congreso_largo.png',
-              width: 300,
+              width: 400,
             ),
           ),
 
@@ -33,7 +33,7 @@ class SuccessScreenView extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0C4793),
+                    color: Color(0xFF387f4d),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -50,7 +50,7 @@ class SuccessScreenView extends StatelessWidget {
                       vertical: 16,
                       horizontal: 24,
                     ),
-                    backgroundColor: const Color(0xFF0C4793),
+                    backgroundColor: const Color(0xFF387f4d),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -69,28 +69,16 @@ class SuccessScreenView extends StatelessWidget {
                     style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ),
+                FadeInUp(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 50),
+                    child: Image.asset(
+                      'assets/imagenes/logo/unisud_investigacion_verde.png',
+                      width: isMobile ? 140 : 400,
+                    ),
+                  ),
+                ),
               ],
-            ),
-          ),
-
-          FadeInUp(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 5, top: 5),
-              child: Wrap(
-                spacing: isMobile ? 20 : 50,
-                runSpacing: isMobile ? 20 : 50,
-                alignment: WrapAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/imagenes/logo/suda_logo_largo.png',
-                    width: isMobile ? 140 : 200,
-                  ),
-                  Image.asset(
-                    'assets/imagenes/logo/suda_inv_logo_largo.png',
-                    width: isMobile ? 140 : 200,
-                  ),
-                ],
-              ),
             ),
           ),
         ],

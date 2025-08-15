@@ -52,8 +52,7 @@ public class CongresistaService {
 			Map<String, String> model = new HashMap<>();
 			model.put("nombre", nombre);
 			model.put("titulo", titulo);
-			model.put("codigoActivacionUrl", "CODIGO DE ACTIVACION DE PRUEBA");
-			emailQueueService.encolarEnvio(destino, titulo, nombre, null, model, template);
+			emailQueueService.encolarEnvio(destino, titulo, null, model, template);
 		}
 	    return new GenericResponseEntity<Usuario>("Guardado con Éxito!", 200, usuario);
 	}
