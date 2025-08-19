@@ -7,7 +7,12 @@ class TrabajoCientificoPaginaAutor extends StatelessWidget {
   final TextEditingController autorNombreTXTCTRL;
   final TextEditingController autorEmailTXTCTRL;
   final TextEditingController autorTelefonoTXTCTRL;
+  final String? filiacionSelected;
+  final TextEditingController filiacionXTCTRL;
+  final TextEditingController filiacionOtrosXTCTRL;
   final Function() onChanged;
+  final List<String> filiacionesDisponibles;
+  final void Function(String?) onFiliacionChanged;
   const TrabajoCientificoPaginaAutor({
     super.key,
     required this.autorNombreTXTCTRL,
@@ -15,6 +20,11 @@ class TrabajoCientificoPaginaAutor extends StatelessWidget {
     required this.autorTelefonoTXTCTRL,
     required this.formKey,
     required this.onChanged,
+    required this.filiacionesDisponibles,
+    required this.filiacionXTCTRL,
+    required this.onFiliacionChanged,
+    required this.filiacionOtrosXTCTRL,
+    this.filiacionSelected,
   });
 
   @override
@@ -89,6 +99,37 @@ class TrabajoCientificoPaginaAutor extends StatelessWidget {
               onChanged();
             },
           ),
+
+          DropdownButtonFormField<String>(
+            isExpanded: true,
+            value: filiacionSelected,
+            decoration: inputDecoration.copyWith(
+              labelText: 'Filiación institucional del autor',
+            ),
+            items: filiacionesDisponibles
+                .map(
+                  (f) => DropdownMenuItem(
+                    value: f,
+                    child: Text(f, overflow: TextOverflow.ellipsis),
+                  ),
+                )
+                .toList(),
+            onChanged: (v) {
+              onFiliacionChanged(v);
+            },
+            validator: (v) => v == null ? 'Seleccione una filiación' : null,
+          ),
+          if (filiacionSelected == 'Otros')
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: TextFieldCustom(
+                label: 'Especifique la filiación',
+                controller: filiacionOtrosXTCTRL,
+                validator: (v) => v == null || v.isEmpty
+                    ? 'Debe especificar la filiación'
+                    : null,
+              ),
+            ),
         ],
       ),
     );

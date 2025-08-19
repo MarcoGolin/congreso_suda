@@ -7,3 +7,7 @@ void bloquearBotonAtrasNavegador() {
 void cierraPreLoader() {
   // No hacer nada en plataformas no-web
 }
+
+void openExternalUrl(String url) {}
+
+void visualizarMapa(String url) {}

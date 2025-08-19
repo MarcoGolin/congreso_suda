@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class HeaderSection extends StatelessWidget {
   final String title;
-  const HeaderSection({super.key, required this.title});
+  final Color? color;
+  const HeaderSection({super.key, required this.title, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +13,7 @@ class HeaderSection extends StatelessWidget {
       style: TextStyle(
         fontSize: isMobile ? 20 : 22,
         fontWeight: FontWeight.bold,
-        color: const Color(0xFF00B2C5),
+        color: color,
       ),
     );
   }

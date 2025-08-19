@@ -16,6 +16,7 @@ TrabajoCientifico _$TrabajoCientificoFromJson(Map<String, dynamic> json) =>
       autorNombre: json['autorNombre'] as String,
       autorEmail: json['autorEmail'] as String,
       autorTelefono: json['autorTelefono'] as String,
+      autorFiliacion: json['autorFiliacion'] as String,
       coautores:
           (json['coautores'] as List<dynamic>?)
               ?.map((e) => Coautor.fromJson(e as Map<String, dynamic>))
@@ -40,6 +41,7 @@ Map<String, dynamic> _$TrabajoCientificoToJson(TrabajoCientifico instance) =>
       'autorNombre': instance.autorNombre,
       'autorEmail': instance.autorEmail,
       'autorTelefono': instance.autorTelefono,
+      'autorFiliacion': instance.autorFiliacion,
       'coautores': instance.coautores.map((e) => e.toJson()).toList(),
       'titulo': instance.titulo,
       'modalidad': instance.modalidad,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:congreso_evento/core/dio/api_rest_client.dart';
 import 'package:congreso_evento/core/dio/rest_client_response.dart';
@@ -46,6 +47,10 @@ class AuthRepository {
 
       await storage.write(key: 'jwttoken', value: data.jwttoken);
       await storage.write(key: 'usuario', value: data.usuario!.id.toString());
+      await storage.write(
+        key: 'usuario_json',
+        value: jsonEncode(data.usuario!.toJson()),
+      );
       await storage.write(key: 'password', value: data.usuario!.senha);
       await storage.write(key: 'email', value: data.usuario!.email);
       await storage.write(key: 'recordar', value: recordarPassword.toString());

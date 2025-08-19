@@ -1,17 +1,18 @@
 import 'package:congreso_evento/core/web_helper/web_helper_stub.dart'
     if (dart.library.html) 'package:congreso_evento/core/web_helper/web_helper.dart';
+import 'package:congreso_evento/modules/home/home_drawer.dart';
 import 'package:congreso_evento/modules/home/sections/inicio_section.dart';
 import 'package:congreso_evento/modules/home/sections/ligas_academicas_section.dart';
-import 'package:congreso_evento/modules/home/sections/lugar_evento_section.dart';
 import 'package:congreso_evento/modules/home/sections/sobre_section.dart';
+import 'package:congreso_evento/modules/home/sections/trabajo_cientifico_section.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:yaml/yaml.dart';
 
-import 'sections/contacto_section.dart';
-import 'sections/trabajos_cientrificos_section.dart';
+import 'sections/footer_section.dart';
+import 'sections/lugar_section.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -61,10 +62,10 @@ class _HomePageState extends State<HomePage> {
     _sectionKeys = {
       'Inicio': _inicioSectionKey,
       'Sobre': _sobreSectionKey,
-      'Lugar': _lugarEventoSectionKey,
       // 'Disertantes': _disertantesSectionKey,
       'Trabajos': _trabajosCientificosSectionKey,
       'Ligas': _ligasAcademicasSectionKey,
+      'Lugar': _lugarEventoSectionKey,
       // 'Precios': _precioSectionKey,
       'Contacto': _contactoSectionKey,
     };
@@ -129,8 +130,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-    final Color textColor = const Color(0xFF73c165);
+    final textColor = const Color(0xFF73c165);
 
     //cambiar color de appBar de acuerdo al scroll section
     final appBarColor = _isAppBarTransparent
@@ -161,115 +161,9 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        // actions: isMobile
-        //     ? null
-        //     : [
-        //         TextButton(
-        //           onPressed: () => _navigateToSection('Inicio'),
-        //           child: Text(
-        //             'Inicio',
-        //             style: TextStyle(
-        //               color: textColor,
-        //               fontSize: 17,
-        //               fontFamily: 'Montserrat',
-        //             ),
-        //           ),
-        //         ),
-        //         PopupMenuButton<String>(
-        //           onSelected: (value) => _navigateToSection(value),
-        //           tooltip: 'El Congreso',
-        //           child: Padding(
-        //             padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        //             child: Text(
-        //               'El Congreso',
-        //               style: TextStyle(color: textColor),
-        //             ),
-        //           ),
-        //           itemBuilder: (_) => const [
-        //             PopupMenuItem(value: 'Sobre', child: Text('Sobre')),
-        //             PopupMenuItem(
-        //               value: 'Lugar',
-        //               child: Text('Lugar del evento'),
-        //             ),
-        //           ],
-        //         ),
-        //         PopupMenuButton<String>(
-        //           onSelected: (value) => _navigateToSection(value),
-        //           tooltip: 'Actividades',
-        //           child: Padding(
-        //             padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        //             child: Text(
-        //               'Actividades',
-        //               style: TextStyle(color: textColor),
-        //             ),
-        //           ),
-        //           itemBuilder: (_) => const [
-        //             PopupMenuItem(
-        //               value: 'Disertantes',
-        //               child: Text('Disertantes'),
-        //             ),
-        //             PopupMenuItem(
-        //               value: 'Trabajos',
-        //               child: Text('Trabajos científicos'),
-        //             ),
-        //             PopupMenuItem(
-        //               value: 'Ligas',
-        //               child: Text('Ligas académicas'),
-        //             ),
-        //           ],
-        //         ),
-        //         TextButton(
-        //           onPressed: () => _navigateToSection('Precios'),
-        //           child: Text(
-        //             'Precios',
-        //             style: TextStyle(
-        //               color: textColor,
-        //               fontSize: 17,
-        //               fontFamily: 'Montserrat',
-        //             ),
-        //           ),
-        //         ),
-        //         TextButton(
-        //           onPressed: () => _navigateToSection('Contacto'),
-        //           child: Text(
-        //             '📞 Contacto',
-        //             style: TextStyle(color: textColor),
-        //           ),
-        //         ),
-        //       ],
       ),
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: textColor),
-              child: Text(
-                'IVCUSMI 2025',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            for (var entry in [
-              'Inicio',
-              'Sobre',
-              'Lugar',
-              // 'Disertantes',
-              'Trabajos',
-              'Ligas',
-              // 'Precios',
-              'Contacto',
-            ])
-              ListTile(
-                title: Text(entry),
-                onTap: () => _navigateToSection(entry),
-              ),
-          ],
-        ),
-      ),
+      endDrawer: HomeDrawer(onTap: _navigateToSection),
+      resizeToAvoidBottomInset: false,
       body: ListView(
         padding: EdgeInsets.zero,
         controller: _scrollController,
@@ -283,20 +177,19 @@ class _HomePageState extends State<HomePage> {
           ),
           SizedBox(key: _sobreSectionKey, child: const SobreSection()),
           SizedBox(
-            key: _lugarEventoSectionKey,
-            child: const LugarEventoSection(),
-          ),
-          SizedBox(
             key: _trabajosCientificosSectionKey,
-            child:
-                const TrabajosCientificosSection(), // Placeholder for Trabajos Científicos
+            child: const TrabajoCientificoSection(),
           ),
           SizedBox(
             key: _ligasAcademicasSectionKey,
             child: const LigasAcademicasSection(),
           ),
+          SizedBox(
+            key: _lugarEventoSectionKey,
+            child: const LugarSection(), // Placeholder for Trabajos Científicos
+          ),
           // SizedBox(key: _precioSectionKey, child: const PrecioSection()),
-          SizedBox(key: _contactoSectionKey, child: const ContactoSection()),
+          SizedBox(key: _contactoSectionKey, child: const FooterSection()),
         ],
       ),
     );

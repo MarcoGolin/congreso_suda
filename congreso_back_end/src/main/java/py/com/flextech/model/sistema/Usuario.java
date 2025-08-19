@@ -4,18 +4,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -107,10 +103,18 @@ public class Usuario  implements Serializable , UserDetails  {
 	@NotNull
 	@Column(name = "UUID")
 	private String uuid;
+
+	@Column(name = "BO_ADMIN")
+	private Boolean isAdmin;
+
+	@Column(name = "BO_FINANCIERO")
+	private Boolean isFinanciero;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "ROL")
-    private Rol rol;
+	@Column(name = "BO_STAFF")
+	private Boolean isStaff;
+
+	@Column(name = "BO_CONGRESISTA")
+	private Boolean isCongresista;
 	
 	@JsonIgnore
 	public Usuario(Long id) {
@@ -118,10 +122,6 @@ public class Usuario  implements Serializable , UserDetails  {
 	}
 
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-	    return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
-	}
 
 	@JsonIgnore
 	@Override
@@ -157,6 +157,12 @@ public class Usuario  implements Serializable , UserDetails  {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

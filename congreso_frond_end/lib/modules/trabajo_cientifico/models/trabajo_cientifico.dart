@@ -13,6 +13,7 @@ class TrabajoCientifico {
   final String autorNombre;
   final String autorEmail;
   final String autorTelefono;
+  final String autorFiliacion;
   final List<Coautor> coautores;
   final String titulo;
   final String modalidad;
@@ -28,6 +29,7 @@ class TrabajoCientifico {
     required this.autorNombre,
     required this.autorEmail,
     required this.autorTelefono,
+    required this.autorFiliacion,
     this.coautores = const [],
     required this.titulo,
     required this.modalidad,

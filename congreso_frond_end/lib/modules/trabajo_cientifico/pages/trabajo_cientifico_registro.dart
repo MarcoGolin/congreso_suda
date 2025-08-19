@@ -74,6 +74,9 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
   final _autorNombreTXTCTRL = TextEditingController();
   final _autorEmail = TextEditingController();
   final _autorTelefono = TextEditingController();
+  final _filiacionXTCTRL = TextEditingController();
+  final _filiacionOtrosXTCTRL = TextEditingController();
+  String? _filiacionSelected;
 
   final _coautoresNombre = TextEditingController();
   final _coautoresEmail = TextEditingController();
@@ -244,6 +247,9 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
       autorNombre: _autorNombreTXTCTRL.text,
       autorEmail: _autorEmail.text,
       autorTelefono: _autorTelefono.text,
+      autorFiliacion: _filiacionXTCTRL.text.isEmpty
+          ? _filiacionOtrosXTCTRL.text
+          : _filiacionXTCTRL.text,
       coautores: _coautores.map((coautor) {
         return Coautor(
           filiacion: coautor['filiacion'] ?? '',
@@ -280,6 +286,10 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
       _autorNombreTXTCTRL.text = 'Juan Pérez';
       _autorEmail.text = 'marcogolin60@gmail.com';
       _autorTelefono.text = '+595 981 234 567';
+      _filiacionXTCTRL.text =
+          'Universidad Sudamericana, Facultad de Ciencias de la Salud, Saltos del Guairá, Paraguay';
+      _filiacionSelected =
+          'Universidad Sudamericana, Facultad de Ciencias de la Salud, Saltos del Guairá, Paraguay';
 
       //cargar datos coautores
       _coautores[0]['nombre'].text = 'Jose López';
@@ -452,9 +462,18 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
                                 autorNombreTXTCTRL: _autorNombreTXTCTRL,
                                 autorEmailTXTCTRL: _autorEmail,
                                 autorTelefonoTXTCTRL: _autorTelefono,
+                                filiacionXTCTRL: _filiacionXTCTRL,
+                                filiacionOtrosXTCTRL: _filiacionOtrosXTCTRL,
+                                filiacionSelected: _filiacionSelected,
+                                onFiliacionChanged: (v) {
+                                  setState(() {
+                                    _filiacionSelected = v;
+                                  });
+                                },
                                 onChanged: () {
                                   _checkValidForm(); // 👈 recalcula si el botón debe estar habilitado
                                 },
+                                filiacionesDisponibles: _filiacionesDisponibles,
                               ),
                               TrabajoCientificoPaginaCoautor(
                                 coautores: _coautores,

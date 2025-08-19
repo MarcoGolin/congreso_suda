@@ -73,12 +73,15 @@ class TrabajoCientificoPaginaCoautor extends StatelessWidget {
                 validator: (v) => v == null ? 'Seleccione una filiación' : null,
               ),
               if (map['filiacion'] == 'Otros')
-                TextFieldCustom(
-                  label: 'Especifique la filiación',
-                  controller: map['filiacionOtro'],
-                  validator: (v) => v == null || v.isEmpty
-                      ? 'Debe especificar la filiación'
-                      : null,
+                Padding(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: TextFieldCustom(
+                    label: 'Especifique la filiación',
+                    controller: map['filiacionOtro'],
+                    validator: (v) => v == null || v.isEmpty
+                        ? 'Debe especificar la filiación'
+                        : null,
+                  ),
                 ),
               Align(
                 alignment: Alignment.centerRight,

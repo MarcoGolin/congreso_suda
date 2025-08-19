@@ -48,6 +48,10 @@ public class TrabajoCientifico {
 	@NotNull
 	@Column(name = "AUTOR_TELEFONO")
 	private String autorTelefono;
+
+	@NotNull
+	@Column(name = "AUTOR_FILIACION")
+	private String autorFiliacion;
 	
 	@OneToMany(mappedBy = "trabajoCientifico", cascade = CascadeType.ALL)
 	private List<Coautor> coautores;

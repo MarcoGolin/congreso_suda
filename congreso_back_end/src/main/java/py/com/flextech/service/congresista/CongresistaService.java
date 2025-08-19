@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import py.com.flextech.model.dto.GenericResponseEntity;
-import py.com.flextech.model.sistema.Rol;
 import py.com.flextech.model.sistema.Usuario;
 import py.com.flextech.repository.sistema.UsuarioRepository;
 import py.com.flextech.service.sistema.EmailQueueService;
@@ -38,8 +37,8 @@ public class CongresistaService {
 			usuario.setFechaRegistro(Instant.now());
 			 UUID uuid = UUID.randomUUID();
 			 usuario.setUuid(uuid.toString());
+			 usuario.setIsCongresista(true);
 			 enviarEmailConfirmacion = true;
-			 usuario.setRol(Rol.CONGRESISTA);
 			 usuario.setIsActivado(false);
 		}
 		usuario = repository.save(usuario);

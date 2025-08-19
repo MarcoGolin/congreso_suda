@@ -38,8 +38,6 @@ abstract class LoginCtrlBase with Store {
       final code = response.code;
       final message = response.message;
 
-      debugPrint('Response: ${data.jwttoken}, Code: $code, Message: $message');
-
       if (code == 301) {
         // _status = StatusEnumGlobal.loaded;
         return;
@@ -66,6 +64,8 @@ abstract class LoginCtrlBase with Store {
       // _status = StatusEnumGlobal.success;
 
       final redirectPath = await storage.read(key: 'redirect_path') ?? '/';
+
+      debugPrint('Redirecting to: $redirectPath');
 
       Modular.to.pushNamedAndRemoveUntil(
         redirectPath,

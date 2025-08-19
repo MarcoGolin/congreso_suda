@@ -28,6 +28,12 @@ class Usuario implements ISimpleListTile {
 
   bool? recordarPassword = false;
 
+  //ROLES
+  bool? isAdmin = false;
+  bool? isFinanciero = false;
+  bool? isStaff = false;
+  bool? isCongresista = false;
+
   Usuario({
     this.id,
     this.nombreCompleto,
@@ -45,6 +51,10 @@ class Usuario implements ISimpleListTile {
     this.pais,
     this.fechaRegistro,
     this.recordarPassword,
+    this.isAdmin = false,
+    this.isFinanciero = false,
+    this.isStaff = false,
+    this.isCongresista = false,
   });
   @override
   String get title => nombreCompleto ?? 'No Name';

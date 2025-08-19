@@ -40,6 +40,7 @@ class _CongresistaRegistroPageState extends State<CongresistaRegistroPage> {
   final telefoneController = TextEditingController();
   final institucionController = TextEditingController();
   final registroAcademicoController = TextEditingController();
+  String? _selectedInstitucion;
   String? _selectedSemestre;
   String? _selectedSeccion;
 
@@ -48,6 +49,8 @@ class _CongresistaRegistroPageState extends State<CongresistaRegistroPage> {
   late ReactionDisposer _rctDspr;
 
   final PageController _pageController = PageController();
+
+  bool get _esOtraInstitucion => _selectedInstitucion == 'OTROS';
 
   final String _terminosTexto = '''
 📜 Bases y Condiciones de Participación
@@ -239,19 +242,21 @@ Al completar y enviar el formulario de preinscripción, el/la participante decla
     // Manually validate the phone field before calling _formKey.currentState!.validate()
     // to ensure _rowError is updated before overall form validation.
     // Also validate the country dropdown explicitly.
+
     if (_formKey.currentState!.validate()) {
+      final institucionParaGuardar = _esOtraInstitucion
+          ? institucionController.text
+          : (_selectedInstitucion ?? '');
       final Future<void> registrationFuture = _ctrl.saveCongresista(
         nombreCompleto: nomeController.text,
         email: emailController.text,
         senha: senhaController.text,
         telefone: telefoneController.text,
-        institucion: institucionController.text,
+        institucion: institucionParaGuardar, // <- aquí
         registroAcademico: registroAcademicoController.text,
         semestre: _selectedSemestre ?? '',
         seccion: _selectedSeccion ?? '',
-        pais: _selectedCountryCodePrefix == "+595"
-            ? "PY"
-            : "BR", // Use the selected country code
+        pais: _selectedCountryCodePrefix == "+595" ? "PY" : "BR",
       );
       _loadingOverlay.show(context, registrationFuture);
     }
@@ -299,247 +304,331 @@ Al completar y enviar el formulario de preinscripción, el/la participante decla
                       children: [
                         Form(
                           key: _formKey,
-                          child: ListView(
-                            children: [
-                              Text(
-                                'Registro de Participante',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  color: textColor,
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                              // Nombre Completo
-                              _buildTextField(
-                                "Nombre Completo",
-                                nomeController,
-                                focusNode: _focusNodes[0],
-                                index: 0,
-                                textCapitalization: TextCapitalization.words,
-                              ),
-                              // Email
-                              _buildTextField(
-                                "Email",
-                                emailController,
-                                keyboardType: TextInputType.emailAddress,
-                                validator: _validarEmail,
-                                focusNode: _focusNodes[1],
-                                index: 1,
-                              ),
-                              // Contraseña
-                              _buildTextField(
-                                "Contraseña",
-                                senhaController,
-                                obscureText: _obscureText,
-                                validator: _validarContrasenha,
-                                focusNode: _focusNodes[2],
-                                index: 2,
-                              ),
-                              // Confirmar Contraseña
-                              _buildTextField(
-                                "Confirmar Contraseña",
-                                confirmarSenhaController,
-                                obscureText: _obscureText,
-                                validator: _validarConfirmacion,
-                                focusNode: _focusNodes[3],
-                                index: 3,
-                              ),
-
-                              TextFieldCelular(
-                                telefoneController: telefoneController,
-                                onChanged: (nrTelefono, selectedCountryCodePrefix) {
-                                  // Call _validarTelefono to update _rowError and trigger red border
-                                  setState(() {
-                                    _selectedCountryCodePrefix =
-                                        selectedCountryCodePrefix ?? '+595';
-                                  });
-
-                                  _formKey.currentState!.validate();
-                                },
-                              ),
-                              // Institución
-                              _buildTextField(
-                                "Institución",
-                                institucionController,
-                                focusNode: _focusNodes[5], // Adjusted index
-                                index: 5,
-                                textCapitalization: TextCapitalization.words,
-                              ),
-                              // Registro Académico
-                              _buildTextField(
-                                "Registro Académico",
-                                registroAcademicoController,
-                                keyboardType: TextInputType.number,
-                                validator: _validarNumerico,
-                                focusNode: _focusNodes[6], // Adjusted index
-                                index: 6,
-                              ),
-                              // Semestre Dropdown
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 12.0),
-                                child: DropdownButtonFormField<String>(
-                                  value: _selectedSemestre,
-                                  decoration: _inputDecoration.copyWith(
-                                    labelText: 'Semestre',
+                          child: AutofillGroup(
+                            child: ListView(
+                              children: [
+                                Text(
+                                  'Registro de Participante',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor,
                                   ),
-                                  items: [
-                                    ...List.generate(
-                                      12,
-                                      (index) => (index + 1).toString(),
-                                    ).map((semestre) {
-                                      return DropdownMenuItem<String>(
-                                        value: semestre,
-                                        child: Text('$semestreº Semestre'),
-                                      );
-                                    }),
-                                    const DropdownMenuItem<String>(
-                                      value: 'NO APLICA',
-                                      child: Text('NO APLICA'),
+                                ),
+                                const SizedBox(height: 24),
+                                // Nombre Completo
+                                _buildTextField(
+                                  "Nombre Completo",
+                                  nomeController,
+                                  focusNode: _focusNodes[0],
+                                  index: 0,
+                                  textCapitalization: TextCapitalization.words,
+                                  autofillHints: const [AutofillHints.name],
+                                ),
+                                // Email
+                                _buildTextField(
+                                  "Email",
+                                  emailController,
+                                  keyboardType: TextInputType.emailAddress,
+                                  validator: _validarEmail,
+                                  focusNode: _focusNodes[1],
+                                  index: 1,
+                                  autofillHints: const [
+                                    AutofillHints.username,
+                                    AutofillHints.email,
+                                  ],
+                                ),
+                                // Contraseña
+                                _buildTextField(
+                                  "Contraseña",
+                                  senhaController,
+                                  obscureText: _obscureText,
+                                  validator: _validarContrasenha,
+                                  focusNode: _focusNodes[2],
+                                  index: 2,
+                                  autofillHints: const [
+                                    AutofillHints.newPassword,
+                                  ],
+                                ),
+                                // Confirmar Contraseña
+                                _buildTextField(
+                                  "Confirmar Contraseña",
+                                  confirmarSenhaController,
+                                  obscureText: _obscureText,
+                                  validator: _validarConfirmacion,
+                                  focusNode: _focusNodes[3],
+                                  index: 3,
+                                ),
+
+                                TextFieldCelular(
+                                  telefoneController: telefoneController,
+                                  onChanged:
+                                      (nrTelefono, selectedCountryCodePrefix) {
+                                        // Call _validarTelefono to update _rowError and trigger red border
+                                        setState(() {
+                                          _selectedCountryCodePrefix =
+                                              selectedCountryCodePrefix ??
+                                              '+595';
+                                        });
+
+                                        _formKey.currentState!.validate();
+                                      },
+                                ),
+
+                                // Institución (dropdown)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 12.0),
+                                  child: DropdownButtonFormField<String>(
+                                    value: _selectedInstitucion,
+                                    decoration: _inputDecoration.copyWith(
+                                      labelText: 'Institución',
                                     ),
-                                  ].toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedSemestre = value;
-                                    });
-                                    _formKey.currentState!.validate();
-                                    FocusScope.of(context).requestFocus(
-                                      _focusNodes[7],
-                                    ); // Focus next after dropdown
-                                  },
-                                  validator: _validarSemestre,
-                                ),
-                              ),
-                              // Sección Dropdown
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 12.0),
-                                child: DropdownButtonFormField<String>(
-                                  value: _selectedSeccion,
-                                  decoration: _inputDecoration.copyWith(
-                                    labelText: 'Sección',
+                                    items: const [
+                                      DropdownMenuItem(
+                                        value: 'Universidad Sudamericana - SDG',
+                                        child: Text(
+                                          'Universidad Sudamericana - SDG',
+                                        ),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'Universidad Sudamericana - PJC',
+                                        child: Text(
+                                          'Universidad Sudamericana - PJC',
+                                        ),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'OTROS',
+                                        child: Text('OTROS'),
+                                      ),
+                                    ],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedInstitucion = value;
+                                        if (_esOtraInstitucion) {
+                                          institucionController
+                                              .clear(); // Pedimos que escriba
+                                          // Foco al campo tipeable
+                                          Future.microtask(
+                                            () => FocusScope.of(
+                                              context,
+                                            ).requestFocus(_focusNodes[5]),
+                                          );
+                                        } else {
+                                          institucionController.text =
+                                              value ?? ''; // Guardamos directo
+                                          // Foco salta al siguiente campo real (Registro Académico)
+                                          Future.microtask(
+                                            () => FocusScope.of(
+                                              context,
+                                            ).requestFocus(_focusNodes[6]),
+                                          );
+                                        }
+                                      });
+                                      _formKey.currentState!.validate();
+                                    },
+                                    validator: (value) =>
+                                        (value == null || value.isEmpty)
+                                        ? 'Campo requerido'
+                                        : null,
                                   ),
-                                  items: ['A', 'B', 'C', 'D', 'NO APLICA'].map((
-                                    seccion,
-                                  ) {
-                                    return DropdownMenuItem<String>(
-                                      value: seccion,
-                                      child: Text(seccion),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedSeccion = value;
-                                    });
-                                    _formKey.currentState!.validate();
-                                    // No next focus, as this is the last input before button
-                                  },
-                                  validator: (value) =>
-                                      (value == null || value.isEmpty)
-                                      ? 'Campo requerido'
-                                      : null,
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ), // Reduced spacing after last input
-                              Text(
-                                "Importante: Por favor, verifique y asegúrese de que todos los datos proporcionados sean correctos. La información será utilizada para que podamos comunicarnos con usted, coordinar el proceso de pago y la emisión de certificados.",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
-                                  height: 1.5,
+
+                                // Solo mostrar el campo tipeable si eligió "OTROS"
+                                if (_esOtraInstitucion)
+                                  _buildTextField(
+                                    "Otra institución (escribí el nombre)",
+                                    institucionController,
+                                    focusNode: _focusNodes[5],
+                                    index: 5,
+                                    textCapitalization:
+                                        TextCapitalization.words,
+                                    validator: (v) {
+                                      if (!_esOtraInstitucion) return null;
+                                      if (v == null || v.trim().isEmpty)
+                                        return 'Ingresá el nombre de la institución';
+                                      if (v.trim().length < 3)
+                                        return 'Nombre demasiado corto';
+                                      return null;
+                                    },
+                                  ),
+
+                                // Registro Académico
+                                _buildTextField(
+                                  "Registro Académico",
+                                  registroAcademicoController,
+                                  keyboardType: TextInputType.number,
+                                  validator: _validarNumerico,
+                                  focusNode: _focusNodes[6], // Adjusted index
+                                  index: 6,
                                 ),
-                              ),
-                              CheckboxListTile(
-                                activeColor: textColor,
-                                contentPadding: EdgeInsets.zero,
-                                title: GestureDetector(
-                                  onTap: () {
-                                    // Mostrar los términos o navegar a otra página
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: Text('Términos y Condiciones'),
-                                        content: SingleChildScrollView(
-                                          child: Text(
-                                            _terminosTexto,
-                                            style: const TextStyle(
-                                              fontSize: 13,
+                                // Semestre Dropdown
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 12.0),
+                                  child: DropdownButtonFormField<String>(
+                                    value: _selectedSemestre,
+                                    decoration: _inputDecoration.copyWith(
+                                      labelText: 'Semestre',
+                                    ),
+                                    items: [
+                                      ...List.generate(
+                                        12,
+                                        (index) => (index + 1).toString(),
+                                      ).map((semestre) {
+                                        return DropdownMenuItem<String>(
+                                          value: semestre,
+                                          child: Text('$semestreº Semestre'),
+                                        );
+                                      }),
+                                      const DropdownMenuItem<String>(
+                                        value: 'NO APLICA',
+                                        child: Text('NO APLICA'),
+                                      ),
+                                    ].toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedSemestre = value;
+                                      });
+                                      _formKey.currentState!.validate();
+                                      FocusScope.of(context).requestFocus(
+                                        _focusNodes[7],
+                                      ); // Focus next after dropdown
+                                    },
+                                    validator: _validarSemestre,
+                                  ),
+                                ),
+                                // Sección Dropdown
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 12.0),
+                                  child: DropdownButtonFormField<String>(
+                                    value: _selectedSeccion,
+                                    decoration: _inputDecoration.copyWith(
+                                      labelText: 'Sección',
+                                    ),
+                                    items: ['A', 'B', 'C', 'D', 'NO APLICA']
+                                        .map((seccion) {
+                                          return DropdownMenuItem<String>(
+                                            value: seccion,
+                                            child: Text(seccion),
+                                          );
+                                        })
+                                        .toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedSeccion = value;
+                                      });
+                                      _formKey.currentState!.validate();
+                                      // No next focus, as this is the last input before button
+                                    },
+                                    validator: (value) =>
+                                        (value == null || value.isEmpty)
+                                        ? 'Campo requerido'
+                                        : null,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ), // Reduced spacing after last input
+                                Text(
+                                  "Importante: Por favor, verifique y asegúrese de que todos los datos proporcionados sean correctos. La información será utilizada para que podamos comunicarnos con usted, coordinar el proceso de pago y la emisión de certificados.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                    height: 1.5,
+                                  ),
+                                ),
+                                CheckboxListTile(
+                                  activeColor: textColor,
+                                  contentPadding: EdgeInsets.zero,
+                                  title: GestureDetector(
+                                    onTap: () {
+                                      // Mostrar los términos o navegar a otra página
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text('Términos y Condiciones'),
+                                          content: SingleChildScrollView(
+                                            child: Text(
+                                              _terminosTexto,
+                                              style: const TextStyle(
+                                                fontSize: 13,
+                                              ),
                                             ),
                                           ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: Text('Cerrar'),
+                                            ),
+                                          ],
                                         ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: Text('Cerrar'),
+                                      );
+                                    },
+                                    child: const Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(text: 'Acepto los '),
+                                          TextSpan(
+                                            text: 'términos y condiciones',
+                                            style: TextStyle(
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ],
                                       ),
-                                    );
+                                    ),
+                                  ),
+                                  value: _aceptaTerminos,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _aceptaTerminos = value ?? false;
+                                    });
                                   },
-                                  child: const Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(text: 'Acepto los '),
-                                        TextSpan(
-                                          text: 'términos y condiciones',
-                                          style: TextStyle(
-                                            decoration:
-                                                TextDecoration.underline,
-                                            fontWeight: FontWeight.bold,
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
+                                ),
+                                const SizedBox(height: 5),
+                                Observer(
+                                  builder: (_) => SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 16,
+                                        ),
+                                        backgroundColor: textColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                value: _aceptaTerminos,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _aceptaTerminos = value ?? false;
-                                  });
-                                },
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                              ),
-                              const SizedBox(height: 5),
-                              Observer(
-                                builder: (_) => SizedBox(
-                                  width: double.infinity,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 16,
+                                        elevation: 5,
                                       ),
-                                      backgroundColor: textColor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      elevation: 5,
-                                    ),
-                                    onPressed:
-                                        (_ctrl.stateClass.status ==
-                                                StatusEnumGlobal.loading ||
-                                            !_aceptaTerminos)
-                                        ? null
-                                        : _enviarFormulario,
-                                    child: const Text(
-                                      'REGISTRARSE',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        letterSpacing: 1.5,
+                                      onPressed:
+                                          (_ctrl.stateClass.status ==
+                                                  StatusEnumGlobal.loading ||
+                                              !_aceptaTerminos)
+                                          ? null
+                                          : _enviarFormulario,
+                                      child: const Text(
+                                        'REGISTRARSE',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          letterSpacing: 1.5,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 16),
-                            ],
+                                const SizedBox(height: 16),
+                              ],
+                            ),
                           ),
                         ),
                         // Success Page
@@ -602,6 +691,7 @@ Al completar y enviar el formulario de preinscripción, el/la participante decla
     List<TextInputFormatter>? inputFormatters,
     String? hintText,
     ValueChanged<String>? onChanged,
+    List<String>? autofillHints, // <-- NUEVO
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0), // Apply padding here
@@ -610,6 +700,7 @@ Al completar y enviar el formulario de preinscripción, el/la participante decla
         obscureText: obscureText ?? false,
         keyboardType: keyboardType,
         focusNode: focusNode,
+        autofillHints: autofillHints,
         textInputAction: index == _focusNodes.length - 1
             ? TextInputAction.done
             : TextInputAction.next,
