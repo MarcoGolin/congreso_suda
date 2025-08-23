@@ -18,7 +18,7 @@ class FooterSection extends StatelessWidget {
   static const String _facebookUrl =
       'https://www.facebook.com/congresosudamericana';
   static const String _instagramUrl =
-      'https://www.instagram.com/congresosudamericana';
+      'https://www.instagram.com/congresounisud';
   static const String _whatsappUrl =
       'https://wa.me/$_whatsNumberIntl?text=Hola%20quiero%20m%C3%A1s%20informaci%C3%B3n';
   static const String _mailto = 'mailto:$_email';
@@ -204,26 +204,28 @@ class FooterSection extends StatelessWidget {
                               icon: Icons.apartment_outlined,
                               label: 'EIRA Studio',
                               onTap: () => _launchUri(
-                                Uri.parse('https://wa.me/595983411142'),
+                                Uri.parse(
+                                  'https://www.instagram.com/eirastudio.digital',
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        _Dot(color: Colors.white.withOpacity(0.35)),
+                        // _Dot(color: Colors.white.withOpacity(0.35)),
 
-                        // Teléfono
-                        _ActionLink(
-                          icon: Icons.call_outlined,
-                          label: '+595 983 411 142',
-                          uri: Uri.parse('tel:+595983411142'),
-                        ),
+                        // // Teléfono
+                        // _ActionLink(
+                        //   icon: Icons.call_outlined,
+                        //   label: '+595 983 411 142',
+                        //   uri: Uri.parse('tel:+595983411142'),
+                        // ),
 
-                        // Email
-                        _ActionLink(
-                          icon: Icons.email_outlined,
-                          label: 'marcogolin60@gmail.com',
-                          uri: Uri.parse('mailto:marcogolin60@gmail.com'),
-                        ),
+                        // // Email
+                        // _ActionLink(
+                        //   icon: Icons.email_outlined,
+                        //   label: 'marcogolin60@gmail.com',
+                        //   uri: Uri.parse('mailto:marcogolin60@gmail.com'),
+                        // ),
                       ],
                     ),
                   ],

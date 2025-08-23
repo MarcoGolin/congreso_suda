@@ -22,6 +22,7 @@ Usuario _$UsuarioFromJson(Map<String, dynamic> json) => Usuario(
     const DateTimeConverter().fromJson,
   ),
   montoPago: (json['montoPago'] as num?)?.toDouble(),
+  usuarioPago: json['usuarioPago'] as String?,
   uuid: json['uuid'] as String?,
   pais: json['pais'] as String?,
   fechaRegistro: _$JsonConverterFromJson<String, DateTime>(
@@ -33,6 +34,7 @@ Usuario _$UsuarioFromJson(Map<String, dynamic> json) => Usuario(
   isFinanciero: json['isFinanciero'] as bool? ?? false,
   isStaff: json['isStaff'] as bool? ?? false,
   isCongresista: json['isCongresista'] as bool? ?? false,
+  isExonerado: json['isExonerado'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$UsuarioToJson(Usuario instance) => <String, dynamic>{
@@ -56,6 +58,8 @@ Map<String, dynamic> _$UsuarioToJson(Usuario instance) => <String, dynamic>{
     const DateTimeConverter().toJson,
   ),
   'montoPago': instance.montoPago,
+  'usuarioPago': instance.usuarioPago,
+  'isExonerado': instance.isExonerado,
   'uuid': instance.uuid,
   'recordarPassword': instance.recordarPassword,
   'isAdmin': instance.isAdmin,

@@ -1,4 +1,5 @@
 import 'package:congreso_evento/modules/auth/pages/login/login_ctrl.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -16,6 +17,22 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
 
   final _ctrl = Modular.get<LoginCtrl>();
+
+  @override
+  void initState() {
+    super.initState();
+    if (kDebugMode) {
+      _emailController.text = 'marcogolin60@gmail.com';
+      _passwordController.text = 'Contraseña123!';
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   void _submitLogin() async {
     if (_formKey.currentState!.validate()) {

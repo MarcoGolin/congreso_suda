@@ -96,9 +96,15 @@ public class Usuario  implements Serializable , UserDetails  {
 
 	@Column(name = "FC_PAGO")
 	private Instant fechaPago;
+	
+	@Column(name = "USUARIO_PAGO")
+	private String usuarioPago;
 
 	@Column(name = "VL_PAGO")
 	private BigDecimal montoPago;
+
+	@Column(name = "BO_EXONERADO")
+	private Boolean isExonerado;
 
 	@NotNull
 	@Column(name = "UUID")

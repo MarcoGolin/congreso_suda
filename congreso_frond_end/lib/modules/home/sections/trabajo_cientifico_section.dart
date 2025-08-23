@@ -1,36 +1,30 @@
-// Web-only
-// ignore: avoid_web_libraries_in_flutter
-// import 'dart:html' as html;
-// // 👇 ESTE es el que necesitás (en Web):
-// import 'dart:ui_web' as ui;
-
 import 'package:animate_do/animate_do.dart';
 import 'package:congreso_evento/core/header_section.dart';
-import 'package:congreso_evento/core/web_helper/web_helper_stub.dart'
-    if (dart.library.html) 'package:congreso_evento/core/web_helper/web_helper.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+// TODO: Reemplazar por tus enlaces reales
+const String kReglamentoPdfUrl =
+    'https://drive.google.com/file/d/1YJdeM4jRvI6Z0mbXmauUDEBfuMFupGXv/view';
+const String kPlantillasDriveUrl =
+    'https://drive.google.com/drive/folders/1Yhwk1iCk_qtF-Xf901-KE7isrIecBma2';
+
+Future<void> _openExternal(String url) async {
+  final uri = Uri.parse(url);
+  // En Web abre nueva pestaña; en móviles usa app/navegador predeterminado
+  await launchUrl(uri, mode: LaunchMode.externalApplication);
+}
 
 class TrabajoCientificoSection extends StatelessWidget {
   const TrabajoCientificoSection({super.key});
-
-  static const _accent = Color(0xFF73c165);
-
-  // Coordenadas aproximadas del Shopping Mercosur
-  static const double _lat = -24.054663;
-  static const double _lon = -54.307983;
-  static const int _zoom = 16;
-
-  static const String _googleMapsUrl =
-      'https://maps.app.goo.gl/Kjath574HRit9K5u6';
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 800;
 
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Stack(
         children: [
@@ -41,7 +35,7 @@ class TrabajoCientificoSection extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          // Overlay oscuro (ajustá la opacidad si querés)
+          // Overlay oscuro
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -83,8 +77,8 @@ class TrabajoCientificoSection extends StatelessWidget {
                               title: 'Trabajos Cientificos',
                               color: Colors.white,
                             ),
-                            SizedBox(height: 12),
-                            Text(
+                            const SizedBox(height: 12),
+                            const Text(
                               'Presentá tu trabajo, compartí tu conocimiento y marcá la diferencia.',
                               style: TextStyle(
                                 fontSize: 26,
@@ -94,8 +88,8 @@ class TrabajoCientificoSection extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            SizedBox(height: 14),
-                            Text(
+                            const SizedBox(height: 14),
+                            const Text(
                               'Modalidades habilitadas:',
                               style: TextStyle(
                                 fontSize: 16,
@@ -104,8 +98,8 @@ class TrabajoCientificoSection extends StatelessWidget {
                                 height: 1.45,
                               ),
                             ),
-                            SizedBox(height: 8),
-                            Text(
+                            const SizedBox(height: 8),
+                            const Text(
                               '• Artículos originales de investigación\n'
                               '• Artículos de revisión bibliográfica\n'
                               '• Casos clínicos\n'
@@ -116,19 +110,21 @@ class TrabajoCientificoSection extends StatelessWidget {
                                 height: 1.6,
                               ),
                             ),
+
+                            // Botón principal
                             Padding(
-                              padding: EdgeInsets.only(top: 20),
+                              padding: const EdgeInsets.only(top: 20),
                               child: SizedBox(
-                                width: 400,
+                                width: 530,
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF73c165),
                                     foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                       horizontal: 40,
                                       vertical: 20,
                                     ),
-                                    textStyle: TextStyle(
+                                    textStyle: const TextStyle(
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -143,7 +139,6 @@ class TrabajoCientificoSection extends StatelessWidget {
                                       ModalRoute.withName('/'),
                                     );
                                   },
-
                                   child: const Text(
                                     'Enviar trabajo científico',
                                     style: TextStyle(
@@ -154,12 +149,81 @@ class TrabajoCientificoSection extends StatelessWidget {
                                 ),
                               ),
                             ),
+
+                            // NUEVOS BOTONES SECUNDARIOS
+                            const SizedBox(height: 12),
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 12,
+                              children: [
+                                SizedBox(
+                                  width: isMobile ? double.infinity : 260,
+                                  child: OutlinedButton.icon(
+                                    style: OutlinedButton.styleFrom(
+                                      side: const BorderSide(
+                                        color: Colors.white70,
+                                        width: 1.2,
+                                      ),
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                        horizontal: 18,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    onPressed: () =>
+                                        _openExternal(kReglamentoPdfUrl),
+                                    icon: const Icon(Icons.picture_as_pdf),
+                                    label: const Text(
+                                      'Reglamento',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: isMobile ? double.infinity : 260,
+                                  child: OutlinedButton.icon(
+                                    style: OutlinedButton.styleFrom(
+                                      side: const BorderSide(
+                                        color: Colors.white70,
+                                        width: 1.2,
+                                      ),
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                        horizontal: 18,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    onPressed: () =>
+                                        _openExternal(kPlantillasDriveUrl),
+                                    icon: const Icon(Icons.cloud_download),
+                                    label: const Text(
+                                      'Modelos / Plantillas',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
                     ),
 
-                    // Mapa interactivo (iframe) con tarjeta
+                    // Imagen con marco
                     SizedBox(
                       width: isMobile ? size.width - 48 : 480,
                       child: FadeInRight(
@@ -219,15 +283,10 @@ class _FramedImageState extends State<_FramedImage> {
           ..translate(0.0, _hover ? -2.0 : 0.0)
           ..scale(_hover ? 1.01 : 1.0),
         decoration: BoxDecoration(
-          // “marco” blanco alrededor de la imagen
           color: const Color(0xFFFFFFFF),
           borderRadius: BorderRadius.circular(r),
-          border: Border.all(
-            color: const Color(0xFFFFFFFF), // borde blanco sutil
-            width: 1.0,
-          ),
+          border: Border.all(color: const Color(0xFFFFFFFF), width: 1.0),
           boxShadow: [
-            // sombra suave para que “flote”
             BoxShadow(
               color: const Color.fromRGBO(0, 0, 0, 0.12),
               blurRadius: _hover ? 18 : 14,
@@ -246,7 +305,7 @@ class _FramedImageState extends State<_FramedImage> {
                 Container(color: const Color(0xFFEAEAEA)),
                 Image.network(
                   widget.url,
-                  fit: BoxFit.cover, // llena sin deformar
+                  fit: BoxFit.cover,
                   loadingBuilder: (_, child, progress) {
                     if (progress == null) {
                       if (_opacity == 0) {
@@ -271,15 +330,14 @@ class _FramedImageState extends State<_FramedImage> {
                     ),
                   ),
                 ),
-                // brillo muy sutil para “calidad”
                 IgnorePointer(
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: const [
+                        colors: [
                           Color.fromRGBO(255, 255, 255, 0.08),
                           Color.fromRGBO(255, 255, 255, 0.00),
                         ],
@@ -289,124 +347,6 @@ class _FramedImageState extends State<_FramedImage> {
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _EmbeddedMapCard extends StatefulWidget {
-  final double lat;
-  final double lon;
-  final int zoom;
-  final double radius;
-  final Color accent;
-  final double aspectRatio;
-  final Widget? footer;
-
-  const _EmbeddedMapCard({
-    required this.lat,
-    required this.lon,
-    this.zoom = 16,
-    this.radius = 16,
-    required this.accent,
-    this.aspectRatio = 16 / 9,
-    this.footer,
-  });
-
-  @override
-  State<_EmbeddedMapCard> createState() => _EmbeddedMapCardState();
-}
-
-class _EmbeddedMapCardState extends State<_EmbeddedMapCard> {
-  late final String _viewType;
-
-  @override
-  void initState() {
-    super.initState();
-    _viewType = 'gmap-embed-${DateTime.now().microsecondsSinceEpoch}';
-
-    final url =
-        'https://www.google.com/maps?q=${widget.lat},${widget.lon}&z=${widget.zoom}&output=embed';
-    visualizarMapa(url);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final border = BorderRadius.circular(widget.radius);
-
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 220),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.96),
-        borderRadius: border,
-        border: Border.all(color: Colors.black.withOpacity(0.06)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.18),
-            blurRadius: 20,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(6),
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(widget.radius - 4),
-            child: AspectRatio(
-              aspectRatio: widget.aspectRatio,
-              child: kIsWeb
-                  ? HtmlElementView(viewType: _viewType)
-                  : Container(
-                      color: Colors.black12,
-                      alignment: Alignment.center,
-                      child: const Text('Mapa interactivo disponible en Web'),
-                    ),
-            ),
-          ),
-          if (widget.footer != null) ...[
-            const SizedBox(height: 10),
-            widget.footer!,
-            const SizedBox(height: 4),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _ActionChipBtn extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-
-  const _ActionChipBtn({required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: const Color(0xFF73c165).withOpacity(0.18),
-      borderRadius: BorderRadius.circular(24),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            children: const [
-              Icon(Icons.map, size: 18, color: Color(0xFF2E7D32)),
-              SizedBox(width: 6),
-              Text(
-                'Abrir en Google Maps',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF2E7D32),
-                ),
-              ),
-            ],
           ),
         ),
       ),

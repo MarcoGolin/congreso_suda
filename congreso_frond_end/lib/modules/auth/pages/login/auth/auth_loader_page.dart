@@ -58,7 +58,6 @@ class _AuthLoaderPageState extends State<AuthLoaderPage>
   @override
   void dispose() {
     _controller.dispose(); // Dispose the controller to free up resources
-    _storage.delete(key: 'from_loader'); // Clear the loader flag
     super.dispose();
   }
 
@@ -77,10 +76,11 @@ class _AuthLoaderPageState extends State<AuthLoaderPage>
 
       if (response.code == 200) {
         await _storage.write(key: 'from_loader', value: 'true');
-        Modular.to.pushNamedAndRemoveUntil(
-          redirectPath,
-          ModalRoute.withName('/'), // mantiene solo el home como ruta previa
-        );
+        Modular.to.pushReplacementNamed(redirectPath);
+        // Modular.to.pushNamedAndRemoveUntil(
+        //   redirectPath,
+        //   ModalRoute.withName('/'), // mantiene solo el home como ruta previa
+        // );
       } else {
         Modular.to.pushNamedAndRemoveUntil(
           '/login_page',

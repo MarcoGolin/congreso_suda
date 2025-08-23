@@ -157,7 +157,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
         icon: Icons.payments_outlined,
         title: 'Pagos',
         subtitle: 'Cobros, estados y conciliación',
-        route: '/admin/pagos', // TODO: ajustar a tus rutas reales
+        route: '/home_admin/pagos', // TODO: ajustar a tus rutas reales
       ),
       const _AdminItem(
         icon: Icons.badge_outlined,

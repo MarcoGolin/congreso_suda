@@ -14,7 +14,7 @@ class LigasAcademicasSection extends StatelessWidget {
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LADAUS-SDG.png',
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAGOUS-SDG.png',
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAETUS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAIIUS-SDG.png',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAPED-US-SDG.png',
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAEME-SDG.png',
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LADTOUS-SDG.png',
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAMICROUS-SDG.png',
@@ -22,7 +22,7 @@ class LigasAcademicasSection extends StatelessWidget {
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LIGAME-SDG.png',
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LANTUS-SDG.png',
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAPSUSS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAPED-US-SDG.png',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAIIUS-SDG.png',
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LACIS-SDG.png',
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAOH-US-SDG.png',
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LACARDIUS-SDG.png',
@@ -103,7 +103,7 @@ class LigasAcademicasSection extends StatelessWidget {
                         .map(
                           (liga) => _RoundLogo(
                             url: liga,
-                            size: isMobile ? 84 : 110, // ajustá si querés
+                            size: isMobile ? 100 : 150, // ajustá si querés
                           ),
                         )
                         .toList(),
@@ -175,8 +175,6 @@ class _RoundLogoState extends State<_RoundLogo> {
             filterQuality: FilterQuality.high,
             width: s,
             height: s,
-            cacheWidth: s.toInt(),
-            cacheHeight: s.toInt(),
             loadingBuilder: (_, child, progress) {
               if (progress == null) {
                 if (_opacity == 0) {

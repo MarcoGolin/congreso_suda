@@ -28,18 +28,11 @@ public class Parametro {
 	@Column(name = "ID_PARAMETRO")
 	private Long id;
 
-	@NotNull
-	@Column(name = "DT_ULT_MODIF")
-	private LocalDateTime dtUltModificacao;
 
 	@NotNull
-	@Column(name = "VL_COMISION_RIFA_VENDIDA")
-	private BigDecimal vlComisionRifaVendida;
+	@Column(name = "VL_INSRIPCION_ACTUAL")
+	private BigDecimal vlInscripconActual;
 		
-	@Transient
-	private Versao versao;
-	
-	
 	
 	public Parametro(Long id) {
 		this.id = id;

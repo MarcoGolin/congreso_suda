@@ -9,7 +9,12 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
 import lombok.RequiredArgsConstructor;
+import py.com.flextech.mapper.congresista.CongresistaMapper;
 import py.com.flextech.model.dto.GenericResponseEntity;
 import py.com.flextech.model.sistema.Usuario;
 import py.com.flextech.repository.sistema.UsuarioRepository;
@@ -24,6 +29,7 @@ public class CongresistaService {
 	private final UsuarioRepository repository;
 //	private final JwtService jwtService;
 	private final EmailQueueService emailQueueService;
+	private final CongresistaMapper congresistaMapper;
 	
 	public GenericResponseEntity<?> save(Usuario usuario) {
 		Optional<Usuario> existente = repository.findByEmail(usuario.getEmail());
@@ -54,5 +60,15 @@ public class CongresistaService {
 			emailQueueService.encolarEnvio(destino, titulo, null, model, template);
 		}
 	    return new GenericResponseEntity<Usuario>("Guardado con Éxito!", 200, usuario);
+	}
+	
+	
+	public GenericResponseEntity<PageInfo<Usuario>> consultaCongresistaPorNombreORegistroAcademico(String nombre, 
+			String registroAcademico, 
+			int pageNo,
+			int pageSize) {
+		PageHelper.startPage(pageNo, pageSize, true);
+		Page<Usuario> congresistas = congresistaMapper.consultaCongresistaPorNombreORegistroAcademico(nombre, registroAcademico);
+		return new GenericResponseEntity<PageInfo<Usuario>>("Guardado con Éxito!", 200, new PageInfo<>(congresistas));
 	}
 }

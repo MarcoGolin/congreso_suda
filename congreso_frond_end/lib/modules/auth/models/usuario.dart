@@ -23,6 +23,8 @@ class Usuario implements ISimpleListTile {
   bool isPago;
   DateTime? fechaPago;
   double? montoPago;
+  String? usuarioPago;
+  bool? isExonerado;
 
   String? uuid;
 
@@ -47,6 +49,7 @@ class Usuario implements ISimpleListTile {
     this.isPago = false,
     this.fechaPago,
     this.montoPago,
+    this.usuarioPago,
     this.uuid,
     this.pais,
     this.fechaRegistro,
@@ -55,6 +58,7 @@ class Usuario implements ISimpleListTile {
     this.isFinanciero = false,
     this.isStaff = false,
     this.isCongresista = false,
+    this.isExonerado = false,
   });
   @override
   String get title => nombreCompleto ?? 'No Name';
@@ -62,4 +66,14 @@ class Usuario implements ISimpleListTile {
   factory Usuario.fromJson(Map<String, dynamic> json) =>
       _$UsuarioFromJson(json);
   Map<String, dynamic> toJson() => _$UsuarioToJson(this);
+
+  String getEstado() {
+    if (isExonerado == true) {
+      return 'Exonerado';
+    }
+    if (isPago == true) {
+      return 'Pagado';
+    }
+    return 'Pendiente';
+  }
 }

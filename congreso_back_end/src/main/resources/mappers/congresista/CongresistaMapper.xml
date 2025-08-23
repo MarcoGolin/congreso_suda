@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="py.com.flextech.mapper.congresista.CongresistaMapper">
+
+
+
+	<resultMap id="resultSimples" type="Usuario">
+		<id property="id" column="ID_USUARIO" />
+		<result property="fechaRegistro" column="FC_REGISTRO" />
+		<result property="nombreCompleto" column="NOMBRE_COMPLETO" />
+		<result property="email" column="EMAIL" />
+		<result property="telefono" column="TELEFONO" />
+		<result property="institucion" column="INSTITUCION" />
+		<result property="registroAcademico" column="REGISTRO_ACADEMICO" />
+		<result property="semestre" column="SEMESTRE" />
+		<result property="seccion" column="SECCION" />
+		<result property="pais" column="PAIS" />
+		<result property="fechaActivacion" column="FC_ACTIVACION" />
+		<result property="isActivado" column="BO_ACTIVADO" />
+		<result property="isPago" column="BO_IS_PAGO" />
+		<result property="fechaPago" column="FC_PAGO" />
+		<result property="montoPago" column="VL_PAGO" />
+		<result property="isExonerado" column="BO_EXONERADO" />
+		<result property="usuarioPago" column="USUARIO_PAGO" />
+		<result property="uuid" column="UUID" />
+	</resultMap>
+	
+	<resultMap id="resultCompleto" type="Usuario" extends="resultSimples">
+
+
+	</resultMap>
+	
+	
+
+	<sql id="sqlDefault">
+		SELECT 
+		  u.*
+		FROM
+		  SYS_USUARIO u
+	</sql>
+	
+	<select id="consultaCongresistaPorNombreORegistroAcademico"
+	        resultMap="resultSimples"
+	        parameterType="map">
+	  <include refid="sqlDefault"/>
+	
+	  <where>
+	    u.BO_CONGRESISTA = TRUE
+	
+	    <if test="nombre != null and nombre.trim() != ''">
+	      AND u.NOMBRE_COMPLETO LIKE CONCAT('%', #{nombre}, '%')
+	    </if>
+	
+	    <!-- Si REGISTRO_ACADEMICO es VARCHAR, dejá sin CAST -->
+	    <if test="registroAcademico != null and registroAcademico.trim() != ''">
+	      AND CAST(u.REGISTRO_ACADEMICO AS CHAR) LIKE CONCAT('%', #{registroAcademico}, '%')
+	    </if>
+	  </where>
+	
+	  ORDER BY u.ID_USUARIO DESC
+	</select>
+
+
+</mapper>

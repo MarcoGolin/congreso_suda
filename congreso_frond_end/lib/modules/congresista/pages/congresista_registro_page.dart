@@ -1,6 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:congreso_evento/core/inputs/text_field_celular.dart';
 import 'package:congreso_evento/core/loader_overlau.dart';
-import 'package:congreso_evento/core/models/global_state_class.dart';
+import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/congresista/pages/congresista_registro_ctrl.dart';
 import 'package:congreso_evento/modules/congresista/pages/congresista_success_screen_view.dart';
 import 'package:flutter/foundation.dart';
@@ -409,11 +411,12 @@ Al completar y enviar el formulario de preinscripción, el/la participante decla
                                           institucionController
                                               .clear(); // Pedimos que escriba
                                           // Foco al campo tipeable
-                                          Future.microtask(
-                                            () => FocusScope.of(
+                                          Future.microtask(() {
+                                            if (!mounted) return;
+                                            FocusScope.of(
                                               context,
-                                            ).requestFocus(_focusNodes[5]),
-                                          );
+                                            ).requestFocus(_focusNodes[5]);
+                                          });
                                         } else {
                                           institucionController.text =
                                               value ?? ''; // Guardamos directo

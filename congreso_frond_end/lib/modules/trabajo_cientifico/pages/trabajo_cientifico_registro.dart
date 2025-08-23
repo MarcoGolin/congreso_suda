@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:congreso_evento/core/loader_overlau.dart';
-import 'package:congreso_evento/core/models/global_state_class.dart';
+import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/models/coautor.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/models/trabajo_cientifico.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/pages/trabajo_cientifico_registro_ctrl.dart';

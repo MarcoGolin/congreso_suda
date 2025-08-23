@@ -23,4 +23,30 @@ class CongresistaRepository {
       throw RepositoryException.toException(e);
     }
   }
+
+  Future<GenericResponseEntity?>
+  consultaCongresistaPorNombreORegistroAcademico({
+    String? nombre,
+    String? registroAcademico,
+    required int pageNr,
+    required int pageSize,
+  }) async {
+    try {
+      final response = await api.get(
+        '/congresista/consultaCongresistaPorNombreORegistroAcademico',
+        queryParameters: {
+          'nombre': nombre,
+          'registroAcademico': registroAcademico,
+          'pageNr': pageNr,
+          'pageSize': pageSize,
+        },
+      );
+      GenericResponseEntity? genericResponse = response.data != null
+          ? GenericResponseEntity.fromJson(response.data)
+          : null;
+      return genericResponse;
+    } on Exception catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
 }

@@ -1,9 +1,11 @@
 package py.com.flextech.controller.congresista;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -23,5 +25,13 @@ public class CongresistaController {
 	@PostMapping("/save")
 	public GenericResponseEntity<?> save(@RequestBody Usuario usuario) {
 		return service.save(usuario);
+	}
+
+	@GetMapping("/consultaCongresistaPorNombreORegistroAcademico")
+	public GenericResponseEntity<?> consultaCongresistaPorNombreORegistroAcademico(@RequestParam String nombre, 
+			@RequestParam String  registroAcademico,
+			@RequestParam int pageNr,
+			@RequestParam int pageSize) {
+		return service.consultaCongresistaPorNombreORegistroAcademico(nombre, registroAcademico, pageNr, pageSize);
 	}
 }
