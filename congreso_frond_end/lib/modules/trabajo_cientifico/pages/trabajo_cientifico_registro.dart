@@ -84,7 +84,8 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
   final _tituloTrabajoTXTCTRL = TextEditingController();
   final _resumen = TextEditingController();
   String? _modalidad;
-  String? _area;
+  String? _areaTematica;
+  String? _areaDeLaMedicina;
 
   String? _archivoWord;
   String? _nameArchivoWord;
@@ -137,13 +138,34 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
     'Resumen en modalidad póster',
   ];
 
-  final _areas = [
-    'Pediatría',
-    'Salud mental',
-    'Cirugía',
-    'Medicina interna',
-    'Ginecología',
-    'Otro',
+  final _areasTematicas = [
+    'Salud Pública y Epidemiología',
+    'Promoción de la Salud y Sociedad',
+    'Investigación Biomédica e Innovación',
+    'Ética y Bioética en Salud',
+    'Salud Mental y Conducta',
+    'Tecnologías de la Información en Salud',
+    'Tecnologías Biomédicas y Biotecnología',
+    'Salud Internacional y de Fronteras',
+  ];
+
+  /// Áreas de la Medicina
+  final _areasDeLaMedicina = [
+    'Medicina Interna – Incluye cardiología, neumología, gastroenterología, endocrinología, reumatología, nefrología',
+    'Pediatría y Neonatología – Salud infantil, neonatología, nutrición pediátrica e infectología pediátrica',
+    'Ginecología y Obstetricia – Obstetricia, salud materno-fetal, salud reproductiva, oncología ginecológica',
+    'Cirugía – Cirugía general, mínimamente invasiva, traumatología, ortopedia y cirugía reconstructiva',
+    'Urgencias y Emergencias – Trauma, cuidados críticos, medicina de emergencias y desastres',
+    'Psiquiatría y Salud Mental – Trastornos mentales, adicciones, psiquiatría infantil y psicología médica',
+    'Medicina Preventiva y Salud Pública – Epidemiología, políticas de salud, promoción y programas preventivos',
+    'Medicina Familiar y Comunitaria – Atención primaria, enfoque integral del paciente, salud ocupacional',
+    'Neurología y Neurociencias – Neurología clínica, neurocirugía, neuropsiquiatría, neurociencias básicas',
+    'Oncología y Hematología – Cáncer, terapias dirigidas, hematología clínica y experimental',
+    'Dermatología – Dermatología clínica, oncología cutánea y enfermedades infecciosas de la piel',
+    'Infectología – Enfermedades transmisibles, resistencia antimicrobiana, zoonosis y enfermedades emergentes',
+    'Anestesiología y Cuidados Intensivos – Anestesia, manejo del dolor, cuidados intensivos',
+    'Rehabilitación y Medicina Física – Fisioterapia, rehabilitación postquirúrgica y neurológica',
+    'Ciencias Básicas en Salud – Anatomía, fisiología, bioquímica, farmacología, microbiología',
   ];
 
   Future<void> _seleccionarArchivoWord() async {
@@ -263,7 +285,8 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
       titulo: _tituloTrabajoTXTCTRL.text,
       resumen: _resumen.text,
       modalidad: _modalidad ?? '',
-      area: _area ?? '',
+      areaTematica: _areaTematica ?? '',
+      areaDeLaMedicina: _areaDeLaMedicina ?? '',
       archivoWordUrl: _archivoWord ?? '',
       archivoPdfUrl: _archivoPdf,
       aceptaDeclaracion: _aceptaDeclaracion,
@@ -316,7 +339,8 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
       _resumen.text =
           'Este es un resumen del trabajo científico que se está presentando.';
       _modalidad = _modalidades[0]; // Artículo original de investigación
-      _area = _areas[0]; // Pediatría
+      _areaTematica = _areasTematicas[0]; // Pediatría
+      _areaDeLaMedicina = _areasDeLaMedicina[0]; // Pediatría
     }
 
     _rctDsp = reaction((_) => _ctrl.stateClass, (state) {
@@ -391,7 +415,8 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
     _archivoWord = null;
     _archivoPdf = null;
     _modalidad = null;
-    _area = null;
+    _areaTematica = null;
+    _areaDeLaMedicina = null;
 
     _autorFormKey.currentState?.reset();
     _coautorFormKey.currentState?.reset();
@@ -403,7 +428,6 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
   @override
   Widget build(BuildContext context) {
     final textColor = const Color(0xFF387f4d);
-    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Stack(
       children: [
@@ -502,15 +526,21 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
                                 tituloTrabajo: _tituloTrabajoTXTCTRL,
                                 resumen: _resumen,
                                 modalidad: _modalidad,
-                                area: _area,
+                                areaTematica: _areaTematica,
+                                areaDeLaMedicina: _areaDeLaMedicina,
                                 modalidades: _modalidades,
-                                areas: _areas,
+                                areasTematicas: _areasTematicas,
+                                areasDeLaMedicina: _areasDeLaMedicina,
                                 onModadilidadChanged: (v) {
                                   setState(() => _modalidad = v);
                                   _checkValidForm();
                                 },
-                                onAreaChanged: (v) {
-                                  setState(() => _area = v);
+                                onAreaTematicaChanged: (v) {
+                                  setState(() => _areaTematica = v);
+                                  _checkValidForm();
+                                },
+                                onAreaDeLaMedicinaChanged: (v) {
+                                  setState(() => _areaDeLaMedicina = v);
                                   _checkValidForm();
                                 },
                                 onChanged: () {

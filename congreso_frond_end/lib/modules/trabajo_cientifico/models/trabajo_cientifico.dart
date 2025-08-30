@@ -17,7 +17,8 @@ class TrabajoCientifico {
   final List<Coautor> coautores;
   final String titulo;
   final String modalidad;
-  final String area;
+  final String areaTematica;
+  final String areaDeLaMedicina;
   final String? resumen;
   final String archivoWordUrl;
   final String? archivoPdfUrl;
@@ -33,7 +34,8 @@ class TrabajoCientifico {
     this.coautores = const [],
     required this.titulo,
     required this.modalidad,
-    required this.area,
+    required this.areaTematica,
+    required this.areaDeLaMedicina,
     this.resumen,
     required this.archivoWordUrl,
     this.archivoPdfUrl,

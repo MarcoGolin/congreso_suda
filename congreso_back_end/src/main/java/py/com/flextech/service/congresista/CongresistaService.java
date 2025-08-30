@@ -32,15 +32,17 @@ public class CongresistaService {
 	private final CongresistaMapper congresistaMapper;
 	
 	public GenericResponseEntity<?> save(Usuario usuario) {
-		Optional<Usuario> existente = repository.findByEmail(usuario.getEmail());
-		if(existente.isPresent()) {
-			return new GenericResponseEntity<String>("El Email " + usuario.getEmail() + " ya se encuentra registrado!", 201, null);
-		}
 		
 		Boolean enviarEmailConfirmacion = false;
 		
 		if(usuario.getId()== null) {
-			usuario.setFechaRegistro(Instant.now());
+			
+			Optional<Usuario> existente = repository.findByEmail(usuario.getEmail());
+			if(existente.isPresent()) {
+				return new GenericResponseEntity<String>("El Email " + usuario.getEmail() + " ya se encuentra registrado!", 201, null);
+			}
+			
+			 usuario.setFechaRegistro(Instant.now());
 			 UUID uuid = UUID.randomUUID();
 			 usuario.setUuid(uuid.toString());
 			 usuario.setIsCongresista(true);

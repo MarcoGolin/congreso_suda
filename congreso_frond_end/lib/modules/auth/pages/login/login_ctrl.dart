@@ -1,4 +1,6 @@
 import 'package:congreso_evento/core/exception/service_exception.dart';
+import 'package:congreso_evento/core/models/global_state_class.dart';
+import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/auth/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -30,9 +32,22 @@ abstract class LoginCtrlBase with Store {
   @readonly
   String _message = '';
 
+  @readonly
+  GlobalStateClass _stateClass = GlobalStateClass(
+    status: StatusEnumGlobal.loaded,
+    message: '',
+  );
+
+  @action
+  void changeStatus(String message, StatusEnumGlobal status) {
+    _stateClass = _stateClass.copyWith(message: message, status: status);
+  }
+
   @action
   Future<void> login(String email, String contrasenha, bool recordar) async {
     try {
+      changeStatus('Cargando...', StatusEnumGlobal.loading);
+
       var response = await service.autenticar(email, contrasenha, recordar);
       final data = response.data;
       final code = response.code;
@@ -48,13 +63,15 @@ abstract class LoginCtrlBase with Store {
         // currentIndex = 2;
         // _message = 'Autenticado con éxito, pendiente de Activación';
         // _status = StatusEnumGlobal.success;
+        changeStatus(message, StatusEnumGlobal.success);
         return;
       }
       if (code != 200) {
-        // _message = message;
-        // _status = StatusEnumGlobal.errorDialog;
+        changeStatus(message, StatusEnumGlobal.errorDialog);
         return;
       }
+
+      changeStatus('Autenticado con éxito', StatusEnumGlobal.success);
 
       // final storage = const FlutterSecureStorage();
       // Por ejemplo: verificás si hay un token válido en SharedPreferences
@@ -74,8 +91,7 @@ abstract class LoginCtrlBase with Store {
 
       return;
     } on ServiceException catch (e) {
-      // _message = e.message;
-      // _status = StatusEnumGlobal.error;
+      changeStatus(e.message, StatusEnumGlobal.errorDialog);
       return;
     }
   }

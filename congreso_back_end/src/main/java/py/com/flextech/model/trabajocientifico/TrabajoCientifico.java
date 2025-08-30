@@ -65,8 +65,12 @@ public class TrabajoCientifico {
 	private String modalidad;
 
 	@NotNull
-	@Column(name = "AREA")
-	private String area;
+	@Column(name = "AREA_TEMATICA")
+	private String areaTematica;
+
+	@NotNull
+	@Column(name = "AREA_DE_LA_MEDICINA")
+	private String areaDeLaMedicina;
 	
 	@Column(name = "RESUMEN")
 	private String resumen;

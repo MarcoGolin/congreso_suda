@@ -6,7 +6,7 @@ class RepositoryException implements Exception {
   String? message;
   int? code;
 
-  RepositoryException.toException(Exception e) {
+  RepositoryException.toException(dynamic e) {
     if (e is RestClientException) {
       if (e.statusCode == 500) {
         message = 'Ocurrio un error desconocido';
@@ -17,8 +17,8 @@ class RepositoryException implements Exception {
       code = e.statusCode;
       return;
     }
-    message = e.toString();
-    code = 500;
+    message = e.statusMessage;
+    code = e.statusCode;
   }
 
   @override

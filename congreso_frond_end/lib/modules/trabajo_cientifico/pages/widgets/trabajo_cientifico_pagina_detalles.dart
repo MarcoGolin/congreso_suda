@@ -6,11 +6,14 @@ class TrabajoCientificoPaginaDetalles extends StatelessWidget {
   final TextEditingController tituloTrabajo;
   final TextEditingController resumen;
   final List<String> modalidades;
-  final List<String> areas;
+  final List<String> areasTematicas;
+  final List<String> areasDeLaMedicina;
   final String? modalidad;
-  final String? area;
+  final String? areaTematica;
+  final String? areaDeLaMedicina;
   final void Function(String?)? onModadilidadChanged;
-  final void Function(String?)? onAreaChanged;
+  final void Function(String?)? onAreaTematicaChanged;
+  final void Function(String?)? onAreaDeLaMedicinaChanged;
 
   final Function() onChanged;
   const TrabajoCientificoPaginaDetalles({
@@ -18,11 +21,14 @@ class TrabajoCientificoPaginaDetalles extends StatelessWidget {
     required this.tituloTrabajo,
     required this.resumen,
     required this.modalidad,
-    required this.area,
+    required this.areaTematica,
+    required this.areaDeLaMedicina,
     required this.onModadilidadChanged,
-    required this.onAreaChanged,
+    required this.onAreaTematicaChanged,
+    required this.onAreaDeLaMedicinaChanged,
     required this.modalidades,
-    required this.areas,
+    required this.areasTematicas,
+    required this.areasDeLaMedicina,
     required this.formKey,
     required this.onChanged,
   });
@@ -78,13 +84,61 @@ class TrabajoCientificoPaginaDetalles extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           DropdownButtonFormField<String>(
-            value: area,
+            value: areaTematica,
             decoration: inputDecoration.copyWith(labelText: 'Área temática'),
-            items: areas
+            items: areasTematicas
                 .map((a) => DropdownMenuItem(value: a, child: Text(a)))
                 .toList(),
-            onChanged: onAreaChanged,
+            onChanged: onAreaTematicaChanged,
             validator: (v) => v == null ? 'Seleccione un área temática' : null,
+          ),
+          const SizedBox(height: 10),
+          DropdownButtonFormField<String>(
+            value: areaDeLaMedicina,
+            decoration: inputDecoration.copyWith(
+              labelText: 'Área de la Medicina',
+            ),
+            items: areasDeLaMedicina.map((a) {
+              final partes = a.split('–');
+              final titulo = partes[0].trim();
+              final detalle = partes.length > 1 ? partes[1].trim() : '';
+
+              return DropdownMenuItem(
+                value: a,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: RichText(
+                    text: TextSpan(
+                      style: const TextStyle(
+                        color: Colors.black,
+                      ), // estilo base
+                      children: [
+                        TextSpan(
+                          text: '$titulo ',
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 16,
+                          ),
+                        ),
+                        if (detalle.isNotEmpty)
+                          TextSpan(
+                            text: '– $detalle',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+            isExpanded: true,
+            onChanged: onAreaDeLaMedicinaChanged,
+            validator: (v) =>
+                v == null ? 'Seleccione un área de la Medicina' : null,
           ),
           const SizedBox(height: 10),
           TextFieldCustom(

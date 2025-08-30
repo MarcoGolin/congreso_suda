@@ -4,10 +4,10 @@ import 'package:congreso_evento/modules/auth/models/usuario.dart';
 
 import '../../core/exception/repository_exception.dart';
 
-class CongresistaRepository {
+class InscripcionRepository {
   final Api api;
 
-  CongresistaRepository(this.api);
+  InscripcionRepository(this.api);
 
   Future<GenericResponseEntity> save(Usuario usuario) async {
     try {

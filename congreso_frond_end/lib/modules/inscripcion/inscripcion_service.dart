@@ -1,12 +1,12 @@
 import 'package:congreso_evento/core/exception/exception_utils.dart';
 import 'package:congreso_evento/core/exception/service_exception.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
-import 'package:congreso_evento/modules/congresista/congresista_repository.dart';
+import 'package:congreso_evento/modules/inscripcion/inscripcion_repository.dart';
 
-class CongresistaService {
-  final CongresistaRepository repository;
+class InscripcionService {
+  final InscripcionRepository repository;
 
-  CongresistaService(this.repository);
+  InscripcionService(this.repository);
 
   Future<({Usuario? data, int code, String message})> save(
     Usuario congresista,

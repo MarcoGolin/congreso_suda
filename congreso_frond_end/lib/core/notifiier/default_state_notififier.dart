@@ -161,17 +161,14 @@ mixin DefaultStateNotifier<T extends StatefulWidget> on State<T> {
               ),
               content: Text(message, textAlign: TextAlign.center),
               actions: [
-                TextButton(
-                  onPressed: onCancel != null
-                      ? () {
-                          Navigator.of(context).pop();
-                          onCancel();
-                        }
-                      : () {
-                          Navigator.of(context).pop();
-                        },
-                  child: const Text("Cancelar"),
-                ),
+                if (onCancel != null)
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      onCancel();
+                    },
+                    child: const Text("Cancelar"),
+                  ),
                 TextButton(
                   onPressed: onPressed != null
                       ? () {

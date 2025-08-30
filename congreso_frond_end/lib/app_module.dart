@@ -3,10 +3,10 @@ import 'package:congreso_evento/modules/auth/auth_guard.dart';
 import 'package:congreso_evento/modules/auth/pages/ingreso_restringido/ingreso_restringido_page.dart';
 import 'package:congreso_evento/modules/auth/pages/login/auth/auth_loader_page.dart';
 import 'package:congreso_evento/modules/auth/pages/login/login_page.dart';
-import 'package:congreso_evento/modules/congresista/congresista_module.dart';
 import 'package:congreso_evento/modules/home/home_page.dart';
 import 'package:congreso_evento/modules/home_admin/home_admin_module.dart';
 import 'package:congreso_evento/modules/home_congresista/home_congresista_module.dart';
+import 'package:congreso_evento/modules/inscripcion/Inscripcion_module.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/trabajo_cientifico_module.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -23,7 +23,7 @@ class AppModule extends Module {
     r.child('/login_page', child: (context) => LoginPage());
     r.module(
       '/congresista',
-      module: CongresistaModule(),
+      module: InscripcionModule(),
       transition: TransitionType.rightToLeft,
     );
     r.module(
@@ -49,5 +49,6 @@ class AppModule extends Module {
       '/ingreso_restringido',
       child: (_) => const IngresoRestringidoPage(),
     );
+    // r.wildcard(child: (context) => const PaginaNoEncontradaPage());
   }
 }

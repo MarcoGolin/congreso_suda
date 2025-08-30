@@ -12,12 +12,16 @@ class LugarSection extends StatefulWidget {
   State<LugarSection> createState() => _LugarSectionState();
 }
 
-class _LugarSectionState extends State<LugarSection> {
+class _LugarSectionState extends State<LugarSection>
+    with AutomaticKeepAliveClientMixin {
   static const _accent = Color(0xFF73c165);
-  static const _bgDark = Color(0xFF252529);
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 900;
 

@@ -22,7 +22,10 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
   @override
   void initState() {
     super.initState();
-    _loadUser();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _loadUser();
+    });
   }
 
   Future<void> _loadUser() async {
@@ -51,10 +54,15 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
+          //cerrar session
           IconButton(
-            tooltip: 'Refrescar permisos',
-            onPressed: _loadUser,
-            icon: const Icon(Icons.refresh),
+            tooltip: 'Cerrar sesión',
+            onPressed: () async {
+              final storage = const FlutterSecureStorage();
+              await storage.deleteAll();
+              Modular.to.navigate('/');
+            },
+            icon: const Icon(Icons.logout),
           ),
         ],
       ),
@@ -157,25 +165,25 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
         icon: Icons.payments_outlined,
         title: 'Pagos',
         subtitle: 'Cobros, estados y conciliación',
-        route: '/home_admin/pagos', // TODO: ajustar a tus rutas reales
+        route: '/home_admin/pagos/',
       ),
       const _AdminItem(
         icon: Icons.badge_outlined,
         title: 'Congresista',
         subtitle: 'Gestión de perfiles y accesos',
-        route: '/admin/congresistas',
+        route: '/home_admin/congresista/',
       ),
       const _AdminItem(
         icon: Icons.science_outlined,
         title: 'Trabajos Científicos',
         subtitle: 'Revisión, estado y certificados',
-        route: '/admin/trabajos',
+        route: '/admin/trabajos/',
       ),
       const _AdminItem(
         icon: Icons.qr_code_scanner_outlined,
         title: 'Check-In',
         subtitle: 'Control de ingreso y presencia',
-        route: '/admin/checkin',
+        route: '/admin/checkin/',
       ),
     ];
 

@@ -69,6 +69,9 @@
                 <td style="padding:0 0 6px;"><strong>Área temática:</strong> ${areaTematica}</td>
               </tr>
               <tr>
+                <td style="padding:0 0 6px;"><strong>Área de la Medicina:</strong> ${areaDeLaMedicina}</td>
+              </tr>
+              <tr>
                 <td style="padding:10px 0 6px;"><strong>Autor/a principal:</strong></td>
               </tr>
               <tr>

@@ -32,6 +32,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Montserrat',
+        tooltipTheme: const TooltipThemeData(
+          triggerMode: TooltipTriggerMode.tap, // 👈 evita hover en web/desktop
+          waitDuration: Duration(milliseconds: 600),
+          showDuration: Duration(milliseconds: 1600),
+        ),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(fontSize: 16),
           titleLarge: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),

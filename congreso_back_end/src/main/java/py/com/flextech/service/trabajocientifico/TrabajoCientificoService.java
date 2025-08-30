@@ -70,11 +70,12 @@ public class TrabajoCientificoService {
 
 	    model.put("tituloTrabajo", orDash(data.getTitulo()));
 	    model.put("modalidad", orDash(data.getModalidad()));
-	    model.put("areaTematica", orDash(data.getArea()));
+	    model.put("areaTematica", orDash(data.getAreaTematica()));
+	    model.put("areaDeLaMedicina", orDash(data.getAreaDeLaMedicina()));
 
 	    model.put("autorPrincipalNombreCompleto", orDash(data.getAutorNombre()));
 	    // Si tenés un campo real de filiación del autor principal, usalo acá
-	    model.put("autorPrincipalFiliacion", orDash("FILIACIÓN PENDIENTE")); // o "FILIACIÓN PENDIENTE"
+	    model.put("autorPrincipalFiliacion", orDash(data.getAutorFiliacion())); // o "FILIACIÓN PENDIENTE"
 
 	    model.put("coautoresLinea", coautoresLinea);
 

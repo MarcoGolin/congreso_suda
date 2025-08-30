@@ -27,7 +27,7 @@ public class ServerApplication  extends SpringBootServletInitializer{
 	
 	@PostConstruct
 	public void init() {
-		TimeZone.setDefault(TimeZone.getTimeZone("America/Asuncion"));
+		TimeZone.setDefault(TimeZone.getTimeZone("America/Sao_Paulo"));
 		System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
 	}
 	

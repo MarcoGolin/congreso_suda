@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
       // 'Precios': _precioSectionKey,
       'Contacto': _contactoSectionKey,
     };
-    _scrollController.addListener(_handleScroll);
+    _scrollController.addListener(_onScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       var y = await rootBundle.loadString("pubspec.yaml");
@@ -87,22 +87,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _handleScroll() {
-    final RenderBox? inicioBox =
-        _inicioSectionKey.currentContext?.findRenderObject() as RenderBox?;
-    if (inicioBox == null) return;
-
-    final offsetTop = inicioBox.localToGlobal(Offset.zero).dy;
-    final offsetBottom = offsetTop + inicioBox.size.height;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    // Verifica si cualquier parte del widget está visible en pantalla
-    final bool isInicioVisible = offsetBottom > 0 && offsetTop < screenHeight;
-
-    if (_isAppBarTransparent != isInicioVisible) {
-      setState(() {
-        _isAppBarTransparent = isInicioVisible;
-      });
+  void _onScroll() {
+    final threshold = MediaQuery.of(context).size.height * 0.6; // 60% pantalla
+    final shouldBeTransparent = _scrollController.offset < threshold;
+    if (_isAppBarTransparent != shouldBeTransparent) {
+      setState(() => _isAppBarTransparent = shouldBeTransparent);
     }
   }
 
@@ -123,7 +112,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    _scrollController.removeListener(_handleScroll);
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
@@ -168,6 +157,7 @@ class _HomePageState extends State<HomePage> {
         padding: EdgeInsets.zero,
         controller: _scrollController,
         scrollDirection: Axis.vertical,
+        cacheExtent: MediaQuery.of(context).size.height * 3,
         physics: const ClampingScrollPhysics(),
         children: [
           SizedBox(

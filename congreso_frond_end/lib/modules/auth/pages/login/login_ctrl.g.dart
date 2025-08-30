@@ -49,6 +49,26 @@ mixin _$LoginCtrl on LoginCtrlBase, Store {
     });
   }
 
+  late final _$_stateClassAtom = Atom(
+    name: 'LoginCtrlBase._stateClass',
+    context: context,
+  );
+
+  GlobalStateClass get stateClass {
+    _$_stateClassAtom.reportRead();
+    return super._stateClass;
+  }
+
+  @override
+  GlobalStateClass get _stateClass => stateClass;
+
+  @override
+  set _stateClass(GlobalStateClass value) {
+    _$_stateClassAtom.reportWrite(value, super._stateClass, () {
+      super._stateClass = value;
+    });
+  }
+
   late final _$loginAsyncAction = AsyncAction(
     'LoginCtrlBase.login',
     context: context,
@@ -59,6 +79,23 @@ mixin _$LoginCtrl on LoginCtrlBase, Store {
     return _$loginAsyncAction.run(
       () => super.login(email, contrasenha, recordar),
     );
+  }
+
+  late final _$LoginCtrlBaseActionController = ActionController(
+    name: 'LoginCtrlBase',
+    context: context,
+  );
+
+  @override
+  void changeStatus(String message, StatusEnumGlobal status) {
+    final _$actionInfo = _$LoginCtrlBaseActionController.startAction(
+      name: 'LoginCtrlBase.changeStatus',
+    );
+    try {
+      return super.changeStatus(message, status);
+    } finally {
+      _$LoginCtrlBaseActionController.endAction(_$actionInfo);
+    }
   }
 
   @override

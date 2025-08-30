@@ -23,6 +23,15 @@
 		<result property="isExonerado" column="BO_EXONERADO" />
 		<result property="usuarioPago" column="USUARIO_PAGO" />
 		<result property="uuid" column="UUID" />
+
+		<result property="isAdmin" column="BO_ADMIN" />
+		<result property="isFinanciero" column="BO_FINANCIERO" />
+		<result property="isStaff" column="BO_STAFF" />
+		<result property="isCongresista" column="BO_CONGRESISTA" />
+		
+		
+		
+		
 	</resultMap>
 	
 	<resultMap id="resultCompleto" type="Usuario" extends="resultSimples">

@@ -2,8 +2,8 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-class SuccessScreenView extends StatelessWidget {
-  const SuccessScreenView({super.key});
+class InscripcionSuccesScreenView extends StatelessWidget {
+  const InscripcionSuccesScreenView({super.key});
 
   @override
   Widget build(BuildContext context) {

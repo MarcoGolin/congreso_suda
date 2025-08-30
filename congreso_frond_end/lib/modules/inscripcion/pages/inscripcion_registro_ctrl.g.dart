@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'congresista_registro_ctrl.dart';
+part of 'inscripcion_registro_ctrl.dart';
 
 // **************************************************************************
 // StoreGenerator
@@ -8,9 +8,9 @@ part of 'congresista_registro_ctrl.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$CongresistaRegistroCtrl on CongresistaRegistroCtrlBase, Store {
+mixin _$InscripcionRegistroCtrl on InscripcionRegistroCtrlBase, Store {
   late final _$_usuarioAtom = Atom(
-    name: 'CongresistaRegistroCtrlBase._usuario',
+    name: 'InscripcionRegistroCtrlBase._usuario',
     context: context,
   );
 
@@ -30,7 +30,7 @@ mixin _$CongresistaRegistroCtrl on CongresistaRegistroCtrlBase, Store {
   }
 
   late final _$_stateClassAtom = Atom(
-    name: 'CongresistaRegistroCtrlBase._stateClass',
+    name: 'InscripcionRegistroCtrlBase._stateClass',
     context: context,
   );
 
@@ -50,7 +50,7 @@ mixin _$CongresistaRegistroCtrl on CongresistaRegistroCtrlBase, Store {
   }
 
   late final _$saveCongresistaAsyncAction = AsyncAction(
-    'CongresistaRegistroCtrlBase.saveCongresista',
+    'InscripcionRegistroCtrlBase.saveCongresista',
     context: context,
   );
 
@@ -81,19 +81,19 @@ mixin _$CongresistaRegistroCtrl on CongresistaRegistroCtrlBase, Store {
     );
   }
 
-  late final _$CongresistaRegistroCtrlBaseActionController = ActionController(
-    name: 'CongresistaRegistroCtrlBase',
+  late final _$InscripcionRegistroCtrlBaseActionController = ActionController(
+    name: 'InscripcionRegistroCtrlBase',
     context: context,
   );
 
   @override
   void changeStatus(String message, StatusEnumGlobal status) {
-    final _$actionInfo = _$CongresistaRegistroCtrlBaseActionController
-        .startAction(name: 'CongresistaRegistroCtrlBase.changeStatus');
+    final _$actionInfo = _$InscripcionRegistroCtrlBaseActionController
+        .startAction(name: 'InscripcionRegistroCtrlBase.changeStatus');
     try {
       return super.changeStatus(message, status);
     } finally {
-      _$CongresistaRegistroCtrlBaseActionController.endAction(_$actionInfo);
+      _$InscripcionRegistroCtrlBaseActionController.endAction(_$actionInfo);
     }
   }
 

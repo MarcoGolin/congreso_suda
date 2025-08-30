@@ -247,6 +247,26 @@ mixin _$PagoPageCtrl on PagoPageCtrlBase, Store {
     });
   }
 
+  late final _$_habilitacionPagosAtom = Atom(
+    name: 'PagoPageCtrlBase._habilitacionPagos',
+    context: context,
+  );
+
+  HabilitacionPagos? get habilitacionPagos {
+    _$_habilitacionPagosAtom.reportRead();
+    return super._habilitacionPagos;
+  }
+
+  @override
+  HabilitacionPagos? get _habilitacionPagos => habilitacionPagos;
+
+  @override
+  set _habilitacionPagos(HabilitacionPagos? value) {
+    _$_habilitacionPagosAtom.reportWrite(value, super._habilitacionPagos, () {
+      super._habilitacionPagos = value;
+    });
+  }
+
   late final _$consultaAsyncAction = AsyncAction(
     'PagoPageCtrlBase.consulta',
     context: context,
@@ -269,6 +289,18 @@ mixin _$PagoPageCtrl on PagoPageCtrlBase, Store {
     );
   }
 
+  late final _$consultarSiEstaHabilitadoAsyncAction = AsyncAction(
+    'PagoPageCtrlBase.consultarSiEstaHabilitado',
+    context: context,
+  );
+
+  @override
+  Future<HabilitacionPagos?> consultarSiEstaHabilitado() {
+    return _$consultarSiEstaHabilitadoAsyncAction.run(
+      () => super.consultarSiEstaHabilitado(),
+    );
+  }
+
   late final _$PagoPageCtrlBaseActionController = ActionController(
     name: 'PagoPageCtrlBase',
     context: context,
@@ -281,6 +313,18 @@ mixin _$PagoPageCtrl on PagoPageCtrlBase, Store {
     );
     try {
       return super.changeStatus(message, status);
+    } finally {
+      _$PagoPageCtrlBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void verificarVigenciaYCancelarSiExpira() {
+    final _$actionInfo = _$PagoPageCtrlBaseActionController.startAction(
+      name: 'PagoPageCtrlBase.verificarVigenciaYCancelarSiExpira',
+    );
+    try {
+      return super.verificarVigenciaYCancelarSiExpira();
     } finally {
       _$PagoPageCtrlBaseActionController.endAction(_$actionInfo);
     }

@@ -5,18 +5,8 @@ class DateTimeConverter implements JsonConverter<DateTime, String> {
 
   @override
   DateTime fromJson(String dateTime) {
-    // Asegúrate de que la cadena de fecha sea UTC agregando 'Z' si falta
     try {
-      //en java se debe usar instant para que guarde como utc
-      if (!dateTime.contains('Z')) {
-        dateTime = '${dateTime}Z';
-        final utcDateTime = DateTime.parse(dateTime);
-        final local = utcDateTime.toLocal();
-        return local;
-      } else {
-        final utcDateTime = DateTime.parse(dateTime);
-        return utcDateTime;
-      }
+      return DateTime.parse(dateTime);
     } catch (e) {
       return DateTime.now();
     }
@@ -24,6 +14,6 @@ class DateTimeConverter implements JsonConverter<DateTime, String> {
 
   @override
   String toJson(DateTime dateTime) {
-    return dateTime.toUtc().toIso8601String();
+    return dateTime.toIso8601String();
   }
 }

@@ -4,6 +4,7 @@ import 'package:congreso_evento/core/exception/service_exception.dart';
 import 'package:congreso_evento/core/models/global_state_class.dart';
 import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
+import 'package:congreso_evento/modules/home_admin/pages/congresista/models/habilitacion_pagos.dart';
 import 'package:congreso_evento/modules/home_admin/pages/pagos/services/pago_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobx/mobx.dart';
@@ -55,8 +56,16 @@ abstract class PagoPageCtrlBase with Store {
   @readonly
   Usuario? _usuario;
 
-  void init() {
-    _loadUser();
+  @readonly
+  HabilitacionPagos? _habilitacionPagos;
+
+  bool get isAdmin => _usuario?.isAdmin == true;
+
+  Future<void> init() async {
+    await _loadUser();
+    if (!isAdmin) {
+      await consultarSiEstaHabilitado();
+    }
   }
 
   @action
@@ -104,6 +113,15 @@ abstract class PagoPageCtrlBase with Store {
   @action
   Future<List<Usuario>> consulta() async {
     try {
+      // BLOQUEO si no es admin y no puede cobrar
+      if (!isAdmin && !puedeCobrar) {
+        changeStatus(
+          'No está habilitado para realizar pagos.',
+          StatusEnumGlobal.errorAndAction,
+        );
+        return [];
+      }
+
       if (_stateClass.status == StatusEnumGlobal.loadingList) {
         return congresistas; // Evita múltiples llamadas simultáneas
       }
@@ -111,6 +129,14 @@ abstract class PagoPageCtrlBase with Store {
         return congresistas; // Evita llamadas si ya es la última página
       }
       changeStatus('', StatusEnumGlobal.loadingList);
+
+      if (!isAdmin) {
+        if (_condicion == null || _condicion!.isEmpty) {
+          changeStatus('', StatusEnumGlobal.loaded);
+          return [];
+        }
+      }
+
       final response = await service.consultaDocumentosPorCondicionPaginado(
         buscador: _condicion,
         pageNr: _pageNr,
@@ -151,6 +177,14 @@ abstract class PagoPageCtrlBase with Store {
     bool? isExonerado = false,
   }) async {
     try {
+      // BLOQUEO si no es admin y no puede cobrar
+      if (!isAdmin && !puedeCobrar) {
+        changeStatus(
+          'La habilitación de cobros expiró.',
+          StatusEnumGlobal.errorAndAction,
+        );
+        return null;
+      }
       if (_stateClass.status == StatusEnumGlobal.loading) {
         return null; // Evita múltiples llamadas simultáneas
       }
@@ -176,6 +210,67 @@ abstract class PagoPageCtrlBase with Store {
       congresistas[index] = data;
     } else {
       congresistas.add(data);
+    }
+  }
+
+  @action
+  Future<HabilitacionPagos?> consultarSiEstaHabilitado() async {
+    try {
+      if (_stateClass.status == StatusEnumGlobal.loading) {
+        return null; // Evita múltiples llamadas simultáneas
+      }
+      changeStatus('', StatusEnumGlobal.loading);
+      final response = await service.consultarSiEstaHabilitado(
+        idUsuario: _usuario?.id ?? 0,
+      );
+
+      final data = response.data;
+
+      if (data == null) {
+        changeStatus(
+          'No está habilitado para realizar pagos!',
+          StatusEnumGlobal.errorAndAction,
+        );
+        return null;
+      }
+
+      _habilitacionPagos = data;
+
+      changeStatus('', StatusEnumGlobal.loaded);
+      return data;
+    } on ServiceException catch (e) {
+      changeStatus(e.message, StatusEnumGlobal.errorDialog);
+      return null;
+    }
+  }
+
+  bool get puedeCobrar {
+    final h = _habilitacionPagos;
+    if (h == null) return false;
+    final now = DateTime.now();
+    return !now.isBefore(h.inicio) && !now.isAfter(h.fin);
+  }
+
+  Duration? get restanteCobro {
+    final h = _habilitacionPagos;
+    if (h == null) return null;
+    final now = DateTime.now();
+    if (now.isAfter(h.fin)) return Duration.zero;
+    if (now.isBefore(h.inicio)) return h.inicio.difference(now);
+    return h.fin.difference(now);
+  }
+
+  @action
+  void verificarVigenciaYCancelarSiExpira() {
+    final h = _habilitacionPagos;
+    if (h == null) return;
+    if (!puedeCobrar) {
+      // Limpia si querés forzar re-consulta futura
+      // _habilitacionPagos = null;
+      changeStatus(
+        'La habilitación de cobros expiró.',
+        StatusEnumGlobal.errorAndAction,
+      );
     }
   }
 }

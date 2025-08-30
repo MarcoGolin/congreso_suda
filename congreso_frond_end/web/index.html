@@ -130,6 +130,32 @@
     </div>
   </div>
 
+	<script>
+    (function () {
+      // Soporta base href distinto a "/"
+      var baseEl = document.querySelector('base');
+      var basePath = baseEl ? new URL(baseEl.href, location.href).pathname : '/';
+      if (!basePath.endsWith('/')) basePath += '/';
+
+      var isAtRoot =
+        location.pathname === basePath ||
+        location.pathname === basePath + 'index.html';
+
+      var hasHashRoute = !!location.hash && location.hash.length > 1; // p.ej. "#/home_admin/pagos"
+
+      // Si NO estamos en la raíz o hay hash routing, redirigimos al home
+      if (!isAtRoot || hasHashRoute) {
+        // (Opcional) guardá a dónde quisieron entrar
+        sessionStorage.setItem(
+          'flutter_intended_route',
+          (location.pathname + location.search + location.hash) || '/'
+        );
+        // Ir al home (respeta basePath)
+        location.replace(basePath);
+      }
+    })();
+  </script>
+
   <!-- Bootstrap de Flutter -->
   <script src="flutter_bootstrap.js" defer></script>
 

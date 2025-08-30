@@ -36,6 +36,8 @@ class Usuario implements ISimpleListTile {
   bool? isStaff = false;
   bool? isCongresista = false;
 
+  bool? isActivado = true;
+
   Usuario({
     this.id,
     this.nombreCompleto,
@@ -59,6 +61,7 @@ class Usuario implements ISimpleListTile {
     this.isStaff = false,
     this.isCongresista = false,
     this.isExonerado = false,
+    this.isActivado = true,
   });
   @override
   String get title => nombreCompleto ?? 'No Name';
@@ -75,5 +78,57 @@ class Usuario implements ISimpleListTile {
       return 'Pagado';
     }
     return 'Pendiente';
+  }
+
+  Usuario copyWith({
+    int? id,
+    DateTime? fechaRegistro,
+    String? nombreCompleto,
+    String? email,
+    String? senha,
+    String? telefono,
+    String? institucion,
+    String? registroAcademico,
+    String? semestre,
+    String? seccion,
+    String? pais,
+    bool? isPago,
+    DateTime? fechaPago,
+    double? montoPago,
+    String? usuarioPago,
+    bool? isExonerado,
+    String? uuid,
+    bool? recordarPassword,
+    bool? isAdmin,
+    bool? isFinanciero,
+    bool? isStaff,
+    bool? isCongresista,
+    bool? isActivado,
+  }) {
+    return Usuario(
+      id: id ?? this.id,
+      fechaRegistro: fechaRegistro ?? this.fechaRegistro,
+      nombreCompleto: nombreCompleto ?? this.nombreCompleto,
+      email: email ?? this.email,
+      senha: senha ?? this.senha,
+      telefono: telefono ?? this.telefono,
+      institucion: institucion ?? this.institucion,
+      registroAcademico: registroAcademico ?? this.registroAcademico,
+      semestre: semestre ?? this.semestre,
+      seccion: seccion ?? this.seccion,
+      pais: pais ?? this.pais,
+      isPago: isPago ?? this.isPago,
+      fechaPago: fechaPago ?? this.fechaPago,
+      montoPago: montoPago ?? this.montoPago,
+      usuarioPago: usuarioPago ?? this.usuarioPago,
+      isExonerado: isExonerado ?? this.isExonerado,
+      uuid: uuid ?? this.uuid,
+      recordarPassword: recordarPassword ?? this.recordarPassword,
+      isAdmin: isAdmin ?? this.isAdmin,
+      isFinanciero: isFinanciero ?? this.isFinanciero,
+      isStaff: isStaff ?? this.isStaff,
+      isCongresista: isCongresista ?? this.isCongresista,
+      isActivado: isActivado ?? this.isActivado,
+    );
   }
 }

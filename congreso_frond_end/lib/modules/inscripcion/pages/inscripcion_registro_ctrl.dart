@@ -2,18 +2,18 @@ import 'package:congreso_evento/core/exception/service_exception.dart';
 import 'package:congreso_evento/core/models/global_state_class.dart';
 import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
-import 'package:congreso_evento/modules/congresista/congresista_service.dart';
+import 'package:congreso_evento/modules/inscripcion/inscripcion_service.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 
-part 'congresista_registro_ctrl.g.dart';
+part 'inscripcion_registro_ctrl.g.dart';
 
-class CongresistaRegistroCtrl = CongresistaRegistroCtrlBase
-    with _$CongresistaRegistroCtrl;
+class InscripcionRegistroCtrl = InscripcionRegistroCtrlBase
+    with _$InscripcionRegistroCtrl;
 
-abstract class CongresistaRegistroCtrlBase with Store {
-  final CongresistaService service;
-  CongresistaRegistroCtrlBase(this.service);
+abstract class InscripcionRegistroCtrlBase with Store {
+  final InscripcionService service;
+  InscripcionRegistroCtrlBase(this.service);
 
   @readonly
   Usuario? _usuario;

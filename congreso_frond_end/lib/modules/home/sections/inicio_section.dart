@@ -13,10 +13,14 @@ class InicioSection extends StatefulWidget {
   State<InicioSection> createState() => _InicioSectionState();
 }
 
-class _InicioSectionState extends State<InicioSection> {
+class _InicioSectionState extends State<InicioSection>
+    with AutomaticKeepAliveClientMixin {
   final DateTime _targetDate = DateTime(2025, 10, 09, 0, 0, 0);
 
   double _backgroundOffset = 0.0; // This will control the parallax movement
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -44,6 +48,7 @@ class _InicioSectionState extends State<InicioSection> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 900;
 

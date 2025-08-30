@@ -2,14 +2,21 @@ import 'package:congreso_evento/core/exception/exception_utils.dart';
 import 'package:congreso_evento/core/exception/service_exception.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
 import 'package:congreso_evento/modules/auth/models/usuario_pageable.dart';
-import 'package:congreso_evento/modules/congresista/congresista_repository.dart';
+import 'package:congreso_evento/modules/home_admin/pages/congresista/models/habilitacion_pagos.dart';
+import 'package:congreso_evento/modules/home_admin/pages/pagos/repositories/habilitacion_pagos_repository.dart';
 import 'package:congreso_evento/modules/home_admin/pages/pagos/repositories/pago_repository.dart';
+import 'package:congreso_evento/modules/inscripcion/inscripcion_repository.dart';
 
 class PagoService {
   final PagoRepository pagoRepository;
-  final CongresistaRepository congresistaRepository;
+  final InscripcionRepository congresistaRepository;
+  final HabilitacionPagosRepository habilitacionPagosRepository;
 
-  PagoService(this.congresistaRepository, this.pagoRepository);
+  PagoService(
+    this.congresistaRepository,
+    this.pagoRepository,
+    this.habilitacionPagosRepository,
+  );
 
   Future<
     ({
@@ -99,6 +106,24 @@ class PagoService {
           ? Usuario.fromJson(response.object)
           : null;
       return (data: p, code: response.code, message: response.message);
+    } on Exception catch (e) {
+      throw ServiceException(message: ExceptionUtils.getExceptionMessage(e));
+    }
+  }
+
+  Future<({HabilitacionPagos? data, int code, String message})>
+  consultarSiEstaHabilitado({required int idUsuario}) async {
+    try {
+      var response = await habilitacionPagosRepository
+          .consultarSiEstaHabilitado(idUsuario: idUsuario);
+      HabilitacionPagos? p = response?.object != null
+          ? HabilitacionPagos.fromJson(response!.object)
+          : null;
+      return (
+        data: p,
+        code: response?.code ?? 0,
+        message: response?.message ?? '',
+      );
     } on Exception catch (e) {
       throw ServiceException(message: ExceptionUtils.getExceptionMessage(e));
     }

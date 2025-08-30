@@ -45,13 +45,36 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
 
   late ReactionDisposer _rctDspr;
 
+  Timer? _tick;
+  Duration? _restante;
+
   @override
   void initState() {
     super.initState();
-    _ctrl.primeraConsulta();
-    _listCtrl.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      await _ctrl.init();
+      _ctrl.primeraConsulta();
+      _listCtrl.addListener(_onScroll);
+
+      // Timer sutil para countdown y corte al expirar
+      _tick?.cancel();
+      _tick = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (!mounted) return;
+        setState(() {
+          _restante = _ctrl.restanteCobro;
+        });
+        _ctrl.verificarVigenciaYCancelarSiExpira();
+      });
+    });
+
     _rctDspr = reaction((_) => _ctrl.stateClass, (s) {
       switch (s.status) {
+        case StatusEnumGlobal.errorAndAction:
+          hideLoader();
+          Modular.to.pop(); // cierra el diálogo
+          showAlertWarning(s.message);
+          break;
         case StatusEnumGlobal.loading:
           showLoader();
           break;
@@ -72,6 +95,7 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
 
   @override
   void dispose() {
+    _tick?.cancel();
     _buscadorCtrl.dispose();
     _registroCtrl.dispose();
     _listCtrl.dispose();
@@ -164,28 +188,10 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
     }
   }
 
-  Future<void> _openQRScanner() async {
-    await showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (ctx) => _QRScannerDialog(
-        onCode: (code) {
-          Navigator.of(ctx).pop();
-          _registroCtrl.text = code;
-          _onSearchChanged();
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('QR detectado: $code')));
-        },
-      ),
-    );
-  }
-
   // ======== UI ========
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final surface = theme.colorScheme.surface;
 
     // Nuevo:
     // final brand = brandPrimary;
@@ -205,13 +211,6 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
           ),
         ],
       ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: _openQRScanner,
-      //   icon: const Icon(Icons.qr_code_scanner),
-      //   label: const Text('Escanear QR'),
-      //   backgroundColor: brand,
-      //   foregroundColor: onBrand,
-      // ),
       body: LayoutBuilder(
         builder: (context, c) {
           final w = c.maxWidth;
@@ -219,11 +218,6 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
 
           return Column(
             children: [
-              // Padding(
-              //   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              //   child: _SectionHeaderChip(title: 'Gestión de pagos'),
-              // ),
-              // Barra de búsqueda (estilo HomeAdmin)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Container(
@@ -247,17 +241,72 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
                 ),
               ),
 
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
+                child: Observer(
+                  builder: (_) {
+                    final visible = _ctrl.puedeCobrar; // vigente
+                    if (!visible) return const SizedBox.shrink();
+
+                    final d = _restante ?? _ctrl.restanteCobro;
+                    final texto = _fmtCountdown(d);
+
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: brandPrimary.withOpacity(.06),
+                        border: Border.all(
+                          color: brandPrimary.withOpacity(.20),
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.timer_outlined, color: brandPrimary),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Ventana de cobros activa • Tiempo restante: $texto',
+                              style: const TextStyle(
+                                color: kInk,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+
               // Resumen
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Observer(
-                    builder: (_) => Text(
-                      'Resultados: ${_ctrl.congresistas.length} / ${_ctrl.totalRegistros}',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color:
-                            brandPrimary, // o onSurface.withOpacity(0.7) si preferís sutil
+                    builder: (_) => Visibility(
+                      visible: _ctrl.isAdmin,
+                      replacement: Text(
+                        'Resultados: ${_ctrl.congresistas.length}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color:
+                              brandPrimary, // o onSurface.withOpacity(0.7) si preferís sutil
+                        ),
+                      ),
+                      child: Text(
+                        'Resultados: ${_ctrl.congresistas.length} / ${_ctrl.totalRegistros}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color:
+                              brandPrimary, // o onSurface.withOpacity(0.7) si preferís sutil
+                        ),
                       ),
                     ),
                   ),
@@ -276,38 +325,67 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
                     controller: _listCtrl,
                     thumbVisibility: true,
                     child: Observer(
-                      builder: (_) => ListView.builder(
-                        controller: _listCtrl,
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount:
-                            _ctrl.congresistas.length +
-                            (_ctrl.isLoading || !_ctrl.isLastPage ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index >= _ctrl.congresistas.length) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 24),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation(
-                                    brandPrimary,
+                      builder: (_) {
+                        final isEmpty = _ctrl.congresistas.isEmpty;
+                        final finished =
+                            !_ctrl.isLoading; // consulta ya finalizó
+
+                        if (isEmpty && finished) {
+                          // Estado vacío: lista vacía pero con scroll (para que funcione el RefreshIndicator)
+                          return ListView(
+                            controller: _listCtrl,
+                            padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            children: const [
+                              _EmptyResult(
+                                title: 'La consulta no retornó registros',
+                              ),
+                            ],
+                          );
+                        }
+
+                        // Lista normal (con ítem de loading/“cargando más” al final si corresponde)
+                        return ListView.builder(
+                          controller: _listCtrl,
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount:
+                              _ctrl.congresistas.length +
+                              (_ctrl.isLoading || !_ctrl.isLastPage ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index >= _ctrl.congresistas.length) {
+                              // Loader al final mientras carga o si aún hay más páginas
+                              return const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 24),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation(
+                                      brandPrimary,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          }
+                              );
+                            }
 
-                          final u = _ctrl.congresistas[index];
-                          return _PagoItem(
-                            usuario: u,
-                            isMobile: isMobile,
-                            onVer: () => _onVerUsuario(u),
-                            onConfirmar: u.isPago == true
-                                ? null
-                                : () => _onConfirmarPago(u),
-                          );
-                        },
-                      ),
+                            final u = _ctrl.congresistas[index];
+                            final isMobile =
+                                MediaQuery.of(context).size.width < 720;
+
+                            return _PagoItem(
+                              usuario: u,
+                              isMobile: isMobile,
+                              onVer: () => _onVerUsuario(u),
+                              isAdmin: _ctrl.isAdmin,
+                              onConfirmar:
+                                  (!_ctrl.isAdmin && !_ctrl.puedeCobrar)
+                                  ? null
+                                  : (u.isPago == true
+                                        ? null
+                                        : () => _onConfirmarPago(u)),
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -317,6 +395,23 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
         },
       ),
     );
+  }
+
+  String _fmtCountdown(Duration? d) {
+    if (d == null) return '—';
+    var secs = d.inSeconds;
+    if (secs < 0) secs = 0;
+    final days = secs ~/ 86400;
+    secs %= 86400;
+    final hh = secs ~/ 3600;
+    secs %= 3600;
+    final mm = secs ~/ 60;
+    final ss = secs % 60;
+
+    if (days > 0) {
+      return '${days}d ${hh.toString().padLeft(2, '0')}:${mm.toString().padLeft(2, '0')}:${ss.toString().padLeft(2, '0')}';
+    }
+    return '${hh.toString().padLeft(2, '0')}:${mm.toString().padLeft(2, '0')}:${ss.toString().padLeft(2, '0')}';
   }
 
   // Helpers UI
@@ -335,6 +430,55 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
       ],
     ),
   );
+}
+
+class _EmptyResult extends StatelessWidget {
+  final String title;
+  final String? subtitle;
+  const _EmptyResult({required this.title, this.subtitle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        width: 520,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: kBorder),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.inbox_outlined,
+              size: 36,
+              color: brandPrimary.withOpacity(.8),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: kInk,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
+            if (subtitle != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                subtitle!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: kMuted),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 // ==========================
@@ -435,12 +579,14 @@ class _PagoItem extends StatelessWidget {
   final bool isMobile;
   final VoidCallback onVer;
   final VoidCallback? onConfirmar;
+  final bool isAdmin;
 
   const _PagoItem({
     required this.usuario,
     required this.isMobile,
     required this.onVer,
     required this.onConfirmar,
+    required this.isAdmin,
   });
 
   @override
@@ -469,7 +615,7 @@ class _PagoItem extends StatelessWidget {
         Expanded(
           flex: 3,
           child: Text(
-            '${usuario.id} -  ${usuario.nombreCompleto ?? ''}',
+            '${isAdmin ? usuario.id : ''} -  ${usuario.nombreCompleto ?? ''}',
             style: Theme.of(
               context,
             ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
@@ -503,13 +649,15 @@ class _PagoItem extends StatelessWidget {
         const SizedBox(width: 12),
 
         // Monto
-        SizedBox(
-          width: 150,
-          child: Text(
-            usuario.isPago ? newFormatNumber(usuario.montoPago, 1) : '—',
+        if (isAdmin) ...[
+          SizedBox(
+            width: 150,
+            child: Text(
+              usuario.isPago ? newFormatNumber(usuario.montoPago, 1) : '—',
+            ),
           ),
-        ),
-        const SizedBox(width: 12),
+          const SizedBox(width: 12),
+        ],
 
         // Fecha
         SizedBox(
@@ -552,7 +700,7 @@ class _PagoItem extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                '${usuario.id} -  ${usuario.nombreCompleto ?? ''}',
+                '${isAdmin ? usuario.id : ''} -  ${usuario.nombreCompleto ?? ''}',
                 style: Theme.of(
                   context,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
@@ -573,21 +721,22 @@ class _PagoItem extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         // Monto y Fecha
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                usuario.isPago ? newFormatNumber(usuario.montoPago, 1) : '—',
-                style: TextStyle(
-                  color: (usuario.isPago) ? brandPrimary : null,
-                ), // <—
+        if (isAdmin)
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  usuario.isPago ? newFormatNumber(usuario.montoPago, 1) : '—',
+                  style: TextStyle(
+                    color: (usuario.isPago) ? brandPrimary : null,
+                  ), // <—
+                ),
               ),
-            ),
-            Text(
-              'Fecha: ${usuario.fechaPago != null ? formatDateAndTime(usuario.fechaPago!) : '—'}',
-            ),
-          ],
-        ),
+              Text(
+                'Fecha: ${usuario.fechaPago != null ? formatDateAndTime(usuario.fechaPago!) : '—'}',
+              ),
+            ],
+          ),
         const SizedBox(height: 8),
         // Acciones
         Row(
@@ -701,36 +850,6 @@ class _QRScannerDialogState extends State<_QRScannerDialog> {
           child: const Text('Cancelar'),
         ),
       ],
-    );
-  }
-}
-
-class _SectionHeaderChip extends StatelessWidget {
-  final String title;
-  const _SectionHeaderChip({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFF7FBF8), Colors.white],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: kBorder),
-      ),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w800,
-          color: Color(0xFF1F2937),
-        ),
-      ),
     );
   }
 }
