@@ -5,11 +5,17 @@ import 'package:congreso_evento/core/models/global_state_class.dart';
 import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/models/habilitacion_pagos.dart';
+import 'package:congreso_evento/modules/home_admin/pages/pagos/models/resumen_cobrador.dart';
 import 'package:congreso_evento/modules/home_admin/pages/pagos/services/pago_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobx/mobx.dart';
 
 part 'pago_page_ctrl.g.dart';
+
+enum FiltroEstado { todos, pagos, exonerados, pendientes }
+
+enum FiltroPeriodo { hoy, ayer, mes, rango }
 
 class PagoPageCtrl = PagoPageCtrlBase with _$PagoPageCtrl;
 
@@ -61,6 +67,18 @@ abstract class PagoPageCtrlBase with Store {
 
   bool get isAdmin => _usuario?.isAdmin == true;
 
+  @observable
+  bool agruparPorCobrador = false;
+  @observable
+  List<ResumenCobrador> resumen = [];
+
+  @observable
+  FiltroEstado filtroEstado = FiltroEstado.todos;
+  @observable
+  FiltroPeriodo filtroPeriodo = FiltroPeriodo.hoy;
+  @observable
+  DateTimeRange? rangoPersonalizado; // cuando el periodo sea "rango"
+
   Future<void> init() async {
     await _loadUser();
     if (!isAdmin) {
@@ -89,7 +107,6 @@ abstract class PagoPageCtrlBase with Store {
     _isLastPage = false;
     congresistas.clear();
     consulta();
-    init();
   }
 
   void siguienteConsulta() {
@@ -141,6 +158,9 @@ abstract class PagoPageCtrlBase with Store {
         buscador: _condicion,
         pageNr: _pageNr,
         pageSize: _pageSize,
+        filtroEstado: filtroEstado,
+        desde: _intervalo.desde,
+        hasta: _intervalo.hasta,
       );
 
       final data = response.data;
@@ -154,6 +174,36 @@ abstract class PagoPageCtrlBase with Store {
     } on ServiceException catch (e) {
       changeStatus(e.message, StatusEnumGlobal.errorDialog);
       return [];
+    }
+  }
+
+  Future<void> cargarResumen() async {
+    try {
+      // BLOQUEO si no es admin y no puede cobrar
+      if (!isAdmin && !puedeCobrar && agruparPorCobrador) {
+        changeStatus(
+          'No está habilitado para realizar pagos.',
+          StatusEnumGlobal.errorAndAction,
+        );
+        return;
+      }
+
+      // if (_stateClass.status == StatusEnumGlobal.loadingList) {
+      //   return; // Evita múltiples llamadas simultáneas
+      // }
+      changeStatus('', StatusEnumGlobal.loadingList);
+
+      final response = await service.resumenCobrador(
+        desde: _intervalo.desde,
+        hasta: _intervalo.hasta,
+      );
+      final data = response.data;
+      resumen = [];
+      resumen.addAll(data);
+      // cerrar loading
+      changeStatus('', StatusEnumGlobal.loaded);
+    } on ServiceException catch (e) {
+      changeStatus(e.message, StatusEnumGlobal.errorDialog);
     }
   }
 
@@ -271,6 +321,32 @@ abstract class PagoPageCtrlBase with Store {
         'La habilitación de cobros expiró.',
         StatusEnumGlobal.errorAndAction,
       );
+    }
+  }
+
+  DateTime _startOfDay(DateTime d) => DateTime(d.year, d.month, d.day);
+  DateTime _endOfDay(DateTime d) =>
+      DateTime(d.year, d.month, d.day, 23, 59, 59);
+
+  ({DateTime? desde, DateTime? hasta}) get _intervalo {
+    final now = DateTime.now();
+    switch (filtroPeriodo) {
+      case FiltroPeriodo.hoy:
+        return (desde: _startOfDay(now), hasta: _endOfDay(now));
+      case FiltroPeriodo.ayer:
+        final y = now.subtract(const Duration(days: 1));
+        return (desde: _startOfDay(y), hasta: _endOfDay(y));
+      case FiltroPeriodo.mes:
+        final first = DateTime(now.year, now.month, 1);
+        final next = DateTime(now.year, now.month + 1, 1);
+        final last = next.subtract(const Duration(seconds: 1));
+        return (desde: first, hasta: last);
+      case FiltroPeriodo.rango:
+        if (rangoPersonalizado == null) return (desde: null, hasta: null);
+        return (
+          desde: _startOfDay(rangoPersonalizado!.start),
+          hasta: _endOfDay(rangoPersonalizado!.end),
+        );
     }
   }
 }

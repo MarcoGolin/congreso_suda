@@ -56,7 +56,7 @@ class FooterSection extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
                         Text(
-                          'IV Congreso Internacional de Medicina',
+                          'IV Congreso Internacional de la Universidad Sudamericana “Medicina Interdisciplinaria"\n\nIVCIUSMI2025',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,

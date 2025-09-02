@@ -28,8 +28,8 @@
 		<result property="isFinanciero" column="BO_FINANCIERO" />
 		<result property="isStaff" column="BO_STAFF" />
 		<result property="isCongresista" column="BO_CONGRESISTA" />
-		
-		
+		<result property="isInvitado" column="BO_INVITADO" />
+		<result property="isDisertante" column="BO_DISERTANTE" />
 		
 		
 	</resultMap>
@@ -68,6 +68,73 @@
 	
 	  ORDER BY u.ID_USUARIO DESC
 	</select>
+	
+	  <!-- LISTA con filtros de estado + periodo -->
+  <select id="consultaCongresistaConFiltros"
+          resultMap="resultSimples"
+          parameterType="map">
+    <include refid="sqlDefault"/>
+    <where>
+      u.BO_CONGRESISTA = TRUE
+
+      <if test="nombre != null and nombre.trim() != ''">
+        AND u.NOMBRE_COMPLETO LIKE CONCAT('%', #{nombre}, '%')
+      </if>
+
+      <if test="registroAcademico != null and registroAcademico.trim() != ''">
+        AND CAST(u.REGISTRO_ACADEMICO AS CHAR) LIKE CONCAT('%', #{registroAcademico}, '%')
+      </if>
+
+      <!-- Estado -->
+      <if test="estado != null and estado == 'PAGOS'">
+        AND u.BO_IS_PAGO = TRUE
+      </if>
+      <if test="estado != null and estado == 'EXONERADOS'">
+        AND u.BO_EXONERADO = TRUE
+      </if>
+      <if test="estado != null and estado == 'PENDIENTES'">
+        AND (u.BO_IS_PAGO = FALSE OR u.BO_IS_PAGO IS NULL)
+        AND (u.BO_EXONERADO = FALSE OR u.BO_EXONERADO IS NULL)
+      </if>
+
+      <!-- Periodo en base a FC_PAGO cuando aplica -->
+      <if test="aplicaFechaPago == true">
+        <if test="desde != null">
+          AND u.FC_PAGO &gt;= #{desde}
+        </if>
+        <if test="hasta != null">
+          AND u.FC_PAGO &lt;= #{hasta}
+        </if>
+      </if>
+    </where>
+    ORDER BY u.FC_PAGO DESC, u.ID_USUARIO DESC
+  </select>
+
+  <!-- RESUMEN agrupado por USUARIO_PAGO -->
+  <select id="resumenPorCobrador"
+          resultType="py.com.flextech.model.pagos.dto.ResumenCobradoDto">
+	SELECT 
+	  u.USUARIO_PAGO AS usuarioPagoId,
+	  u.USUARIO_PAGO AS usuarioPagoNombre,
+	  COUNT(*) AS cantidad,
+	  COALESCE(SUM(u.VL_PAGO), 0) AS montoTotal 
+	FROM
+	  SYS_USUARIO u 
+    <where>
+      u.BO_CONGRESISTA = TRUE
+      AND u.BO_IS_PAGO = TRUE  <!-- solo pagos registrados -->
+
+      <!-- Periodo -->
+      <if test="desde != null">
+        AND u.FC_PAGO &gt;= #{desde}
+      </if>
+      <if test="hasta != null">
+        AND u.FC_PAGO &lt;= #{hasta}
+      </if>
+    </where>
+    GROUP BY u.USUARIO_PAGO
+    ORDER BY cantidad DESC
+  </select>
 
 
 </mapper>

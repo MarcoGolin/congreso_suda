@@ -46,7 +46,7 @@ class SobreSection extends StatelessWidget {
                     ),
                     SizedBox(height: 16),
                     Text(
-                      'El IV Congreso Internacional de Medicina nace con un propósito: reunir a profesionales, estudiantes y expertos para compartir conocimientos que marcan la diferencia.',
+                      'IV Congreso Internacional de la Universidad Sudamericana “Medicina Interdisciplinaria” nace con un propósito: reunir a profesionales, estudiantes y expertos para compartir conocimientos que marcan la diferencia.',
                       style: TextStyle(
                         fontSize: 16,
                         fontFamily: 'Montserrat',

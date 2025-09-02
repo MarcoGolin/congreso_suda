@@ -35,6 +35,8 @@ class Usuario implements ISimpleListTile {
   bool? isFinanciero = false;
   bool? isStaff = false;
   bool? isCongresista = false;
+  bool? isInvitado = false;
+  bool? isDisertante = false;
 
   bool? isActivado = true;
 
@@ -62,6 +64,8 @@ class Usuario implements ISimpleListTile {
     this.isCongresista = false,
     this.isExonerado = false,
     this.isActivado = true,
+    this.isInvitado = false,
+    this.isDisertante = false,
   });
   @override
   String get title => nombreCompleto ?? 'No Name';
@@ -78,6 +82,17 @@ class Usuario implements ISimpleListTile {
       return 'Pagado';
     }
     return 'Pendiente';
+  }
+
+  String getTipo() {
+    if (isStaff == true) {
+      return 'STAFF';
+    } else if (isInvitado == true) {
+      return 'INVITADO';
+    } else if (isDisertante == true) {
+      return 'DISERTANTE';
+    }
+    return 'PARTICIPANTE';
   }
 
   Usuario copyWith({

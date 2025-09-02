@@ -5,6 +5,8 @@ import 'package:congreso_evento/core/formater/number_formater.dart';
 import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/congresista_ctrl.dart';
+import 'package:congreso_evento/modules/home_admin/pages/congresista/utils/carnet_pdf.dart';
+import 'package:congreso_evento/modules/home_admin/pages/congresista/widgets/congresista_end_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -145,18 +147,14 @@ class _CongresistaPageState extends State<CongresistaPage>
     final theme = Theme.of(context);
 
     return Scaffold(
+      endDrawer: CongresistaEndDrawer(),
       appBar: AppBar(
         title: const Text('Congresista'),
         centerTitle: false,
         backgroundColor: brandLight,
         foregroundColor: Colors.white,
         elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () => _ctrl.primeraConsulta(),
-            icon: Icon(Icons.refresh),
-          ),
-        ],
+        actions: [],
       ),
       body: LayoutBuilder(
         builder: (context, c) {
@@ -240,6 +238,7 @@ class _CongresistaPageState extends State<CongresistaPage>
                           return _CongresistaItem(
                             usuario: u,
                             isMobile: isMobile,
+                            generarCarnet: () => _generarCarnet(u),
                             onVer: () => _onVerUsuario(u),
                             onEditar: () => _openEditar(u), // <— NUEVO
                             onHabilitarPago: () =>
@@ -291,6 +290,10 @@ class _CongresistaPageState extends State<CongresistaPage>
         builder: (_) => CongresistaHabilitarParaPagosPage(usuario: u),
       ),
     );
+  }
+
+  void _generarCarnet(Usuario u) async {
+    await printOrShareCarnet(u);
   }
 }
 
@@ -393,6 +396,7 @@ class _CongresistaItem extends StatelessWidget {
   final VoidCallback onVer;
   final VoidCallback onEditar;
   final VoidCallback onHabilitarPago;
+  final VoidCallback generarCarnet;
 
   const _CongresistaItem({
     required this.usuario,
@@ -400,6 +404,7 @@ class _CongresistaItem extends StatelessWidget {
     required this.onVer,
     required this.onEditar,
     required this.onHabilitarPago,
+    required this.generarCarnet,
   });
 
   @override
@@ -457,6 +462,12 @@ class _CongresistaItem extends StatelessWidget {
         const SizedBox(width: 12),
 
         IconButton(
+          tooltip: 'Generar carnet',
+          onPressed: generarCarnet,
+          icon: const Icon(Icons.qr_code, color: brandPrimary),
+        ),
+
+        IconButton(
           tooltip: 'Habilitar para Pago',
           icon: Icon(Icons.payments, color: brandPrimary),
           onPressed: onHabilitarPago, // <— NUEVO
@@ -502,6 +513,15 @@ class _CongresistaItem extends StatelessWidget {
         Row(
           spacing: 5,
           children: [
+            OutlinedButton.icon(
+              onPressed: generarCarnet,
+              icon: const Icon(Icons.qr_code, size: 18),
+              label: const Text('Generar carnet'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: brandPrimary,
+                side: BorderSide(color: brandPrimary.withOpacity(0.6)),
+              ),
+            ),
             OutlinedButton.icon(
               onPressed: onHabilitarPago,
               icon: const Icon(Icons.payments, size: 18),

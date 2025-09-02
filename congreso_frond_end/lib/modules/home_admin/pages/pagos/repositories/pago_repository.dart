@@ -27,4 +27,54 @@ class PagoRepository {
       throw RepositoryException.toException(e);
     }
   }
+
+  Future<GenericResponseEntity?> consultaConFiltros({
+    String? nombre,
+    String? registroAcademico,
+    required String estado, // "TODOS"|"PAGOS"|"EXONERADOS"|"PENDIENTES"
+    DateTime? desde,
+    DateTime? hasta,
+    required int pageNr,
+    required int pageSize,
+  }) async {
+    try {
+      final response = await api.get(
+        '/congresista/consultaConFiltros',
+        queryParameters: {
+          'nombre': nombre,
+          'registroAcademico': registroAcademico,
+          'estado': estado,
+          'desde': desde?.toIso8601String(),
+          'hasta': hasta?.toIso8601String(),
+          'pageNr': pageNr,
+          'pageSize': pageSize,
+        },
+      );
+      return response.data != null
+          ? GenericResponseEntity.fromJson(response.data)
+          : null;
+    } catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
+
+  Future<GenericResponseEntity?> resumenCobrador({
+    DateTime? desde,
+    DateTime? hasta,
+  }) async {
+    try {
+      final response = await api.get(
+        '/congresista/resumenCobrador',
+        queryParameters: {
+          'desde': desde?.toIso8601String(),
+          'hasta': hasta?.toIso8601String(),
+        },
+      );
+      return response.data != null
+          ? GenericResponseEntity.fromJson(response.data)
+          : null;
+    } catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
 }

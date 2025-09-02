@@ -122,6 +122,12 @@ public class Usuario  implements Serializable , UserDetails  {
 	@Column(name = "BO_CONGRESISTA")
 	private Boolean isCongresista;
 	
+	@Column(name = "BO_INVITADO")
+	private Boolean isInvitado;
+
+	@Column(name = "BO_DISERTANTE")
+	private Boolean isDisertante;
+	
 	@JsonIgnore
 	public Usuario(Long id) {
 		this.id = id;

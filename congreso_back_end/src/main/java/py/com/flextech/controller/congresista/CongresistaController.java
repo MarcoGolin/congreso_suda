@@ -1,5 +1,8 @@
 package py.com.flextech.controller.congresista;
 
+import java.time.LocalDateTime;
+
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import py.com.flextech.model.dto.GenericResponseEntity;
+import py.com.flextech.model.pagos.enums.FiltroEstado;
 import py.com.flextech.model.sistema.Usuario;
 import py.com.flextech.service.congresista.CongresistaService;
 
@@ -33,5 +37,25 @@ public class CongresistaController {
 			@RequestParam int pageNr,
 			@RequestParam int pageSize) {
 		return service.consultaCongresistaPorNombreORegistroAcademico(nombre, registroAcademico, pageNr, pageSize);
+	}
+	
+	@GetMapping("/consultaConFiltros")
+	public GenericResponseEntity<?> consultaConFiltros(
+	    @RequestParam(required = false) String nombre,
+	    @RequestParam(required = false) String registroAcademico,
+	    @RequestParam(defaultValue = "TODOS") FiltroEstado estado,
+	    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
+	    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta,
+	    @RequestParam int pageNr,
+	    @RequestParam int pageSize) {
+
+	  return service.consultaConFiltros(nombre, registroAcademico, estado, desde, hasta, pageNr, pageSize);
+	}
+
+	@GetMapping("/resumenCobrador")
+	public GenericResponseEntity<?> resumenCobrador(
+	    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
+	    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta) {
+	  return service.resumenCobrador(desde, hasta);
 	}
 }

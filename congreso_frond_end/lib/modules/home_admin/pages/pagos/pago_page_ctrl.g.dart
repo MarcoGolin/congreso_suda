@@ -267,6 +267,96 @@ mixin _$PagoPageCtrl on PagoPageCtrlBase, Store {
     });
   }
 
+  late final _$agruparPorCobradorAtom = Atom(
+    name: 'PagoPageCtrlBase.agruparPorCobrador',
+    context: context,
+  );
+
+  @override
+  bool get agruparPorCobrador {
+    _$agruparPorCobradorAtom.reportRead();
+    return super.agruparPorCobrador;
+  }
+
+  @override
+  set agruparPorCobrador(bool value) {
+    _$agruparPorCobradorAtom.reportWrite(value, super.agruparPorCobrador, () {
+      super.agruparPorCobrador = value;
+    });
+  }
+
+  late final _$resumenAtom = Atom(
+    name: 'PagoPageCtrlBase.resumen',
+    context: context,
+  );
+
+  @override
+  List<ResumenCobrador> get resumen {
+    _$resumenAtom.reportRead();
+    return super.resumen;
+  }
+
+  @override
+  set resumen(List<ResumenCobrador> value) {
+    _$resumenAtom.reportWrite(value, super.resumen, () {
+      super.resumen = value;
+    });
+  }
+
+  late final _$filtroEstadoAtom = Atom(
+    name: 'PagoPageCtrlBase.filtroEstado',
+    context: context,
+  );
+
+  @override
+  FiltroEstado get filtroEstado {
+    _$filtroEstadoAtom.reportRead();
+    return super.filtroEstado;
+  }
+
+  @override
+  set filtroEstado(FiltroEstado value) {
+    _$filtroEstadoAtom.reportWrite(value, super.filtroEstado, () {
+      super.filtroEstado = value;
+    });
+  }
+
+  late final _$filtroPeriodoAtom = Atom(
+    name: 'PagoPageCtrlBase.filtroPeriodo',
+    context: context,
+  );
+
+  @override
+  FiltroPeriodo get filtroPeriodo {
+    _$filtroPeriodoAtom.reportRead();
+    return super.filtroPeriodo;
+  }
+
+  @override
+  set filtroPeriodo(FiltroPeriodo value) {
+    _$filtroPeriodoAtom.reportWrite(value, super.filtroPeriodo, () {
+      super.filtroPeriodo = value;
+    });
+  }
+
+  late final _$rangoPersonalizadoAtom = Atom(
+    name: 'PagoPageCtrlBase.rangoPersonalizado',
+    context: context,
+  );
+
+  @override
+  DateTimeRange<DateTime>? get rangoPersonalizado {
+    _$rangoPersonalizadoAtom.reportRead();
+    return super.rangoPersonalizado;
+  }
+
+  @override
+  set rangoPersonalizado(DateTimeRange<DateTime>? value) {
+    _$rangoPersonalizadoAtom.reportWrite(value, super.rangoPersonalizado, () {
+      super.rangoPersonalizado = value;
+    });
+  }
+
   late final _$consultaAsyncAction = AsyncAction(
     'PagoPageCtrlBase.consulta',
     context: context,
@@ -333,7 +423,12 @@ mixin _$PagoPageCtrl on PagoPageCtrlBase, Store {
   @override
   String toString() {
     return '''
-congresistas: ${congresistas}
+congresistas: ${congresistas},
+agruparPorCobrador: ${agruparPorCobrador},
+resumen: ${resumen},
+filtroEstado: ${filtroEstado},
+filtroPeriodo: ${filtroPeriodo},
+rangoPersonalizado: ${rangoPersonalizado}
     ''';
   }
 }

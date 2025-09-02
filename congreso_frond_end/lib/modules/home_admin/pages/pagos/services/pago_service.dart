@@ -3,6 +3,8 @@ import 'package:congreso_evento/core/exception/service_exception.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
 import 'package:congreso_evento/modules/auth/models/usuario_pageable.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/models/habilitacion_pagos.dart';
+import 'package:congreso_evento/modules/home_admin/pages/pagos/models/resumen_cobrador.dart';
+import 'package:congreso_evento/modules/home_admin/pages/pagos/pago_page_ctrl.dart';
 import 'package:congreso_evento/modules/home_admin/pages/pagos/repositories/habilitacion_pagos_repository.dart';
 import 'package:congreso_evento/modules/home_admin/pages/pagos/repositories/pago_repository.dart';
 import 'package:congreso_evento/modules/inscripcion/inscripcion_repository.dart';
@@ -34,12 +36,28 @@ class PagoService {
     String? buscador,
     required int pageNr,
     required int pageSize,
+    required FiltroEstado filtroEstado,
+    required DateTime? desde,
+    required DateTime? hasta,
   }) async {
     try {
+      String estadoStr;
+      switch (filtroEstado) {
+        case FiltroEstado.pagos:
+          estadoStr = 'PAGOS';
+          break;
+        case FiltroEstado.exonerados:
+          estadoStr = 'EXONERADOS';
+          break;
+        case FiltroEstado.pendientes:
+          estadoStr = 'PENDIENTES';
+          break;
+        default:
+          estadoStr = 'TODOS';
+      }
+
       String? nombre;
       String? registroAcademico;
-
-      // si buscador es totalmente numero busca por registro academico, osino por nombre
       if (buscador != null && buscador.isNotEmpty) {
         if (RegExp(r'^\d+$').hasMatch(buscador)) {
           registroAcademico = buscador;
@@ -48,13 +66,15 @@ class PagoService {
         }
       }
 
-      var response = await congresistaRepository
-          .consultaCongresistaPorNombreORegistroAcademico(
-            nombre: nombre,
-            registroAcademico: registroAcademico,
-            pageNr: pageNr,
-            pageSize: pageSize,
-          );
+      var response = await pagoRepository.consultaConFiltros(
+        nombre: nombre,
+        registroAcademico: registroAcademico,
+        estado: estadoStr,
+        desde: desde,
+        hasta: hasta,
+        pageNr: pageNr,
+        pageSize: pageSize,
+      );
 
       if (response == null) {
         throw ServiceException(
@@ -119,6 +139,31 @@ class PagoService {
       HabilitacionPagos? p = response?.object != null
           ? HabilitacionPagos.fromJson(response!.object)
           : null;
+      return (
+        data: p,
+        code: response?.code ?? 0,
+        message: response?.message ?? '',
+      );
+    } on Exception catch (e) {
+      throw ServiceException(message: ExceptionUtils.getExceptionMessage(e));
+    }
+  }
+
+  Future<({List<ResumenCobrador> data, int code, String message})>
+  resumenCobrador({required DateTime? desde, required DateTime? hasta}) async {
+    try {
+      var response = await pagoRepository.resumenCobrador(
+        desde: desde,
+        hasta: hasta,
+      );
+
+      List<ResumenCobrador> p = [];
+      if (response?.object != null) {
+        p = (response!.object as List)
+            .map((e) => ResumenCobrador.fromJson(e))
+            .toList();
+      }
+
       return (
         data: p,
         code: response?.code ?? 0,

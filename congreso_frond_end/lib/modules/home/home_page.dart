@@ -145,7 +145,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('IVCUSMI 2025'),
+              const Text('#IVCIUSMI 2025'),
               Text(_version, style: TextStyle(fontSize: 8, color: Colors.grey)),
             ],
           ),

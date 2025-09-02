@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:congreso_evento/core/empty_result.dart';
 import 'package:congreso_evento/core/formater/date_formater.dart';
 import 'package:congreso_evento/core/formater/number_formater.dart';
 import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
@@ -149,7 +150,7 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
           ),
         ),
         actions: [
-          if (_ctrl.usuario?.isAdmin == true)
+          if (_ctrl.usuario?.isAdmin == true && u.isPago == false)
             TextButton(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
@@ -286,6 +287,165 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
                 ),
               ),
 
+              // Fila 1: Estado
+              Visibility(
+                visible: _ctrl.isAdmin,
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _ChoiceChipX(
+                      label: 'Todos',
+                      selected: _ctrl.filtroEstado == FiltroEstado.todos,
+                      onSelected: (_) {
+                        _ctrl.filtroEstado = FiltroEstado.todos;
+                        _ctrl.primeraConsulta();
+                      },
+                    ),
+                    _ChoiceChipX(
+                      label: 'Pagos',
+                      selected: _ctrl.filtroEstado == FiltroEstado.pagos,
+                      onSelected: (_) {
+                        _ctrl.filtroEstado = FiltroEstado.pagos;
+                        _ctrl.primeraConsulta();
+                      },
+                    ),
+                    _ChoiceChipX(
+                      label: 'Exonerados',
+                      selected: _ctrl.filtroEstado == FiltroEstado.exonerados,
+                      onSelected: (_) {
+                        _ctrl.filtroEstado = FiltroEstado.exonerados;
+                        _ctrl.primeraConsulta();
+                      },
+                    ),
+                    _ChoiceChipX(
+                      label: 'Pendientes',
+                      selected: _ctrl.filtroEstado == FiltroEstado.pendientes,
+                      onSelected: (_) {
+                        _ctrl.filtroEstado = FiltroEstado.pendientes;
+                        _ctrl.primeraConsulta();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              // Fila 2: Periodo
+              Visibility(
+                visible: _ctrl.isAdmin,
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _ChoiceChipX(
+                      label: 'Hoy',
+                      selected: _ctrl.filtroPeriodo == FiltroPeriodo.hoy,
+                      onSelected: (_) {
+                        _ctrl.filtroPeriodo = FiltroPeriodo.hoy;
+                        _ctrl.primeraConsulta();
+                        _ctrl.cargarResumen();
+                      },
+                    ),
+                    _ChoiceChipX(
+                      label: 'Ayer',
+                      selected: _ctrl.filtroPeriodo == FiltroPeriodo.ayer,
+                      onSelected: (_) {
+                        _ctrl.filtroPeriodo = FiltroPeriodo.ayer;
+                        _ctrl.primeraConsulta();
+                        _ctrl.cargarResumen();
+                      },
+                    ),
+                    _ChoiceChipX(
+                      label: 'Este mes',
+                      selected: _ctrl.filtroPeriodo == FiltroPeriodo.mes,
+                      onSelected: (_) {
+                        _ctrl.filtroPeriodo = FiltroPeriodo.mes;
+                        _ctrl.primeraConsulta();
+                        _ctrl.cargarResumen();
+                      },
+                    ),
+                    _ChoiceChipX(
+                      label: _ctrl.filtroPeriodo == FiltroPeriodo.rango
+                          ? 'Rango (${_fmtShortRange(_ctrl.rangoPersonalizado)})'
+                          : 'Rango...',
+                      selected: _ctrl.filtroPeriodo == FiltroPeriodo.rango,
+                      onSelected: (_) async {
+                        final picked = await showDateRangePicker(
+                          context: context,
+                          firstDate: DateTime.now().subtract(
+                            const Duration(days: 365),
+                          ),
+                          lastDate: DateTime.now().add(
+                            const Duration(days: 365),
+                          ),
+                          saveText: 'Aplicar',
+                          builder: (ctx, child) => Theme(
+                            data: Theme.of(ctx).copyWith(
+                              colorScheme: ColorScheme.fromSeed(
+                                seedColor: brandPrimary,
+                              ),
+                            ),
+                            child: child!,
+                          ),
+                        );
+                        if (picked != null) {
+                          _ctrl.rangoPersonalizado = picked;
+                          _ctrl.filtroPeriodo = FiltroPeriodo.rango;
+                          _ctrl.primeraConsulta();
+                          _ctrl.cargarResumen();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              Visibility(
+                visible: _ctrl.isAdmin,
+                child: Row(
+                  children: [
+                    Switch(
+                      value: _ctrl.agruparPorCobrador,
+                      onChanged: (v) async {
+                        setState(() {}); // si hace falta
+                        _ctrl.agruparPorCobrador = v;
+                        if (v) {
+                          await _ctrl.cargarResumen();
+                        } else {
+                          _ctrl.primeraConsulta();
+                        }
+                      },
+                      activeColor: brandPrimary,
+                    ),
+                    const SizedBox(width: 6),
+                    const Text('Agrupar por cobrador'),
+                  ],
+                ),
+              ),
+
+              if (_ctrl.agruparPorCobrador)
+                Card(
+                  margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(color: kBorder),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: _ctrl.resumen
+                        .map(
+                          (r) => ListTile(
+                            leading: const Icon(Icons.badge_outlined),
+                            title: Text(r.usuarioPagoNombre ?? '—'),
+                            subtitle: Text('Cobros: ${r.cantidad}'),
+                            trailing: Text(newFormatNumber(r.montoTotal, 1)),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+
               // Resumen
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -337,7 +497,7 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
                             padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
                             physics: const AlwaysScrollableScrollPhysics(),
                             children: const [
-                              _EmptyResult(
+                              EmptyResult(
                                 title: 'La consulta no retornó registros',
                               ),
                             ],
@@ -432,53 +592,40 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
   );
 }
 
-class _EmptyResult extends StatelessWidget {
-  final String title;
-  final String? subtitle;
-  const _EmptyResult({required this.title, this.subtitle});
+class _ChoiceChipX extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final ValueChanged<bool> onSelected;
+  const _ChoiceChipX({
+    required this.label,
+    required this.selected,
+    required this.onSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 520,
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: kBorder),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.inbox_outlined,
-              size: 36,
-              color: brandPrimary.withOpacity(.8),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: kInk,
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-              ),
-            ),
-            if (subtitle != null) ...[
-              const SizedBox(height: 6),
-              Text(
-                subtitle!,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: kMuted),
-              ),
-            ],
-          ],
-        ),
+    return ChoiceChip(
+      label: Text(label),
+      selected: selected,
+      onSelected: onSelected,
+      shape: StadiumBorder(
+        side: BorderSide(color: brandPrimary.withOpacity(.25)),
+      ),
+      backgroundColor: Colors.white,
+      selectedColor: brandPrimary.withOpacity(.12),
+      labelStyle: TextStyle(color: selected ? brandPrimary : kInk),
+      side: BorderSide(
+        color: selected ? brandPrimary.withOpacity(.45) : kBorder,
       ),
     );
   }
+}
+
+String _fmtShortRange(DateTimeRange? r) {
+  if (r == null) return '';
+  String dd(DateTime d) =>
+      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}';
+  return '${dd(r.start)}–${dd(r.end)}';
 }
 
 // ==========================

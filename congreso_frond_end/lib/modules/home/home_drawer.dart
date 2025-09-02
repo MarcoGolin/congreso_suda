@@ -39,7 +39,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'IVCUSMI 2025',
+                    '#IVCIUSMI2025',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -49,7 +49,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   ),
                   const SizedBox(height: 4),
                   const Text(
-                    'Congreso Internacional de Medicina',
+                    'IV Congreso Internacional de la Universidad Sudamericana “Medicina Interdisciplinaria”',
                     style: TextStyle(
                       color: Color.fromRGBO(255, 255, 255, 0.92),
                       fontSize: 12.5,
@@ -76,12 +76,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   ),
                   _NavTile(
                     icon: Icons.description_outlined,
-                    label: 'Trabajos',
+                    label: 'Trabajos Científicos',
                     onTap: () => widget.onTap('Trabajos'),
                   ),
                   _NavTile(
                     icon: Icons.groups_outlined,
-                    label: 'Ligas',
+                    label: 'Ligas Académicas',
                     onTap: () => widget.onTap('Ligas'),
                   ),
                   _NavTile(

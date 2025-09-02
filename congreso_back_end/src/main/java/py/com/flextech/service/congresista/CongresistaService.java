@@ -1,7 +1,9 @@
 package py.com.flextech.service.congresista;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,6 +18,8 @@ import com.github.pagehelper.PageInfo;
 import lombok.RequiredArgsConstructor;
 import py.com.flextech.mapper.congresista.CongresistaMapper;
 import py.com.flextech.model.dto.GenericResponseEntity;
+import py.com.flextech.model.pagos.dto.ResumenCobradoDto;
+import py.com.flextech.model.pagos.enums.FiltroEstado;
 import py.com.flextech.model.sistema.Usuario;
 import py.com.flextech.repository.sistema.UsuarioRepository;
 import py.com.flextech.service.sistema.EmailQueueService;
@@ -73,4 +77,32 @@ public class CongresistaService {
 		Page<Usuario> congresistas = congresistaMapper.consultaCongresistaPorNombreORegistroAcademico(nombre, registroAcademico);
 		return new GenericResponseEntity<PageInfo<Usuario>>("Guardado con Éxito!", 200, new PageInfo<>(congresistas));
 	}
+	
+	public GenericResponseEntity<PageInfo<Usuario>> consultaConFiltros(
+		    String nombre,
+		    String registroAcademico,
+		    FiltroEstado estado,
+		    LocalDateTime desde,
+		    LocalDateTime hasta,
+		    int pageNo,
+		    int pageSize) {
+
+		  PageHelper.startPage(pageNo, pageSize, true);
+		  final boolean aplicaFechaPago = (estado == FiltroEstado.PAGOS || estado == FiltroEstado.EXONERADOS);
+
+		  Page<Usuario> page = congresistaMapper.consultaCongresistaConFiltros(
+		      nombre,
+		      registroAcademico,
+		      estado != null ? estado.name() : "TODOS",
+		      desde, hasta,
+		      aplicaFechaPago
+		  );
+		  return new GenericResponseEntity<>("OK", 200, new PageInfo<>(page));
+		}
+
+		public GenericResponseEntity<List<ResumenCobradoDto>> resumenCobrador(
+		    LocalDateTime desde, LocalDateTime hasta) {
+		  List<ResumenCobradoDto> rows = congresistaMapper.resumenPorCobrador(desde, hasta);
+		  return new GenericResponseEntity<>("OK", 200, rows);
+		}
 }
