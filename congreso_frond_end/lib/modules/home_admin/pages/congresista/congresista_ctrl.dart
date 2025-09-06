@@ -2,6 +2,7 @@ import 'package:congreso_evento/core/exception/service_exception.dart';
 import 'package:congreso_evento/core/models/global_state_class.dart';
 import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
+import 'package:congreso_evento/modules/home_admin/pages/congresista/enums/tipo_usuario_enum.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/services/congresista_service.dart';
 import 'package:mobx/mobx.dart';
 
@@ -92,6 +93,14 @@ abstract class CongresistaCtrlBase with Store {
     _congresista = _congresista?.copyWith(isStaff: value);
   }
 
+  set setIsInvitado(bool? value) {
+    _congresista = _congresista?.copyWith(isInvitado: value);
+  }
+
+  set setIsDisertante(bool? value) {
+    _congresista = _congresista?.copyWith(isDisertante: value);
+  }
+
   @action
   void changeStatus(String message, StatusEnumGlobal status) {
     _stateClass = _stateClass.copyWith(message: message, status: status);
@@ -135,7 +144,8 @@ abstract class CongresistaCtrlBase with Store {
     _congresista = _congresista?.copyWith(nombreCompleto: value);
   }
 
-  bool get isLoading => _stateClass.status == StatusEnumGlobal.loadingList;
+  bool get isLoading => _stateClass.status == StatusEnumGlobal.loading;
+  bool get isLoadingList => _stateClass.status == StatusEnumGlobal.loadingList;
 
   @action
   Future<void> guardar() async {
@@ -200,6 +210,32 @@ abstract class CongresistaCtrlBase with Store {
       congresistas[index] = data;
     } else {
       congresistas.add(data);
+    }
+  }
+
+  @action
+  Future<List<Usuario>> consultaCongresistaPorTipo(
+    TipoUsuarioEnum tipoUsuario,
+  ) async {
+    try {
+      if (_stateClass.status == StatusEnumGlobal.loading) {
+        return []; // Evita múltiples llamadas simultáneas
+      }
+      changeStatus('', StatusEnumGlobal.loading);
+      final response = await service.consultaCongresistaPorTipo(tipoUsuario);
+      final data = response.data;
+      if (data.isEmpty) {
+        changeStatus(
+          'No se encontraron registros para ese tipo.',
+          StatusEnumGlobal.errorDialog,
+        );
+        return [];
+      }
+      changeStatus('', StatusEnumGlobal.loaded);
+      return data;
+    } on ServiceException catch (e) {
+      changeStatus(e.message, StatusEnumGlobal.errorDialog);
+      return [];
     }
   }
 }

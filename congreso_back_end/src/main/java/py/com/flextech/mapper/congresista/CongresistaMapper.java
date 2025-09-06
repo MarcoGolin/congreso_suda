@@ -27,4 +27,9 @@ public interface CongresistaMapper {
 		      @Param("desde") LocalDateTime desde,
 		      @Param("hasta") LocalDateTime hasta
 		  );
+		  
+		  
+		  List<Usuario> consultaCongresistaPorCondicion(
+			      @Param("condicion") String condicion
+			  );
 }

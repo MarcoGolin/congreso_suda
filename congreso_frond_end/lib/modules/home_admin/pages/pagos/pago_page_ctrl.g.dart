@@ -379,6 +379,16 @@ mixin _$PagoPageCtrl on PagoPageCtrlBase, Store {
     );
   }
 
+  late final _$anularPagoAsyncAction = AsyncAction(
+    'PagoPageCtrlBase.anularPago',
+    context: context,
+  );
+
+  @override
+  Future<Usuario?> anularPago(Usuario u) {
+    return _$anularPagoAsyncAction.run(() => super.anularPago(u));
+  }
+
   late final _$consultarSiEstaHabilitadoAsyncAction = AsyncAction(
     'PagoPageCtrlBase.consultarSiEstaHabilitado',
     context: context,

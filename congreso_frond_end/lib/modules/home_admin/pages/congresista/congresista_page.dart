@@ -7,6 +7,7 @@ import 'package:congreso_evento/modules/auth/models/usuario.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/congresista_ctrl.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/utils/carnet_pdf.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/widgets/congresista_end_drawer.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -154,7 +155,6 @@ class _CongresistaPageState extends State<CongresistaPage>
         backgroundColor: brandLight,
         foregroundColor: Colors.white,
         elevation: 0,
-        actions: [],
       ),
       body: LayoutBuilder(
         builder: (context, c) {
@@ -219,7 +219,7 @@ class _CongresistaPageState extends State<CongresistaPage>
                         physics: const AlwaysScrollableScrollPhysics(),
                         itemCount:
                             _ctrl.congresistas.length +
-                            (_ctrl.isLoading || !_ctrl.isLastPage ? 1 : 0),
+                            (_ctrl.isLoadingList || !_ctrl.isLastPage ? 1 : 0),
                         itemBuilder: (context, index) {
                           if (index >= _ctrl.congresistas.length) {
                             return const Padding(
@@ -368,6 +368,11 @@ class _SearchBar extends StatelessWidget {
             ),
             Tooltip(
               message: 'Limpiar filtros',
+              triggerMode: kIsWeb
+                  ? TooltipTriggerMode.tap
+                  : TooltipTriggerMode.longPress,
+              waitDuration: const Duration(milliseconds: 600),
+              showDuration: const Duration(seconds: 3),
               child: IconButton.filledTonal(
                 onPressed: () {
                   buscadorCtrl.clear();
@@ -510,13 +515,14 @@ class _CongresistaItem extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         // Acciones
-        Row(
+        Wrap(
           spacing: 5,
+          runSpacing: 5,
           children: [
             OutlinedButton.icon(
               onPressed: generarCarnet,
               icon: const Icon(Icons.qr_code, size: 18),
-              label: const Text('Generar carnet'),
+              label: const Text('Carnet'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: brandPrimary,
                 side: BorderSide(color: brandPrimary.withOpacity(0.6)),
@@ -525,7 +531,7 @@ class _CongresistaItem extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: onHabilitarPago,
               icon: const Icon(Icons.payments, size: 18),
-              label: const Text('Habilitar para Pago'),
+              label: const Text('Habilitar'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: brandPrimary,
                 side: BorderSide(color: brandPrimary.withOpacity(0.6)),

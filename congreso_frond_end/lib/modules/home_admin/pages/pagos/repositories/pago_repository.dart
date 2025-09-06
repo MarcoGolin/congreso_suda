@@ -28,6 +28,21 @@ class PagoRepository {
     }
   }
 
+  Future<GenericResponseEntity> anularPago({required int idCongresista}) async {
+    try {
+      final response = await api.delete(
+        '/pago/anular',
+        queryParameters: {'idCongresista': idCongresista},
+      );
+      GenericResponseEntity genericResponse = GenericResponseEntity.fromJson(
+        response.data,
+      );
+      return genericResponse;
+    } on Exception catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
+
   Future<GenericResponseEntity?> consultaConFiltros({
     String? nombre,
     String? registroAcademico,

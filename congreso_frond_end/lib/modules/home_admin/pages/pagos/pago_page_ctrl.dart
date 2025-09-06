@@ -253,6 +253,32 @@ abstract class PagoPageCtrlBase with Store {
     }
   }
 
+  @action
+  Future<Usuario?> anularPago(Usuario u) async {
+    try {
+      // BLOQUEO si no es admin y no puede cobrar
+      if (!isAdmin) {
+        changeStatus(
+          'La Cancelacion de cobros solo está permitida para administradores.',
+          StatusEnumGlobal.errorAndAction,
+        );
+        return null;
+      }
+      if (_stateClass.status == StatusEnumGlobal.loading) {
+        return null; // Evita múltiples llamadas simultáneas
+      }
+      changeStatus('', StatusEnumGlobal.loading);
+      final response = await service.anularPago(id: u.id!);
+      final data = response.data;
+      _actualizaLista(data);
+      changeStatus('', StatusEnumGlobal.success);
+      return data;
+    } on ServiceException catch (e) {
+      changeStatus(e.message, StatusEnumGlobal.errorDialog);
+      return null;
+    }
+  }
+
   void _actualizaLista(Usuario? data) {
     if (data == null) return;
     final index = congresistas.indexWhere((c) => c.id == data.id);

@@ -150,6 +150,18 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
           ),
         ),
         actions: [
+          if (_ctrl.usuario?.isAdmin == true &&
+              (u.isPago == true || u.isExonerado == true))
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.red,
+              ),
+              onPressed: () {
+                _onAnularPago(u);
+              },
+              child: const Text('Anular Pago'),
+            ),
           if (_ctrl.usuario?.isAdmin == true && u.isPago == false)
             TextButton(
               style: TextButton.styleFrom(
@@ -590,6 +602,30 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
       ],
     ),
   );
+
+  void _onAnularPago(Usuario u) {
+    Navigator.pop(context);
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Anular Pago'),
+        content: const Text('¿Estás seguro de que deseas anular este pago?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              _ctrl.anularPago(u);
+              Navigator.pop(context);
+            },
+            child: const Text('Confirmar'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _ChoiceChipX extends StatelessWidget {

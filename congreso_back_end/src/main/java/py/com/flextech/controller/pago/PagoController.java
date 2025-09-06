@@ -1,6 +1,7 @@
 package py.com.flextech.controller.pago;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,5 +24,10 @@ public class PagoController {
 	@PutMapping("/confirmar")
 	public GenericResponseEntity<?> confirmar(@RequestAttribute Long idUsuario, @RequestParam Long idCongresista, @RequestParam Boolean isExonerado) {
 		return service.confirmar(idUsuario, idCongresista, isExonerado);
+	}
+	
+	@DeleteMapping("/anular")
+	public GenericResponseEntity<?> anular(@RequestAttribute Long idUsuario, @RequestParam Long idCongresista) {
+		return service.anular(idUsuario, idCongresista);
 	}
 }

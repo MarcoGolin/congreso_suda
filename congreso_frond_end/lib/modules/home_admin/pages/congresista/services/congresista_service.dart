@@ -2,6 +2,7 @@ import 'package:congreso_evento/core/exception/exception_utils.dart';
 import 'package:congreso_evento/core/exception/service_exception.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
 import 'package:congreso_evento/modules/auth/models/usuario_pageable.dart';
+import 'package:congreso_evento/modules/home_admin/pages/congresista/enums/tipo_usuario_enum.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/repositories/congresista_repository.dart';
 
 class CongresistaService {
@@ -93,6 +94,26 @@ class CongresistaService {
         isFirstPage: isFirstPage,
         totalRegistros: totalRegistros,
       );
+    } on Exception catch (e) {
+      throw ServiceException(message: ExceptionUtils.getExceptionMessage(e));
+    }
+  }
+
+  Future<({List<Usuario> data, int code, String message})>
+  consultaCongresistaPorTipo(TipoUsuarioEnum tipoUsuario) async {
+    try {
+      var response = await repository.consultaCongresistaPorTipo(
+        tipoUsuario: tipoUsuario,
+      );
+      if (response == null) {
+        throw ServiceException(
+          message: 'No se encontró información del congresista',
+        );
+      }
+      List<Usuario> usuarios = response.object != null
+          ? (response.object as List).map((e) => Usuario.fromJson(e)).toList()
+          : [];
+      return (data: usuarios, code: response.code, message: response.message);
     } on Exception catch (e) {
       throw ServiceException(message: ExceptionUtils.getExceptionMessage(e));
     }

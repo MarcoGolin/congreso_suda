@@ -22,6 +22,7 @@
 		<result property="montoPago" column="VL_PAGO" />
 		<result property="isExonerado" column="BO_EXONERADO" />
 		<result property="usuarioPago" column="USUARIO_PAGO" />
+		<result property="obsAnulacionPago" column="OBS_ANULACION_PAGO" />
 		<result property="uuid" column="UUID" />
 
 		<result property="isAdmin" column="BO_ADMIN" />
@@ -135,6 +136,19 @@
     GROUP BY u.USUARIO_PAGO
     ORDER BY cantidad DESC
   </select>
+  
+  
+  <select id="consultaCongresistaPorCondicion"
+	        resultMap="resultSimples"
+	        parameterType="map">
+	  <include refid="sqlDefault"/>
+	  <where>
+	    <if test="condicion != null and condicion.trim() != ''">
+	      ${condicion}
+	    </if>
+	  </where>
+	  ORDER BY u.NOMBRE_COMPLETO DESC
+	</select>
 
 
 </mapper>

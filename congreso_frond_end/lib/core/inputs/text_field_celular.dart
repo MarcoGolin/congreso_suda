@@ -62,7 +62,7 @@ class _TextFieldCelularState extends State<TextFieldCelular> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              width: 110,
+              width: 120,
               height: 60,
               child: DropdownButtonFormField<String>(
                 value: _selectedCountryCodePrefix,

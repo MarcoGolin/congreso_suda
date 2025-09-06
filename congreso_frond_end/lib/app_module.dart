@@ -4,6 +4,9 @@ import 'package:congreso_evento/modules/auth/pages/ingreso_restringido/ingreso_r
 import 'package:congreso_evento/modules/auth/pages/login/auth/auth_loader_page.dart';
 import 'package:congreso_evento/modules/auth/pages/login/login_page.dart';
 import 'package:congreso_evento/modules/home/home_page.dart';
+import 'package:congreso_evento/modules/home/home_page_ctrl.dart';
+import 'package:congreso_evento/modules/home/repositories/organizadores_repository.dart';
+import 'package:congreso_evento/modules/home/service/organizadores_service.dart';
 import 'package:congreso_evento/modules/home_admin/home_admin_module.dart';
 import 'package:congreso_evento/modules/home_congresista/home_congresista_module.dart';
 import 'package:congreso_evento/modules/inscripcion/Inscripcion_module.dart';
@@ -12,7 +15,11 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 class AppModule extends Module {
   @override
-  void binds(i) {}
+  void binds(i) {
+    i.addLazySingleton(HomePageCtrl.new);
+    i.addLazySingleton(OrganizadoresService.new);
+    i.addLazySingleton(OrganizadoresRepository.new);
+  }
 
   @override
   List<Module> get imports => [CoreModule()];

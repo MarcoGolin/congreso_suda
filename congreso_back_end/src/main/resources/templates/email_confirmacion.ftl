@@ -50,7 +50,7 @@
           <td style="padding:16px 28px 0; font-family:'Segoe UI', Roboto, Arial, sans-serif;">
             <h4 style="margin:0 0 10px; font-size:15px; line-height:1.4; color:#387f4d; font-weight:700;">Detalles del evento</h4>
             <p style="margin:0 0 12px; color:#333333; font-size:14px; line-height:1.6;">
-              <strong>Fechas:</strong> 10, 11 y 12 de octubre de 2025<br>
+              <strong>Fechas:</strong> 09, 10 y 11 de octubre de 2025<br>
               <strong>Lugar:</strong> Shopping Mall Mercosur, Saltos del Guairá
             </p>
           </td>

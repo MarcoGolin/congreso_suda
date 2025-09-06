@@ -1,8 +1,8 @@
 import 'dart:ui' as ui;
 
+import 'package:congreso_evento/core/app_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mobx/mobx.dart';
 
 mixin DefaultStateNotifier<T extends StatefulWidget> on State<T> {
@@ -193,10 +193,7 @@ mixin DefaultStateNotifier<T extends StatefulWidget> on State<T> {
       context: context,
       barrierDismissible: false,
       builder: (_) {
-        return LoadingAnimationWidget.threeArchedCircle(
-          color: Colors.white,
-          size: 60,
-        );
+        return const AppLoader();
       },
     );
   }

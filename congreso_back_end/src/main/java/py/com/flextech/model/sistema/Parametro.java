@@ -32,6 +32,10 @@ public class Parametro {
 	@NotNull
 	@Column(name = "VL_INSRIPCION_ACTUAL")
 	private BigDecimal vlInscripconActual;
+	
+	@NotNull
+	@Column(name = "BO_MOSTRAR_COMITE")
+	private Boolean mostrarComite;
 		
 	
 	public Parametro(Long id) {

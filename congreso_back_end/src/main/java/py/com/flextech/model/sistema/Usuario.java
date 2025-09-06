@@ -3,6 +3,7 @@ package py.com.flextech.model.sistema;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -43,7 +44,7 @@ public class Usuario  implements Serializable , UserDetails  {
 	
 	@NotNull
 	@Column(name = "FC_REGISTRO")
-	private Instant fechaRegistro;
+	private LocalDateTime fechaRegistro;
 
 	@NotNull
 	@Column(name = "NOMBRE_COMPLETO")
@@ -83,7 +84,7 @@ public class Usuario  implements Serializable , UserDetails  {
 	
 	//ACTIVACION
 	@Column(name = "FC_ACTIVACION")
-	private Instant fechaActivacion;
+	private LocalDateTime fechaActivacion;
 
 	@NotNull
 	@Column(name = "BO_ACTIVADO")
@@ -95,7 +96,10 @@ public class Usuario  implements Serializable , UserDetails  {
 	private Boolean isPago;
 
 	@Column(name = "FC_PAGO")
-	private Instant fechaPago;
+	private LocalDateTime fechaPago;
+
+	@Column(name = "NR_COMPROBANTE")
+	private String nrComprobante;
 	
 	@Column(name = "USUARIO_PAGO")
 	private String usuarioPago;
@@ -105,6 +109,9 @@ public class Usuario  implements Serializable , UserDetails  {
 
 	@Column(name = "BO_EXONERADO")
 	private Boolean isExonerado;
+	
+	@Column(name = "OBS_ANULACION_PAGO")
+	private String obsAnulacionPago;
 
 	@NotNull
 	@Column(name = "UUID")

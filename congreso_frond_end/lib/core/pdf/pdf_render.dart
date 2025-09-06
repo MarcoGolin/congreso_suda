@@ -226,7 +226,7 @@ class _PdfRenderState extends State<PdfRender> {
                       build: (format) => pdfLocal!,
                       actions: _widgets,
                       actionBarTheme: PdfActionBarTheme(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        backgroundColor: Color(0xFF387f4d),
                       ),
                     )
                   : const Center(

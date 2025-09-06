@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import py.com.flextech.model.dto.GenericResponseEntity;
 import py.com.flextech.model.pagos.enums.FiltroEstado;
 import py.com.flextech.model.sistema.Usuario;
+import py.com.flextech.model.sistema.enums.TipoUsuarioEnum;
 import py.com.flextech.service.congresista.CongresistaService;
 
 
@@ -57,5 +58,16 @@ public class CongresistaController {
 	    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
 	    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta) {
 	  return service.resumenCobrador(desde, hasta);
+	}
+	
+	@GetMapping("/consultaCongresistaPorTipo")
+	public GenericResponseEntity<?> consultaCongresistaPorTipo(
+	    @RequestParam(required = true)  String tipoUsuario) {
+	  return service.consultaCongresistaPorTipo(TipoUsuarioEnum.valueOf(tipoUsuario));
+	}
+
+	@GetMapping("/reenviarEmailInscripcion")
+	public GenericResponseEntity<?> reenviarEmailInscripcion() {
+		return service.reenviarEmailInscripcion();
 	}
 }

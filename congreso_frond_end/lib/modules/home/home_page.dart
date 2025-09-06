@@ -1,13 +1,15 @@
 import 'package:congreso_evento/core/web_helper/web_helper_stub.dart'
     if (dart.library.html) 'package:congreso_evento/core/web_helper/web_helper.dart';
 import 'package:congreso_evento/modules/home/home_drawer.dart';
+import 'package:congreso_evento/modules/home/home_page_ctrl.dart';
+import 'package:congreso_evento/modules/home/sections/comite_section.dart';
 import 'package:congreso_evento/modules/home/sections/inicio_section.dart';
 import 'package:congreso_evento/modules/home/sections/ligas_academicas_section.dart';
 import 'package:congreso_evento/modules/home/sections/sobre_section.dart';
 import 'package:congreso_evento/modules/home/sections/trabajo_cientifico_section.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:yaml/yaml.dart';
 
@@ -22,6 +24,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _ctrl = Modular.get<HomePageCtrl>();
   final ScrollController _scrollController = ScrollController();
 
   final GlobalKey _inicioSectionKey = GlobalKey();
@@ -31,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey _trabajosCientificosSectionKey = GlobalKey();
   final GlobalKey _ligasAcademicasSectionKey = GlobalKey();
   final GlobalKey _lugarEventoSectionKey = GlobalKey();
+  final GlobalKey _comiteSectionKey = GlobalKey();
   // final GlobalKey _reconocimientosApoyoSectionKey = GlobalKey();
 
   // final GlobalKey _precioSectionKey = GlobalKey();
@@ -46,25 +50,13 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     bloquearBotonAtrasNavegador();
-    final args = Modular.args.queryParams;
-    debugPrint("Args: $args");
-    if (args.containsKey('codigoKape')) {
-      debugPrint('Codigo Kape: ${args['codigoKape']?.trim()}');
-    } else {
-      debugPrint('Codigo Kape no encontrado');
-    }
-    if (args.containsKey('codigoInfluencer')) {
-      debugPrint('Codigo Influencer: ${args['codigoInfluencer']?.trim()}');
-    } else {
-      debugPrint('Codigo Influencer no encontrado');
-    }
-
     _sectionKeys = {
       'Inicio': _inicioSectionKey,
       'Sobre': _sobreSectionKey,
       // 'Disertantes': _disertantesSectionKey,
       'Trabajos': _trabajosCientificosSectionKey,
       'Ligas': _ligasAcademicasSectionKey,
+      'Comité': _comiteSectionKey,
       'Lugar': _lugarEventoSectionKey,
       // 'Precios': _precioSectionKey,
       'Contacto': _contactoSectionKey,
@@ -72,6 +64,8 @@ class _HomePageState extends State<HomePage> {
     _scrollController.addListener(_onScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _ctrl.consultarOrganizadores();
+      cierraPreLoader();
       var y = await rootBundle.loadString("pubspec.yaml");
       String nrBuild = loadYaml(y)["version"];
 
@@ -79,12 +73,6 @@ class _HomePageState extends State<HomePage> {
         _version = 'V: $nrBuild';
       });
     });
-
-    if (kIsWeb) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        cierraPreLoader();
-      });
-    }
   }
 
   void _onScroll() {
@@ -174,6 +162,23 @@ class _HomePageState extends State<HomePage> {
             key: _ligasAcademicasSectionKey,
             child: const LigasAcademicasSection(),
           ),
+          //seccion organizadores
+          if (_ctrl.organizadores.isNotEmpty)
+            SizedBox(
+              key: _comiteSectionKey,
+              child: Observer(
+                builder: (_) {
+                  final lista = _ctrl.organizadores; // MobX observable
+                  final isLoading =
+                      _ctrl.isLoading ==
+                      true; // si tenés un flag; si no, dejá false
+                  return ComiteSection(
+                    organizadores: lista,
+                    isLoading: isLoading,
+                  );
+                },
+              ),
+            ),
           SizedBox(
             key: _lugarEventoSectionKey,
             child: const LugarSection(), // Placeholder for Trabajos Científicos

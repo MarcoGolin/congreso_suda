@@ -1,7 +1,7 @@
 name: congreso_evento
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+19
+version: 1.0.0+20
 
 environment:
   sdk: ^3.8.0
@@ -112,8 +112,4 @@ targets:
           generic_argument_factories: false
           ignore_unannotated: false
           include_if_null: true  
-X
-mobx: 
-  name: "Slydy run mobx"
-  description: 'minha descricao'
-  run: dart run build_runner watch -d                
+

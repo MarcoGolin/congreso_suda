@@ -118,6 +118,8 @@ class Usuario implements ISimpleListTile {
     bool? isFinanciero,
     bool? isStaff,
     bool? isCongresista,
+    bool? isInvitado,
+    bool? isDisertante,
     bool? isActivado,
   }) {
     return Usuario(
@@ -143,6 +145,8 @@ class Usuario implements ISimpleListTile {
       isFinanciero: isFinanciero ?? this.isFinanciero,
       isStaff: isStaff ?? this.isStaff,
       isCongresista: isCongresista ?? this.isCongresista,
+      isInvitado: isInvitado ?? this.isInvitado,
+      isDisertante: isDisertante ?? this.isDisertante,
       isActivado: isActivado ?? this.isActivado,
     );
   }

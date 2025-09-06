@@ -7,13 +7,14 @@ class HeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
+    final themeTitle = Theme.of(context).textTheme;
     return Text(
       title,
-      style: TextStyle(
-        fontSize: isMobile ? 20 : 22,
-        fontWeight: FontWeight.bold,
+      style: themeTitle.displaySmall?.copyWith(
+        fontFamily: 'Montserrat',
+        fontWeight: FontWeight.w800,
         color: color,
+        letterSpacing: -0.5,
       ),
     );
   }

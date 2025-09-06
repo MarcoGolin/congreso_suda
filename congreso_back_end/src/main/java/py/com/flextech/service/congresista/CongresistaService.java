@@ -1,8 +1,8 @@
 package py.com.flextech.service.congresista;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,6 +21,7 @@ import py.com.flextech.model.dto.GenericResponseEntity;
 import py.com.flextech.model.pagos.dto.ResumenCobradoDto;
 import py.com.flextech.model.pagos.enums.FiltroEstado;
 import py.com.flextech.model.sistema.Usuario;
+import py.com.flextech.model.sistema.enums.TipoUsuarioEnum;
 import py.com.flextech.repository.sistema.UsuarioRepository;
 import py.com.flextech.service.sistema.EmailQueueService;
 
@@ -46,7 +47,7 @@ public class CongresistaService {
 				return new GenericResponseEntity<String>("El Email " + usuario.getEmail() + " ya se encuentra registrado!", 201, null);
 			}
 			
-			 usuario.setFechaRegistro(Instant.now());
+			 usuario.setFechaRegistro(LocalDateTime.now());
 			 UUID uuid = UUID.randomUUID();
 			 usuario.setUuid(uuid.toString());
 			 usuario.setIsCongresista(true);
@@ -104,5 +105,41 @@ public class CongresistaService {
 		    LocalDateTime desde, LocalDateTime hasta) {
 		  List<ResumenCobradoDto> rows = congresistaMapper.resumenPorCobrador(desde, hasta);
 		  return new GenericResponseEntity<>("OK", 200, rows);
+		}
+		
+		
+		public GenericResponseEntity<List<Usuario>> consultaCongresistaPorTipo(TipoUsuarioEnum tpUsuario) {
+			
+			  String condicion = "";
+			  
+			  if(tpUsuario == TipoUsuarioEnum.boStaff) {
+				  condicion = "U.BO_STAFF = TRUE";
+			  }else if (tpUsuario == TipoUsuarioEnum.boInvitado) {
+				  condicion = "U.BO_INVITADO = TRUE";
+			  }else if (tpUsuario == TipoUsuarioEnum.boDisertante) {
+				  condicion = "U.BO_DISERTANTE = TRUE";
+			  }else {
+				  condicion = "U.BO_CONGRESISTA = TRUE AND U.BO_STAFF = FALSE AND U.BO_INVITADO = FALSE AND U.BO_DISERTANTE = FALSE";
+			  }
+			  
+			  List<Usuario> list = congresistaMapper.consultaCongresistaPorCondicion(condicion);
+			  return new GenericResponseEntity<>("OK", 200, list);
+		}
+		
+		
+		public GenericResponseEntity<String> reenviarEmailInscripcion() {
+			  String condicion = "u.BO_ENVIADO_EMAIL_INSCRIPCION = FALSE";
+			  List<Usuario> list = congresistaMapper.consultaCongresistaPorCondicion(condicion);
+			  for (Usuario usuario : list) {
+					String titulo = "Confirmacion de Correo IVCUSMI";
+					String template = "email_confirmacion.ftl";
+					String destino = usuario.getEmail();
+					String nombre = usuario.getNombreCompleto();
+					Map<String, String> model = new HashMap<>();
+					model.put("nombre", nombre);
+					model.put("titulo", titulo);
+					emailQueueService.encolarEnvio(destino, titulo, null, model, template);
+			}
+			  return new GenericResponseEntity<>("OK", 200, list.size() + " correos reenviados!");
 		}
 }

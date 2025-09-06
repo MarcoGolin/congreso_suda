@@ -303,7 +303,11 @@ Future<Uint8List> buildCarnetsGridPdf(
 }
 
 /// Atajo para abrir/compartir el PDF con 4 por hoja
-Future<void> printOrShareCarnetsGrid(List<Usuario> users) async {
+Future<void> printOrShareCarnetsGrid(
+  List<Usuario> users,
+  String pdfName,
+) async {
+  if (users.isEmpty) return;
   final bytes = await buildCarnetsGridPdf(
     users,
     sheetFormat: PdfPageFormat.a4, // podés pasar PdfPageFormat.letter si querés
@@ -314,7 +318,7 @@ Future<void> printOrShareCarnetsGrid(List<Usuario> users) async {
   Modular.to.push(
     MaterialPageRoute(
       builder: (_) => PdfRender(
-        filaName: 'carnets_4_por_hoja',
+        filaName: pdfName,
         pdf: bytes,
         isLoading: false,
         showFiltro: false,

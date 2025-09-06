@@ -3,6 +3,8 @@ import 'package:congreso_evento/core/exception/repository_exception.dart';
 import 'package:congreso_evento/core/models/generic_response_entity.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
 
+import '../enums/tipo_usuario_enum.dart';
+
 class CongresistaRepository {
   final Api api;
 
@@ -39,6 +41,23 @@ class CongresistaRepository {
           'pageNr': pageNr,
           'pageSize': pageSize,
         },
+      );
+      GenericResponseEntity? genericResponse = response.data != null
+          ? GenericResponseEntity.fromJson(response.data)
+          : null;
+      return genericResponse;
+    } on Exception catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
+
+  Future<GenericResponseEntity?> consultaCongresistaPorTipo({
+    required TipoUsuarioEnum tipoUsuario,
+  }) async {
+    try {
+      final response = await api.get(
+        '/congresista/consultaCongresistaPorTipo',
+        queryParameters: {'tipoUsuario': tipoUsuario.toJson()},
       );
       GenericResponseEntity? genericResponse = response.data != null
           ? GenericResponseEntity.fromJson(response.data)

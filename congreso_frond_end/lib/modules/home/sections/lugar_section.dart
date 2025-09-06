@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:congreso_evento/core/header_section.dart';
 import 'package:congreso_evento/core/web_helper/web_helper_stub.dart'
     if (dart.library.html) 'package:congreso_evento/core/web_helper/web_helper.dart';
 import 'package:flutter/foundation.dart';
@@ -216,16 +217,7 @@ class _TextBlock extends StatelessWidget {
         // Eyebrow / chip “Sede”
 
         // Título fuerte
-        const Text(
-          'Lugar del evento',
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 24,
-            fontWeight: FontWeight.w800,
-            height: 1.15,
-            color: Colors.black87,
-          ),
-        ),
+        const HeaderSection(title: 'Lugar del Evento', color: _accent),
 
         // Subrayado/acento
         Container(

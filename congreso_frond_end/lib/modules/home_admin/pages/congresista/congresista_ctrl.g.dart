@@ -267,6 +267,20 @@ mixin _$CongresistaCtrl on CongresistaCtrlBase, Store {
     return _$consultaAsyncAction.run(() => super.consulta());
   }
 
+  late final _$consultaCongresistaPorTipoAsyncAction = AsyncAction(
+    'CongresistaCtrlBase.consultaCongresistaPorTipo',
+    context: context,
+  );
+
+  @override
+  Future<List<Usuario>> consultaCongresistaPorTipo(
+    TipoUsuarioEnum tipoUsuario,
+  ) {
+    return _$consultaCongresistaPorTipoAsyncAction.run(
+      () => super.consultaCongresistaPorTipo(tipoUsuario),
+    );
+  }
+
   late final _$CongresistaCtrlBaseActionController = ActionController(
     name: 'CongresistaCtrlBase',
     context: context,

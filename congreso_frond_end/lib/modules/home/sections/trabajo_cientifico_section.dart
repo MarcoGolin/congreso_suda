@@ -12,17 +12,19 @@ const String kPlantillasDriveUrl =
 
 Future<void> _openExternal(String url) async {
   final uri = Uri.parse(url);
-  // En Web abre nueva pestaña; en móviles usa app/navegador predeterminado
   await launchUrl(uri, mode: LaunchMode.externalApplication);
 }
 
 class TrabajoCientificoSection extends StatelessWidget {
   const TrabajoCientificoSection({super.key});
 
+  static const brandPrimary = Color(0xFF387f4d);
+  static const brandLight = Color(0xFF73c165);
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isMobile = size.width < 800;
+    final isMobile = size.width < 900;
 
     return SizedBox(
       width: double.infinity,
@@ -35,7 +37,7 @@ class TrabajoCientificoSection extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          // Overlay oscuro
+          // Overlay oscuro con leve viñeta
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -44,7 +46,7 @@ class TrabajoCientificoSection extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Colors.black.withOpacity(isMobile ? 0.55 : 0.70),
-                    Colors.black.withOpacity(isMobile ? 0.60 : 0.75),
+                    Colors.black.withOpacity(isMobile ? 0.62 : 0.78),
                   ],
                 ),
               ),
@@ -55,7 +57,7 @@ class TrabajoCientificoSection extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(
               horizontal: isMobile ? 24 : 50,
-              vertical: isMobile ? 40 : 50,
+              vertical: isMobile ? 44 : 64,
             ),
             child: Center(
               child: ConstrainedBox(
@@ -66,70 +68,96 @@ class TrabajoCientificoSection extends StatelessWidget {
                   spacing: 32,
                   runSpacing: 40,
                   children: [
-                    // Texto
+                    // ===================== TEXTO ===========================
                     SizedBox(
-                      width: isMobile ? double.infinity : 560,
+                      width: isMobile ? double.infinity : 580,
                       child: FadeInLeft(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: isMobile
+                              ? CrossAxisAlignment.center
+                              : CrossAxisAlignment.start,
                           children: [
-                            HeaderSection(
-                              title: 'Trabajos Cientificos',
-                              color: Colors.white,
+                            const HeaderSection(
+                              title: 'Trabajos Científicos',
+                              color: brandLight,
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 10),
+
+                            // Línea/indicador de marca
+                            Container(
+                              width: 72,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                gradient: const LinearGradient(
+                                  colors: [brandLight, brandPrimary],
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            // Subtítulo fuerte
                             const Text(
                               'Presentá tu trabajo, compartí tu conocimiento y marcá la diferencia.',
                               style: TextStyle(
                                 fontSize: 26,
                                 fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w600,
-                                height: 1.5,
+                                fontWeight: FontWeight.w700,
+                                height: 1.35,
                                 color: Colors.white,
                               ),
+                              textAlign: TextAlign.start,
                             ),
-                            const SizedBox(height: 14),
+
+                            const SizedBox(height: 18),
+
+                            // ---- Modalidades habilitadas
                             const Text(
-                              'Modalidades habilitadas:',
+                              'Modalidades habilitadas',
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w800,
                                 color: Colors.white,
                                 height: 1.45,
+                                fontFamily: 'Montserrat',
                               ),
                             ),
                             const SizedBox(height: 8),
-                            const Text(
-                              '• Artículos originales de investigación\n'
-                              '• Artículos de revisión bibliográfica\n'
-                              '• Casos clínicos\n'
-                              '• Resúmenes en modalidad póster',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                                height: 1.6,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                _Bullet(
+                                  text: 'Artículo original de investigación',
+                                ),
+                                _Bullet(
+                                  text: 'Artículo de revisión bibliográfica',
+                                ),
+                                _Bullet(text: 'Caso clínico'),
+                                _Bullet(text: 'Resumen en modalidad póster'),
+                              ],
                             ),
 
-                            // Botón principal
+                            // CTA principal
                             Padding(
-                              padding: const EdgeInsets.only(top: 20),
+                              padding: const EdgeInsets.only(top: 22),
                               child: SizedBox(
-                                width: 530,
+                                width: isMobile ? double.infinity : 520,
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF73c165),
+                                    backgroundColor: brandLight,
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 40,
-                                      vertical: 20,
+                                      vertical: 18,
                                     ),
                                     textStyle: const TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w800,
+                                      fontFamily: 'Montserrat',
                                     ),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
+                                      borderRadius: BorderRadius.circular(14),
                                     ),
                                     elevation: 10,
                                   ),
@@ -141,33 +169,32 @@ class TrabajoCientificoSection extends StatelessWidget {
                                   },
                                   child: const Text(
                                     'Enviar trabajo científico',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
                                   ),
                                 ),
                               ),
                             ),
 
-                            // NUEVOS BOTONES SECUNDARIOS
+                            // Botones secundarios
                             const SizedBox(height: 12),
                             Wrap(
+                              alignment: isMobile
+                                  ? WrapAlignment.center
+                                  : WrapAlignment.start,
                               spacing: 12,
                               runSpacing: 12,
                               children: [
                                 SizedBox(
-                                  width: isMobile ? double.infinity : 260,
+                                  width: isMobile ? double.infinity : 252,
                                   child: OutlinedButton.icon(
                                     style: OutlinedButton.styleFrom(
-                                      side: const BorderSide(
-                                        color: Colors.white70,
-                                        width: 1.2,
+                                      side: BorderSide(
+                                        color: Colors.white.withOpacity(.75),
+                                        width: 1.1,
                                       ),
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
-                                        vertical: 16,
-                                        horizontal: 18,
+                                        vertical: 14,
+                                        horizontal: 16,
                                       ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
@@ -180,24 +207,25 @@ class TrabajoCientificoSection extends StatelessWidget {
                                       'Reglamento',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15.5,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Montserrat',
                                       ),
                                     ),
                                   ),
                                 ),
                                 SizedBox(
-                                  width: isMobile ? double.infinity : 260,
+                                  width: isMobile ? double.infinity : 252,
                                   child: OutlinedButton.icon(
                                     style: OutlinedButton.styleFrom(
-                                      side: const BorderSide(
-                                        color: Colors.white70,
-                                        width: 1.2,
+                                      side: BorderSide(
+                                        color: Colors.white.withOpacity(.75),
+                                        width: 1.1,
                                       ),
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
-                                        vertical: 16,
-                                        horizontal: 18,
+                                        vertical: 14,
+                                        horizontal: 16,
                                       ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
@@ -210,8 +238,9 @@ class TrabajoCientificoSection extends StatelessWidget {
                                       'Modelos / Plantillas',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15.5,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Montserrat',
                                       ),
                                     ),
                                   ),
@@ -223,7 +252,7 @@ class TrabajoCientificoSection extends StatelessWidget {
                       ),
                     ),
 
-                    // Imagen con marco
+                    // ================== IMAGEN ENMARCADA =====================
                     SizedBox(
                       width: isMobile ? size.width - 48 : 480,
                       child: FadeInRight(
@@ -231,7 +260,7 @@ class TrabajoCientificoSection extends StatelessWidget {
                           url:
                               'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/fotos_evento/congreso_01.webp',
                           radius: 16,
-                          frameWidth: 10,
+                          frameWidth: 1,
                           aspectRatio: 16 / 9,
                         ),
                       ),
@@ -243,6 +272,40 @@ class TrabajoCientificoSection extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// =============== helpers visuales reutilizados =================
+
+class _Bullet extends StatelessWidget {
+  final String text;
+  const _Bullet({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Icon(
+          Icons.check_circle_rounded,
+          size: 18,
+          color: TrabajoCientificoSection.brandLight,
+        ),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 15,
+              height: 1.5,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

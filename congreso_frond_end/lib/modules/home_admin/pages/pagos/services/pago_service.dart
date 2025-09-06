@@ -131,6 +131,20 @@ class PagoService {
     }
   }
 
+  Future<({Usuario? data, int code, String message})> anularPago({
+    required int id,
+  }) async {
+    try {
+      var response = await pagoRepository.anularPago(idCongresista: id);
+      Usuario? p = response.object != null
+          ? Usuario.fromJson(response.object)
+          : null;
+      return (data: p, code: response.code, message: response.message);
+    } on Exception catch (e) {
+      throw ServiceException(message: ExceptionUtils.getExceptionMessage(e));
+    }
+  }
+
   Future<({HabilitacionPagos? data, int code, String message})>
   consultarSiEstaHabilitado({required int idUsuario}) async {
     try {

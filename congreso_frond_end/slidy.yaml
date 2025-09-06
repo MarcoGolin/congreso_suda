@@ -1,0 +1,4 @@
+mobx: 
+  name: "slidy run mobx"
+  description: 'minha descricao'
+  run: dart run build_runner watch -d                

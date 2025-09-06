@@ -52,7 +52,8 @@ public class SecurityConfiguration {
 						request -> request
 								.requestMatchers(
 										mvc.pattern("/api/congresista/save"),
-										mvc.pattern("/api/auth/authenticate"))
+										mvc.pattern("/api/auth/authenticate"),
+										mvc.pattern("/api/organizadores/consultaTodos"))
 								.permitAll().anyRequest().authenticated())
 				.sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
 				.authenticationProvider(authenticationProvider())
