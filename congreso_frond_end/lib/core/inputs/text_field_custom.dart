@@ -19,6 +19,8 @@ class TextFieldCustom extends StatelessWidget {
   final int? maxLines;
   final int? maxLength;
 
+  final Iterable<String>? autofillHints;
+
   const TextFieldCustom({
     super.key,
     required this.label,
@@ -36,6 +38,7 @@ class TextFieldCustom extends StatelessWidget {
     this.onTap,
     this.textCapitalization = TextCapitalization.none,
     this.obscureText,
+    this.autofillHints,
   });
 
   @override
@@ -43,6 +46,7 @@ class TextFieldCustom extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: TextFormField(
+        autofillHints: autofillHints,
         controller: controller,
         obscureText: obscureText ?? false,
         focusNode: focusNode,

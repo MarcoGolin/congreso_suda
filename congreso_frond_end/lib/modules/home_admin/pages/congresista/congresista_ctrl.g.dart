@@ -257,6 +257,18 @@ mixin _$CongresistaCtrl on CongresistaCtrlBase, Store {
     return _$guardarAsyncAction.run(() => super.guardar());
   }
 
+  late final _$restablecerContrasenhaAsyncAction = AsyncAction(
+    'CongresistaCtrlBase.restablecerContrasenha',
+    context: context,
+  );
+
+  @override
+  Future<void> restablecerContrasenha() {
+    return _$restablecerContrasenhaAsyncAction.run(
+      () => super.restablecerContrasenha(),
+    );
+  }
+
   late final _$consultaAsyncAction = AsyncAction(
     'CongresistaCtrlBase.consulta',
     context: context,

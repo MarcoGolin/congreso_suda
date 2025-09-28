@@ -5,7 +5,7 @@ import 'package:congreso_evento/core/models/global_state_class.dart';
 import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/models/habilitacion_pagos.dart';
-import 'package:congreso_evento/modules/home_admin/pages/pagos/models/resumen_cobrador.dart';
+import 'package:congreso_evento/modules/home_admin/pages/pagos/models/resumen_cobrador_turno.dart';
 import 'package:congreso_evento/modules/home_admin/pages/pagos/services/pago_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -69,8 +69,9 @@ abstract class PagoPageCtrlBase with Store {
 
   @observable
   bool agruparPorCobrador = false;
+
   @observable
-  List<ResumenCobrador> resumen = [];
+  List<ResumenCobradorTurno> resumenTurno = [];
 
   @observable
   FiltroEstado filtroEstado = FiltroEstado.todos;
@@ -177,9 +178,8 @@ abstract class PagoPageCtrlBase with Store {
     }
   }
 
-  Future<void> cargarResumen() async {
+  Future<void> cargarResumenTurno() async {
     try {
-      // BLOQUEO si no es admin y no puede cobrar
       if (!isAdmin && !puedeCobrar && agruparPorCobrador) {
         changeStatus(
           'No está habilitado para realizar pagos.',
@@ -187,20 +187,14 @@ abstract class PagoPageCtrlBase with Store {
         );
         return;
       }
-
-      // if (_stateClass.status == StatusEnumGlobal.loadingList) {
-      //   return; // Evita múltiples llamadas simultáneas
-      // }
       changeStatus('', StatusEnumGlobal.loadingList);
 
-      final response = await service.resumenCobrador(
+      final response = await service.resumenCobradorPorTurno(
         desde: _intervalo.desde,
         hasta: _intervalo.hasta,
       );
-      final data = response.data;
-      resumen = [];
-      resumen.addAll(data);
-      // cerrar loading
+
+      resumenTurno = response.data;
       changeStatus('', StatusEnumGlobal.loaded);
     } on ServiceException catch (e) {
       changeStatus(e.message, StatusEnumGlobal.errorDialog);

@@ -1,3 +1,4 @@
+import 'package:congreso_evento/core/behahavior/custom_scroll_behavior.dart';
 import 'package:congreso_evento/core/web_helper/web_helper_stub.dart'
     if (dart.library.html) 'package:congreso_evento/core/web_helper/web_helper.dart';
 import 'package:congreso_evento/modules/home/home_drawer.dart';
@@ -7,7 +8,9 @@ import 'package:congreso_evento/modules/home/sections/inicio_section.dart';
 import 'package:congreso_evento/modules/home/sections/ligas_academicas_section.dart';
 import 'package:congreso_evento/modules/home/sections/sobre_section.dart';
 import 'package:congreso_evento/modules/home/sections/trabajo_cientifico_section.dart';
+import 'package:congreso_evento/modules/home/sections/widgets/taller_inscripcion_section.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -33,6 +36,7 @@ class _HomePageState extends State<HomePage> {
   // final GlobalKey _disertantesSectionKey = GlobalKey();
   final GlobalKey _trabajosCientificosSectionKey = GlobalKey();
   final GlobalKey _ligasAcademicasSectionKey = GlobalKey();
+  final GlobalKey _tallerSectionKey = GlobalKey();
   final GlobalKey _lugarEventoSectionKey = GlobalKey();
   final GlobalKey _comiteSectionKey = GlobalKey();
   // final GlobalKey _reconocimientosApoyoSectionKey = GlobalKey();
@@ -56,6 +60,7 @@ class _HomePageState extends State<HomePage> {
       // 'Disertantes': _disertantesSectionKey,
       'Trabajos': _trabajosCientificosSectionKey,
       'Ligas': _ligasAcademicasSectionKey,
+      'Talleres': _tallerSectionKey,
       'Comité': _comiteSectionKey,
       'Lugar': _lugarEventoSectionKey,
       // 'Precios': _precioSectionKey,
@@ -65,6 +70,7 @@ class _HomePageState extends State<HomePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _ctrl.consultarOrganizadores();
+      _ctrl.consultarTalleres();
       cierraPreLoader();
       var y = await rootBundle.loadString("pubspec.yaml");
       String nrBuild = loadYaml(y)["version"];
@@ -84,18 +90,48 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _navigateToSection(String sectionName) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final index = _sectionKeys.keys.toList().indexOf(sectionName);
+    final key = _sectionKeys[sectionName];
+    if (key == null) return;
 
-    if (index >= 0) {
-      final double targetOffset = index * screenHeight;
-
-      _scrollController.animateTo(
-        targetOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
-        duration: const Duration(milliseconds: 700),
-        curve: Curves.easeInOut,
+    final ctx = key.currentContext;
+    if (ctx == null) {
+      // La sección aún no está montada; reintentamos en el próximo frame
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _navigateToSection(sectionName),
       );
+      return;
     }
+
+    final renderObject = ctx.findRenderObject();
+    if (renderObject == null) return;
+
+    final viewport = RenderAbstractViewport.of(renderObject);
+
+    // Offset para alinear el INICIO del widget en la parte superior
+    final rawTarget = viewport.getOffsetToReveal(renderObject, 0.0).offset;
+
+    // Compensación dinámica por AppBar según tu umbral del 60%
+    final screenH = MediaQuery.of(context).size.height;
+    final threshold = screenH * 0.60;
+    final topPadding = MediaQuery.of(context).padding.top;
+    const appBarH = kToolbarHeight; // 56
+    const fudge = 6.0;
+
+    final willBeOpaque = rawTarget >= threshold;
+    final needsAppBar = willBeOpaque && sectionName != 'Inicio';
+    final compensate = topPadding + (needsAppBar ? appBarH : 0) + fudge;
+
+    // Apuntar lo más arriba posible sin pasarse del final del scroll
+    final maxExtent = sectionName != 'Contacto'
+        ? _scrollController.position.maxScrollExtent
+        : _scrollController.position.maxScrollExtent - 100;
+    final target = (rawTarget - compensate).clamp(0.0, maxExtent);
+
+    _scrollController.animateTo(
+      target,
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -113,6 +149,7 @@ class _HomePageState extends State<HomePage> {
     final appBarColor = _isAppBarTransparent
         ? Colors.transparent
         : Colors.white;
+    // final appBarColor = Colors.transparent;
 
     return Scaffold(
       //  background: rgba(255,255,255,.06);
@@ -139,53 +176,70 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      endDrawer: HomeDrawer(onTap: _navigateToSection),
+      endDrawer: HomeDrawer(
+        onTap: (sectionName) => _navigateToSection(sectionName),
+      ),
       resizeToAvoidBottomInset: false,
-      body: ListView(
-        padding: EdgeInsets.zero,
-        controller: _scrollController,
-        scrollDirection: Axis.vertical,
-        cacheExtent: MediaQuery.of(context).size.height * 3,
-        physics: const ClampingScrollPhysics(),
-        children: [
-          SizedBox(
-            key: _inicioSectionKey,
-            height: MediaQuery.of(context).size.height,
-            child: InicioSection(scrollController: _scrollController),
-          ),
-          SizedBox(key: _sobreSectionKey, child: const SobreSection()),
-          SizedBox(
-            key: _trabajosCientificosSectionKey,
-            child: const TrabajoCientificoSection(),
-          ),
-          SizedBox(
-            key: _ligasAcademicasSectionKey,
-            child: const LigasAcademicasSection(),
-          ),
-          //seccion organizadores
-          if (_ctrl.organizadores.isNotEmpty)
+      body: ScrollConfiguration(
+        behavior: CustomScrollBehavior(),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          controller: _scrollController,
+          scrollDirection: Axis.vertical,
+          cacheExtent: MediaQuery.of(context).size.height * 3,
+          physics: const ClampingScrollPhysics(),
+          children: [
             SizedBox(
-              key: _comiteSectionKey,
-              child: Observer(
-                builder: (_) {
-                  final lista = _ctrl.organizadores; // MobX observable
-                  final isLoading =
-                      _ctrl.isLoading ==
-                      true; // si tenés un flag; si no, dejá false
-                  return ComiteSection(
+              key: _inicioSectionKey,
+              height: MediaQuery.of(context).size.height,
+              child: InicioSection(scrollController: _scrollController),
+            ),
+            SizedBox(key: _sobreSectionKey, child: const SobreSection()),
+            SizedBox(
+              key: _trabajosCientificosSectionKey,
+              child: const TrabajoCientificoSection(),
+            ),
+            SizedBox(
+              key: _ligasAcademicasSectionKey,
+              child: const LigasAcademicasSection(),
+            ),
+            //seccion talleres
+            Observer(
+              builder: (_) {
+                if (_ctrl.talleres.isEmpty) return const SizedBox.shrink();
+                return SizedBox(
+                  key: _tallerSectionKey,
+                  child: TallerInscripcionSection(talleres: _ctrl.talleres),
+                );
+              },
+            ),
+            //seccion organizadores
+            Observer(
+              builder: (_) {
+                if (_ctrl.organizadores.isEmpty) return const SizedBox.shrink();
+                final lista = _ctrl.organizadores; // MobX observable
+                final isLoading =
+                    _ctrl.isLoading ==
+                    true; // Si tenés un flag; si no, dejá false
+                return SizedBox(
+                  key: _comiteSectionKey,
+                  child: ComiteSection(
                     organizadores: lista,
                     isLoading: isLoading,
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
-          SizedBox(
-            key: _lugarEventoSectionKey,
-            child: const LugarSection(), // Placeholder for Trabajos Científicos
-          ),
-          // SizedBox(key: _precioSectionKey, child: const PrecioSection()),
-          SizedBox(key: _contactoSectionKey, child: const FooterSection()),
-        ],
+
+            SizedBox(
+              key: _lugarEventoSectionKey,
+              child:
+                  const LugarSection(), // Placeholder for Trabajos Científicos
+            ),
+            // SizedBox(key: _precioSectionKey, child: const PrecioSection()),
+            SizedBox(key: _contactoSectionKey, child: const FooterSection()),
+          ],
+        ),
       ),
     );
   }

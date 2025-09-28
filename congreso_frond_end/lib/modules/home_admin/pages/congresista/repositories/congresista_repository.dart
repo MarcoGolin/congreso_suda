@@ -25,6 +25,36 @@ class CongresistaRepository {
     }
   }
 
+  Future<GenericResponseEntity> consultaCongresistaPorId(idUsuario) async {
+    try {
+      final response = await api.get(
+        '/congresista/consultaCongresistaPorId',
+        queryParameters: {'idUsuario': idUsuario},
+      );
+      GenericResponseEntity genericResponse = GenericResponseEntity.fromJson(
+        response.data,
+      );
+      return genericResponse;
+    } on Exception catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
+
+  Future<GenericResponseEntity> restablecerContrasenha(Usuario usuario) async {
+    try {
+      final response = await api.put(
+        '/congresista/restablecerContrasenha',
+        queryParameters: {'idCongresista': usuario.id},
+      );
+      GenericResponseEntity genericResponse = GenericResponseEntity.fromJson(
+        response.data,
+      );
+      return genericResponse;
+    } on Exception catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
+
   Future<GenericResponseEntity?>
   consultaCongresistaPorNombreORegistroAcademico({
     String? nombre,

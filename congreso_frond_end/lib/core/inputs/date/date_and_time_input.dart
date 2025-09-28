@@ -152,7 +152,7 @@ class _DateAndTimeInputState extends State<DateAndTimeInput> {
             children: [
               Expanded(
                 child: ScrollConfiguration(
-                  behavior: CustomScollBehavior(),
+                  behavior: CustomScrollBehavior(),
                   child: CupertinoDatePicker(
                     mode: CupertinoDatePickerMode
                         .dateAndTime, // Use dateAndTime mode

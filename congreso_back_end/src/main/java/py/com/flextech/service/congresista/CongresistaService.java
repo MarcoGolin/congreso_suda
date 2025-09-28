@@ -2,7 +2,6 @@ package py.com.flextech.service.congresista;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,7 +31,6 @@ import py.com.flextech.service.sistema.EmailQueueService;
 public class CongresistaService {
 	
 	private final UsuarioRepository repository;
-//	private final JwtService jwtService;
 	private final EmailQueueService emailQueueService;
 	private final CongresistaMapper congresistaMapper;
 	
@@ -101,9 +99,9 @@ public class CongresistaService {
 		  return new GenericResponseEntity<>("OK", 200, new PageInfo<>(page));
 		}
 
-		public GenericResponseEntity<List<ResumenCobradoDto>> resumenCobrador(
+		public GenericResponseEntity<List<ResumenCobradoDto>> resumenCobradorTurno(
 		    LocalDateTime desde, LocalDateTime hasta) {
-		  List<ResumenCobradoDto> rows = congresistaMapper.resumenPorCobrador(desde, hasta);
+		  List<ResumenCobradoDto> rows = congresistaMapper.resumenPorCobradorTurno(desde, hasta);
 		  return new GenericResponseEntity<>("OK", 200, rows);
 		}
 		
@@ -141,5 +139,17 @@ public class CongresistaService {
 					emailQueueService.encolarEnvio(destino, titulo, null, model, template);
 			}
 			  return new GenericResponseEntity<>("OK", 200, list.size() + " correos reenviados!");
+		}
+		
+		public GenericResponseEntity<?> restablecerContrasenha(Long idUsuario) {
+			Usuario usuario = repository.findById(idUsuario).get();
+			usuario.setSenha(usuario.getRegistroAcademico());
+			usuario = repository.saveAndFlush(usuario);
+		    return new GenericResponseEntity<Usuario>("Contraseña establecida con Éxito!", 200, usuario);
+		}
+		
+		public GenericResponseEntity<?> consultaCongresistaPorId(Long idUsuario) {
+			Usuario  usuario = repository.findById(idUsuario).get();
+		    return new GenericResponseEntity<Usuario>("Contraseña establecida con Éxito!", 200, usuario);
 		}
 }

@@ -73,13 +73,13 @@ class PagoRepository {
     }
   }
 
-  Future<GenericResponseEntity?> resumenCobrador({
+  Future<GenericResponseEntity?> resumenCobradorTurno({
     DateTime? desde,
     DateTime? hasta,
   }) async {
     try {
       final response = await api.get(
-        '/congresista/resumenCobrador',
+        '/congresista/resumenCobradorTurno',
         queryParameters: {
           'desde': desde?.toIso8601String(),
           'hasta': hasta?.toIso8601String(),

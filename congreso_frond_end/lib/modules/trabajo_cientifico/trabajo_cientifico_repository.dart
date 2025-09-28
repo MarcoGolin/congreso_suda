@@ -23,4 +23,35 @@ class TrabajoCientificoRepository {
       throw RepositoryException.toException(e);
     }
   }
+
+  Future<GenericResponseEntity?> consultaTrabajosPorUsuario({
+    required int usuarioId,
+  }) async {
+    try {
+      final response = await api.get(
+        '/trabajo_cientifico/consultaTrabajosPorUsuario',
+        // En tu backend uses @RequestAttribute Long idUsuario, así que el ID va en el header/token
+        // Los query parameters no son necesarios ya que se obtiene del token
+      );
+      GenericResponseEntity? genericResponse = response.data != null
+          ? GenericResponseEntity.fromJson(response.data)
+          : null;
+      return genericResponse;
+    } on Exception catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
+
+  /// Consulta todos los trabajos científicos (para admin)
+  Future<GenericResponseEntity?> consultaTodos() async {
+    try {
+      final response = await api.get('/trabajo_cientifico/consultaTodos');
+      GenericResponseEntity? genericResponse = response.data != null
+          ? GenericResponseEntity.fromJson(response.data)
+          : null;
+      return genericResponse;
+    } on Exception catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
 }

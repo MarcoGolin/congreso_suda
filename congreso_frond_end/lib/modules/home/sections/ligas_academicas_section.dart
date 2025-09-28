@@ -51,7 +51,7 @@ class LigasAcademicasSection extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: isMobile ? 10 : 20),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const HeaderSection(
                     title: 'Ligas Académicas',
@@ -61,22 +61,26 @@ class LigasAcademicasSection extends StatelessWidget {
 
                   // línea de acento
                   // Línea/indicador de marca
-                  Container(
-                    width: 72,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      gradient: const LinearGradient(
-                        colors: [brandLight, brandPrimary],
+                  Row(
+                    children: [
+                      Container(
+                        width: 72,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          gradient: const LinearGradient(
+                            colors: [brandLight, brandPrimary],
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
 
                   const SizedBox(height: 16),
 
                   // subtítulo
                   Text(
-                    'Durante los tres días del congreso, las Ligas Académicas de la Universidad Sudamericana —Sede Saltos del Guairá— liderarán actividades simultáneas:',
+                    'Durante los tres días del congreso, las Ligas Académicas de la Universidad Sudamericana, Sede Saltos del Guairá liderarán actividades simultáneas:',
                     textAlign: isMobile ? TextAlign.center : TextAlign.start,
                     style: TextStyle(
                       fontSize: 22,

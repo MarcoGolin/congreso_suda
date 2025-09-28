@@ -45,7 +45,6 @@ public class TrabajoCientifico {
 	@Column(name = "AUTOR_EMAIL")
 	private String autorEmail;
 
-	@NotNull
 	@Column(name = "AUTOR_TELEFONO")
 	private String autorTelefono;
 

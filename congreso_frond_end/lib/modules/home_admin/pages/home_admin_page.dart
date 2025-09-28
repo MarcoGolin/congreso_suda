@@ -60,7 +60,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
             onPressed: () async {
               final storage = const FlutterSecureStorage();
               await storage.deleteAll();
-              Modular.to.navigate('/');
+              Modular.to.pushNamedAndRemoveUntil('/', (_) => false);
             },
             icon: const Icon(Icons.logout),
           ),
@@ -177,7 +177,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
         icon: Icons.science_outlined,
         title: 'Trabajos Científicos',
         subtitle: 'Revisión, estado y certificados',
-        route: '/admin/trabajos/',
+        route: '/home_admin/trabajos/',
       ),
       const _AdminItem(
         icon: Icons.qr_code_scanner_outlined,

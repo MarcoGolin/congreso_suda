@@ -112,30 +112,58 @@
   </select>
 
   <!-- RESUMEN agrupado por USUARIO_PAGO -->
-  <select id="resumenPorCobrador"
-          resultType="py.com.flextech.model.pagos.dto.ResumenCobradoDto">
-	SELECT 
-	  u.USUARIO_PAGO AS usuarioPagoId,
-	  u.USUARIO_PAGO AS usuarioPagoNombre,
-	  COUNT(*) AS cantidad,
-	  COALESCE(SUM(u.VL_PAGO), 0) AS montoTotal 
-	FROM
-	  SYS_USUARIO u 
-    <where>
-      u.BO_CONGRESISTA = TRUE
-      AND u.BO_IS_PAGO = TRUE  <!-- solo pagos registrados -->
+<select id="resumenPorCobradorTurno"
+        resultType="py.com.flextech.model.pagos.dto.ResumenCobradoDto">
+  SELECT
+    u.USUARIO_PAGO AS usuarioPagoId,
+    u.USUARIO_PAGO AS usuarioPagoNombre,
 
-      <!-- Periodo -->
-      <if test="desde != null">
-        AND u.FC_PAGO &gt;= #{desde}
-      </if>
-      <if test="hasta != null">
-        AND u.FC_PAGO &lt;= #{hasta}
-      </if>
-    </where>
-    GROUP BY u.USUARIO_PAGO
-    ORDER BY cantidad DESC
-  </select>
+    /* --- PAGOS por turno --- */
+    COALESCE(SUM(CASE WHEN u.BO_IS_PAGO = TRUE
+                        AND HOUR(u.FC_PAGO) BETWEEN 6 AND 12
+                      THEN u.VL_PAGO ELSE 0 END), 0) AS montoDiaPagos,
+    COALESCE(SUM(CASE WHEN u.BO_IS_PAGO = TRUE
+                        AND HOUR(u.FC_PAGO) BETWEEN 13 AND 18
+                      THEN u.VL_PAGO ELSE 0 END), 0) AS montoTardePagos,
+    COALESCE(SUM(CASE WHEN u.BO_IS_PAGO = TRUE
+                        AND (HOUR(u.FC_PAGO) <![CDATA[ >= ]]> 19 OR HOUR(u.FC_PAGO) <![CDATA[ <= ]]> 5)
+                      THEN u.VL_PAGO ELSE 0 END), 0) AS montoNochePagos,
+    COALESCE(SUM(CASE WHEN u.BO_IS_PAGO = TRUE
+                        AND HOUR(u.FC_PAGO) BETWEEN 6 AND 12
+                      THEN 1 ELSE 0 END), 0) AS cantDiaPagos,
+    COALESCE(SUM(CASE WHEN u.BO_IS_PAGO = TRUE
+                        AND HOUR(u.FC_PAGO) BETWEEN 13 AND 18
+                      THEN 1 ELSE 0 END), 0) AS cantTardePagos,
+    COALESCE(SUM(CASE WHEN u.BO_IS_PAGO = TRUE
+                        AND (HOUR(u.FC_PAGO) <![CDATA[ >= ]]> 19 OR HOUR(u.FC_PAGO) <![CDATA[ <= ]]> 5)
+                      THEN 1 ELSE 0 END), 0) AS cantNochePagos,
+    /* --- EXONERADOS por turno (sin monto) --- */
+    COALESCE(SUM(CASE WHEN u.BO_EXONERADO = TRUE
+                        AND HOUR(u.FC_PAGO) BETWEEN 6 AND 12
+                      THEN 1 ELSE 0 END), 0) AS cantDiaEx,
+    COALESCE(SUM(CASE WHEN u.BO_EXONERADO = TRUE
+                        AND HOUR(u.FC_PAGO) BETWEEN 13 AND 18
+                      THEN 1 ELSE 0 END), 0) AS cantTardeEx,
+    COALESCE(SUM(CASE WHEN u.BO_EXONERADO = TRUE
+                        AND (HOUR(u.FC_PAGO) <![CDATA[ >= ]]> 19 OR HOUR(u.FC_PAGO) <![CDATA[ <= ]]> 5)
+                      THEN 1 ELSE 0 END), 0) AS cantNocheEx
+
+  FROM SYS_USUARIO u
+  <where>
+    u.BO_CONGRESISTA = TRUE
+    <!-- Consideramos registros con fecha de pago, sea pago o exonerado -->
+    <if test="desde != null">
+      AND u.FC_PAGO <![CDATA[ >= ]]> #{desde}
+    </if>
+    <if test="hasta != null">
+      AND u.FC_PAGO <![CDATA[ <= ]]> #{hasta}
+    </if>
+  </where>
+  GROUP BY u.USUARIO_PAGO
+  ORDER BY (montoDiaPagos + montoTardePagos + montoNochePagos) DESC
+</select>
+
+
   
   
   <select id="consultaCongresistaPorCondicion"

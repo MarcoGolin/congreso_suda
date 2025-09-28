@@ -23,7 +23,7 @@ public interface CongresistaMapper {
 		      @Param("aplicaFechaPago") Boolean aplicaFechaPago // true si filtro de fecha debe aplicar sobre FC_PAGO
 		  );
 
-		  List<ResumenCobradoDto> resumenPorCobrador(
+		  List<ResumenCobradoDto> resumenPorCobradorTurno(
 		      @Param("desde") LocalDateTime desde,
 		      @Param("hasta") LocalDateTime hasta
 		  );

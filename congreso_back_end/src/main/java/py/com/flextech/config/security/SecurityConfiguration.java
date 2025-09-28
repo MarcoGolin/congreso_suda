@@ -46,8 +46,10 @@ public class SecurityConfiguration {
 
 	@Bean
 	SecurityFilterChain appSecurity(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
-		http.cors(AbstractHttpConfigurer::disable)
-	        .csrf(AbstractHttpConfigurer::disable)
+		  http
+	      .cors(c -> c.configurationSource(corsConfigurationSource))
+	      .csrf(AbstractHttpConfigurer::disable)
+	      .sessionManagement(sm -> sm.sessionCreationPolicy(STATELESS))
 				.authorizeHttpRequests(
 						request -> request
 								.requestMatchers(
@@ -55,9 +57,8 @@ public class SecurityConfiguration {
 										mvc.pattern("/api/auth/authenticate"),
 										mvc.pattern("/api/organizadores/consultaTodos"))
 								.permitAll().anyRequest().authenticated())
-				.sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-				.authenticationProvider(authenticationProvider())
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).cors(cors -> cors.configurationSource(corsConfigurationSource));
+			    .authenticationProvider(authenticationProvider())
+			      .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 

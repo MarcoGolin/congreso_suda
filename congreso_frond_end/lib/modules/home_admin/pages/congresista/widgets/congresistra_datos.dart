@@ -337,6 +337,21 @@ class _CongresistraDatosState extends State<CongresistraDatos> {
               ),
             ),
 
+            const SizedBox(height: 12),
+            const _SectionHeaderChip(title: 'Restablecer contraseña'),
+            const SizedBox(height: 8),
+            FilledButton.icon(
+              icon: const Icon(Icons.restore),
+              label: const Text(
+                'Restablecer contraseña a Registro Academico (RA)',
+              ),
+              onPressed: _restablecerContrasenha,
+              style: FilledButton.styleFrom(
+                backgroundColor: brandPrimary,
+                foregroundColor: Colors.white,
+              ),
+            ),
+
             const SizedBox(height: 20),
             Row(
               children: [
@@ -417,6 +432,12 @@ class _CongresistraDatosState extends State<CongresistraDatos> {
         default:
       }
     });
+  }
+
+  void _restablecerContrasenha() {
+    if (_ctrl.congresista == null) return;
+    final fut = _ctrl.restablecerContrasenha();
+    _loadingOverlay.show(context, fut);
   }
 }
 

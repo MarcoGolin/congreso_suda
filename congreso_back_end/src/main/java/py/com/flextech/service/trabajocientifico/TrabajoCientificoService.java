@@ -102,6 +102,23 @@ public class TrabajoCientificoService {
 	private static String orDash(String s) {
 	    return hasText(s) ? s : "—";
 	}
+	
+	
+	public GenericResponseEntity<List<TrabajoCientifico>> consultaTrabajosPorUsuario(Long idUsuario){
+		
+		List<TrabajoCientifico> trabajos = repository.findByUsuario(new Usuario(idUsuario));
+		
+		 return new GenericResponseEntity<List<TrabajoCientifico>>("Consulta con Éxito!", 200, trabajos);
+		
+	}
+
+	public GenericResponseEntity<List<TrabajoCientifico>> consultaTodos(){
+		
+		List<TrabajoCientifico> trabajos = repository.findAll();
+		
+		return new GenericResponseEntity<List<TrabajoCientifico>>("Consulta con Éxito!", 200, trabajos);
+		
+	}
 }
 
 

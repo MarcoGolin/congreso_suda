@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:congreso_evento/core/behahavior/custom_scroll_behavior.dart';
 import 'package:congreso_evento/core/inputs/text_field_celular.dart';
 import 'package:congreso_evento/core/loader_overlau.dart';
 import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
@@ -278,6 +279,10 @@ Al completar y enviar el formulario de preinscripción, el/la participante decla
 
         Scaffold(
           appBar: AppBar(
+            title: Text(
+              'Registro del participante',
+              style: TextStyle(color: Colors.white),
+            ),
             backgroundColor: Colors.transparent,
             elevation: 0,
             iconTheme: IconThemeData(color: textColor),
@@ -286,21 +291,18 @@ Al completar y enviar el formulario de preinscripción, el/la participante decla
           backgroundColor: Colors.transparent,
           body: Center(
             child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15.0,
-                  vertical: 15,
+              child: Card(
+                elevation: 8,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                child: Card(
-                  elevation: 8,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  color: Colors.white.withOpacity(0.95),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 500),
+                color: Colors.white.withOpacity(0.95),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 500),
+                    child: ScrollConfiguration(
+                      behavior: CustomScrollBehavior(),
                       child: PageView(
                         controller: _pageController,
                         physics: const NeverScrollableScrollPhysics(),
@@ -311,17 +313,10 @@ Al completar y enviar el formulario de preinscripción, el/la participante decla
                                 AutovalidateMode.onUserInteraction,
                             child: AutofillGroup(
                               child: ListView(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 20,
+                                ),
                                 children: [
-                                  Text(
-                                    'Registro de Participante',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                      color: textColor,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 24),
                                   // Nombre Completo
                                   _buildTextField(
                                     "Nombre Completo",
@@ -330,7 +325,10 @@ Al completar y enviar el formulario de preinscripción, el/la participante decla
                                     index: 0,
                                     textCapitalization:
                                         TextCapitalization.words,
-                                    autofillHints: const [AutofillHints.name],
+                                    autofillHints: const [
+                                      AutofillHints.name,
+                                      AutofillHints.username,
+                                    ],
                                   ),
                                   // Email
                                   _buildTextField(
@@ -460,17 +458,19 @@ Al completar y enviar el formulario de preinscripción, el/la participante decla
                                           TextCapitalization.words,
                                       validator: (v) {
                                         if (!_esOtraInstitucion) return null;
-                                        if (v == null || v.trim().isEmpty)
+                                        if (v == null || v.trim().isEmpty) {
                                           return 'Ingresá el nombre de la institución';
-                                        if (v.trim().length < 3)
+                                        }
+                                        if (v.trim().length < 3) {
                                           return 'Nombre demasiado corto';
+                                        }
                                         return null;
                                       },
                                     ),
 
                                   // Registro Académico
                                   _buildTextField(
-                                    "Registro Académico",
+                                    "Registro Académico (RA)",
                                     registroAcademicoController,
                                     keyboardType: TextInputType.number,
                                     validator: _validarNumerico,
@@ -524,14 +524,21 @@ Al completar y enviar el formulario de preinscripción, el/la participante decla
                                       decoration: _inputDecoration.copyWith(
                                         labelText: 'Sección',
                                       ),
-                                      items: ['A', 'B', 'C', 'D', 'NO APLICA']
-                                          .map((seccion) {
+                                      items:
+                                          [
+                                            'A',
+                                            'B',
+                                            'C',
+                                            'D',
+                                            'E',
+                                            'F',
+                                            'NO APLICA',
+                                          ].map((seccion) {
                                             return DropdownMenuItem<String>(
                                               value: seccion,
                                               child: Text(seccion),
                                             );
-                                          })
-                                          .toList(),
+                                          }).toList(),
                                       onChanged: (value) {
                                         setState(() {
                                           _selectedSeccion = value;
@@ -781,18 +788,6 @@ Al completar y enviar el formulario de preinscripción, el/la participante decla
   String? _validarContrasenha(String? value) {
     if (value == null || value.isEmpty) return 'Campo requerido';
     if (value.length < 6) return 'Mínimo 6 caracteres';
-    if (!value.contains(RegExp(r'[A-Z]'))) {
-      return 'Debe contener al menos una letra mayúscula';
-    }
-    if (!value.contains(RegExp(r'[a-z]'))) {
-      return 'Debe contener al menos una letra minúscula';
-    }
-    if (!value.contains(RegExp(r'[0-9]'))) {
-      return 'Debe contener al menos un dígito';
-    }
-    if (!value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-      return 'Debe contener al menos un carácter especial';
-    }
     return null;
   }
 

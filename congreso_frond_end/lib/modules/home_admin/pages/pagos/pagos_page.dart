@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:congreso_evento/core/behahavior/custom_scroll_behavior.dart';
 import 'package:congreso_evento/core/empty_result.dart';
 import 'package:congreso_evento/core/formater/date_formater.dart';
 import 'package:congreso_evento/core/formater/number_formater.dart';
 import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
+import 'package:congreso_evento/modules/home_admin/pages/pagos/models/resumen_cobrador_turno.dart';
 import 'package:congreso_evento/modules/home_admin/pages/pagos/pago_page_ctrl.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -146,6 +148,7 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
                 'Fecha',
                 u.fechaPago != null ? formatDateAndTime(u.fechaPago!) : '—',
               ),
+              _kv('Cobrador', u.usuarioPago ?? '—'),
             ],
           ),
         ),
@@ -224,326 +227,439 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
           ),
         ],
       ),
-      body: LayoutBuilder(
-        builder: (context, c) {
-          final w = c.maxWidth;
-          final isMobile = w < 720;
+      body: RefreshIndicator(
+        onRefresh: () async => _ctrl.onRefresh(),
+        child: LayoutBuilder(
+          builder: (context, c) {
+            final w = c.maxWidth;
+            final isMobile = w < 720;
 
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: kBorder),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: _SearchBar(
-                    buscadorCtrl: _buscadorCtrl,
-                    onChanged: _onSearchChanged,
-                  ),
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 4,
-                ),
-                child: Observer(
-                  builder: (_) {
-                    final visible = _ctrl.puedeCobrar; // vigente
-                    if (!visible) return const SizedBox.shrink();
-
-                    final d = _restante ?? _ctrl.restanteCobro;
-                    final texto = _fmtCountdown(d);
-
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: brandPrimary.withOpacity(.06),
-                        border: Border.all(
-                          color: brandPrimary.withOpacity(.20),
+            return ScrollConfiguration(
+              behavior: CustomScrollBehavior(),
+              child: CustomScrollView(
+                controller: _listCtrl,
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  // --- BARRA DE BÚSQUEDA ---
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: kBorder),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 12,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
                         ),
-                        borderRadius: BorderRadius.circular(12),
+                        alignment: Alignment.center,
+                        child: _SearchBar(
+                          buscadorCtrl: _buscadorCtrl,
+                          onChanged: _onSearchChanged,
+                        ),
                       ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 10,
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.timer_outlined, color: brandPrimary),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Ventana de cobros activa • Tiempo restante: $texto',
-                              style: const TextStyle(
-                                color: kInk,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
+                    ),
+                  ),
 
-              // Fila 1: Estado
-              Visibility(
-                visible: _ctrl.isAdmin,
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    _ChoiceChipX(
-                      label: 'Todos',
-                      selected: _ctrl.filtroEstado == FiltroEstado.todos,
-                      onSelected: (_) {
-                        _ctrl.filtroEstado = FiltroEstado.todos;
-                        _ctrl.primeraConsulta();
-                      },
-                    ),
-                    _ChoiceChipX(
-                      label: 'Pagos',
-                      selected: _ctrl.filtroEstado == FiltroEstado.pagos,
-                      onSelected: (_) {
-                        _ctrl.filtroEstado = FiltroEstado.pagos;
-                        _ctrl.primeraConsulta();
-                      },
-                    ),
-                    _ChoiceChipX(
-                      label: 'Exonerados',
-                      selected: _ctrl.filtroEstado == FiltroEstado.exonerados,
-                      onSelected: (_) {
-                        _ctrl.filtroEstado = FiltroEstado.exonerados;
-                        _ctrl.primeraConsulta();
-                      },
-                    ),
-                    _ChoiceChipX(
-                      label: 'Pendientes',
-                      selected: _ctrl.filtroEstado == FiltroEstado.pendientes,
-                      onSelected: (_) {
-                        _ctrl.filtroEstado = FiltroEstado.pendientes;
-                        _ctrl.primeraConsulta();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              // Fila 2: Periodo
-              Visibility(
-                visible: _ctrl.isAdmin,
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    _ChoiceChipX(
-                      label: 'Hoy',
-                      selected: _ctrl.filtroPeriodo == FiltroPeriodo.hoy,
-                      onSelected: (_) {
-                        _ctrl.filtroPeriodo = FiltroPeriodo.hoy;
-                        _ctrl.primeraConsulta();
-                        _ctrl.cargarResumen();
-                      },
-                    ),
-                    _ChoiceChipX(
-                      label: 'Ayer',
-                      selected: _ctrl.filtroPeriodo == FiltroPeriodo.ayer,
-                      onSelected: (_) {
-                        _ctrl.filtroPeriodo = FiltroPeriodo.ayer;
-                        _ctrl.primeraConsulta();
-                        _ctrl.cargarResumen();
-                      },
-                    ),
-                    _ChoiceChipX(
-                      label: 'Este mes',
-                      selected: _ctrl.filtroPeriodo == FiltroPeriodo.mes,
-                      onSelected: (_) {
-                        _ctrl.filtroPeriodo = FiltroPeriodo.mes;
-                        _ctrl.primeraConsulta();
-                        _ctrl.cargarResumen();
-                      },
-                    ),
-                    _ChoiceChipX(
-                      label: _ctrl.filtroPeriodo == FiltroPeriodo.rango
-                          ? 'Rango (${_fmtShortRange(_ctrl.rangoPersonalizado)})'
-                          : 'Rango...',
-                      selected: _ctrl.filtroPeriodo == FiltroPeriodo.rango,
-                      onSelected: (_) async {
-                        final picked = await showDateRangePicker(
-                          context: context,
-                          firstDate: DateTime.now().subtract(
-                            const Duration(days: 365),
-                          ),
-                          lastDate: DateTime.now().add(
-                            const Duration(days: 365),
-                          ),
-                          saveText: 'Aplicar',
-                          builder: (ctx, child) => Theme(
-                            data: Theme.of(ctx).copyWith(
-                              colorScheme: ColorScheme.fromSeed(
-                                seedColor: brandPrimary,
-                              ),
-                            ),
-                            child: child!,
-                          ),
+                  // --- COUNTDOWN (ventana de cobro) ---
+                  Observer(
+                    builder: (_) {
+                      if (!_ctrl.puedeCobrar) {
+                        return const SliverToBoxAdapter(
+                          child: SizedBox.shrink(),
                         );
-                        if (picked != null) {
-                          _ctrl.rangoPersonalizado = picked;
-                          _ctrl.filtroPeriodo = FiltroPeriodo.rango;
-                          _ctrl.primeraConsulta();
-                          _ctrl.cargarResumen();
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              Visibility(
-                visible: _ctrl.isAdmin,
-                child: Row(
-                  children: [
-                    Switch(
-                      value: _ctrl.agruparPorCobrador,
-                      onChanged: (v) async {
-                        setState(() {}); // si hace falta
-                        _ctrl.agruparPorCobrador = v;
-                        if (v) {
-                          await _ctrl.cargarResumen();
-                        } else {
-                          _ctrl.primeraConsulta();
-                        }
-                      },
-                      activeColor: brandPrimary,
-                    ),
-                    const SizedBox(width: 6),
-                    const Text('Agrupar por cobrador'),
-                  ],
-                ),
-              ),
-
-              if (_ctrl.agruparPorCobrador)
-                Card(
-                  margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(color: kBorder),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    children: _ctrl.resumen
-                        .map(
-                          (r) => ListTile(
-                            leading: const Icon(Icons.badge_outlined),
-                            title: Text(r.usuarioPagoNombre ?? '—'),
-                            subtitle: Text('Cobros: ${r.cantidad}'),
-                            trailing: Text(newFormatNumber(r.montoTotal, 1)),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-
-              // Resumen
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Observer(
-                    builder: (_) => Visibility(
-                      visible: _ctrl.isAdmin,
-                      replacement: Text(
-                        'Resultados: ${_ctrl.congresistas.length}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color:
-                              brandPrimary, // o onSurface.withOpacity(0.7) si preferís sutil
-                        ),
-                      ),
-                      child: Text(
-                        'Resultados: ${_ctrl.congresistas.length} / ${_ctrl.totalRegistros}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color:
-                              brandPrimary, // o onSurface.withOpacity(0.7) si preferís sutil
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              // Lista (scroll SOLO vertical)
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    await _ctrl.onRefresh();
-                  },
-                  child: Scrollbar(
-                    controller: _listCtrl,
-                    thumbVisibility: true,
-                    child: Observer(
-                      builder: (_) {
-                        final isEmpty = _ctrl.congresistas.isEmpty;
-                        final finished =
-                            !_ctrl.isLoading; // consulta ya finalizó
-
-                        if (isEmpty && finished) {
-                          // Estado vacío: lista vacía pero con scroll (para que funcione el RefreshIndicator)
-                          return ListView(
-                            controller: _listCtrl,
-                            padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            children: const [
-                              EmptyResult(
-                                title: 'La consulta no retornó registros',
+                      }
+                      final d = _restante ?? _ctrl.restanteCobro;
+                      final texto = _fmtCountdown(d);
+                      return SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: brandPrimary.withOpacity(.06),
+                              border: Border.all(
+                                color: brandPrimary.withOpacity(.20),
                               ),
-                            ],
-                          );
-                        }
-
-                        // Lista normal (con ítem de loading/“cargando más” al final si corresponde)
-                        return ListView.builder(
-                          controller: _listCtrl,
-                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount:
-                              _ctrl.congresistas.length +
-                              (_ctrl.isLoading || !_ctrl.isLastPage ? 1 : 0),
-                          itemBuilder: (context, index) {
-                            if (index >= _ctrl.congresistas.length) {
-                              // Loader al final mientras carga o si aún hay más páginas
-                              return const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 24),
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation(
-                                      brandPrimary,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 10,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.timer_outlined, color: brandPrimary),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Ventana de cobros activa • Tiempo restante: $texto',
+                                    style: const TextStyle(
+                                      color: kInk,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
-                              );
-                            }
+                                IconButton(
+                                  tooltip: 'Refrescar',
+                                  onPressed: () => _ctrl.primeraConsulta(),
+                                  icon: const Icon(Icons.refresh),
+                                  color: brandPrimary,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
 
-                            final u = _ctrl.congresistas[index];
-                            final isMobile =
-                                MediaQuery.of(context).size.width < 720;
+                  // --- FILTROS: ESTADO ---
+                  Observer(
+                    builder: (_) {
+                      if (!_ctrl.isAdmin) {
+                        return const SliverToBoxAdapter(
+                          child: SizedBox(height: 8),
+                        );
+                      }
+                      return SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              _ChoiceChipX(
+                                label: 'Todos',
+                                selected:
+                                    _ctrl.filtroEstado == FiltroEstado.todos,
+                                onSelected: (_) {
+                                  _ctrl.filtroEstado = FiltroEstado.todos;
+                                  _ctrl.primeraConsulta();
+                                },
+                              ),
+                              _ChoiceChipX(
+                                label: 'Pagos',
+                                selected:
+                                    _ctrl.filtroEstado == FiltroEstado.pagos,
+                                onSelected: (_) {
+                                  _ctrl.filtroEstado = FiltroEstado.pagos;
+                                  _ctrl.primeraConsulta();
+                                },
+                              ),
+                              _ChoiceChipX(
+                                label: 'Exonerados',
+                                selected:
+                                    _ctrl.filtroEstado ==
+                                    FiltroEstado.exonerados,
+                                onSelected: (_) {
+                                  _ctrl.filtroEstado = FiltroEstado.exonerados;
+                                  _ctrl.primeraConsulta();
+                                },
+                              ),
+                              _ChoiceChipX(
+                                label: 'Pendientes',
+                                selected:
+                                    _ctrl.filtroEstado ==
+                                    FiltroEstado.pendientes,
+                                onSelected: (_) {
+                                  _ctrl.filtroEstado = FiltroEstado.pendientes;
+                                  _ctrl.primeraConsulta();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
 
-                            return _PagoItem(
+                  // --- FILTROS: PERIODO ---
+                  Observer(
+                    builder: (_) {
+                      if (!_ctrl.isAdmin) {
+                        return const SliverToBoxAdapter(
+                          child: SizedBox(height: 8),
+                        );
+                      }
+                      return SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              _ChoiceChipX(
+                                label: 'Hoy',
+                                selected:
+                                    _ctrl.filtroPeriodo == FiltroPeriodo.hoy,
+                                onSelected: (_) {
+                                  _ctrl.filtroPeriodo = FiltroPeriodo.hoy;
+                                  _ctrl.primeraConsulta();
+                                  _ctrl.cargarResumenTurno();
+                                },
+                              ),
+                              _ChoiceChipX(
+                                label: 'Ayer',
+                                selected:
+                                    _ctrl.filtroPeriodo == FiltroPeriodo.ayer,
+                                onSelected: (_) {
+                                  _ctrl.filtroPeriodo = FiltroPeriodo.ayer;
+                                  _ctrl.primeraConsulta();
+                                  _ctrl.cargarResumenTurno();
+                                },
+                              ),
+                              _ChoiceChipX(
+                                label: 'Este mes',
+                                selected:
+                                    _ctrl.filtroPeriodo == FiltroPeriodo.mes,
+                                onSelected: (_) {
+                                  _ctrl.filtroPeriodo = FiltroPeriodo.mes;
+                                  _ctrl.primeraConsulta();
+                                  _ctrl.cargarResumenTurno();
+                                },
+                              ),
+                              _ChoiceChipX(
+                                label:
+                                    _ctrl.filtroPeriodo == FiltroPeriodo.rango
+                                    ? 'Rango (${_fmtShortRange(_ctrl.rangoPersonalizado)})'
+                                    : 'Rango...',
+                                selected:
+                                    _ctrl.filtroPeriodo == FiltroPeriodo.rango,
+                                onSelected: (_) async {
+                                  final picked = await showDateRangePicker(
+                                    context: context,
+                                    firstDate: DateTime.now().subtract(
+                                      const Duration(days: 365),
+                                    ),
+                                    lastDate: DateTime.now().add(
+                                      const Duration(days: 365),
+                                    ),
+                                    saveText: 'Aplicar',
+                                    builder: (ctx, child) => Theme(
+                                      data: Theme.of(ctx).copyWith(
+                                        colorScheme: ColorScheme.fromSeed(
+                                          seedColor: brandPrimary,
+                                        ),
+                                      ),
+                                      child: child!,
+                                    ),
+                                  );
+                                  if (picked != null) {
+                                    _ctrl.rangoPersonalizado = picked;
+                                    _ctrl.filtroPeriodo = FiltroPeriodo.rango;
+                                    _ctrl.primeraConsulta();
+                                    _ctrl.cargarResumenTurno();
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  // --- AGRUPACIÓN Y RESUMEN ---
+                  Observer(
+                    builder: (_) {
+                      if (!_ctrl.isAdmin) {
+                        return const SliverToBoxAdapter(
+                          child: SizedBox.shrink(),
+                        );
+                      }
+                      return SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 6, 16, 0),
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 4),
+                              Switch(
+                                value: _ctrl.agruparPorCobrador,
+                                onChanged: (v) async {
+                                  _ctrl.agruparPorCobrador = v;
+                                  if (v) {
+                                    await _ctrl.cargarResumenTurno();
+                                  } else {
+                                    _ctrl.primeraConsulta();
+                                  }
+                                },
+                                activeColor: brandPrimary,
+                              ),
+                              const SizedBox(width: 6),
+                              const Text('Agrupar por cobrador'),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  // --- TARJETA DE RESUMEN (agrupado) ---
+                  Observer(
+                    builder: (_) {
+                      if (!_ctrl.agruparPorCobrador) {
+                        return const SliverToBoxAdapter(
+                          child: SizedBox.shrink(),
+                        );
+                      }
+                      final lista = _ctrl.resumenTurno;
+
+                      return SliverToBoxAdapter(
+                        child: Card(
+                          margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(color: kBorder),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            children: [
+                              ...lista.map(
+                                (r) => Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                      horizontal: 4,
+                                    ),
+                                    leading: const Icon(Icons.badge_outlined),
+                                    title: Text(
+                                      r.usuarioPagoNombre ?? '—',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // --- Bloque PAGOS ---
+                                        const SizedBox(height: 6),
+                                        const Text(
+                                          'Pagos',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        _filaTurno(
+                                          'Día (06–12)',
+                                          r.cantDiaPagos,
+                                          newFormatNumber(r.montoDiaPagos, 1),
+                                        ),
+                                        _filaTurno(
+                                          'Tarde (13–18)',
+                                          r.cantTardePagos,
+                                          newFormatNumber(r.montoTardePagos, 1),
+                                        ),
+                                        _filaTurno(
+                                          'Noche (19–05)',
+                                          r.cantNochePagos,
+                                          newFormatNumber(r.montoNochePagos, 1),
+                                        ),
+
+                                        // --- Bloque EXONERADOS ---
+                                        const SizedBox(height: 8),
+                                        const Text(
+                                          'Exonerados',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        _filaTurno(
+                                          'Día (06–12)',
+                                          r.cantDiaEx,
+                                          '—',
+                                        ),
+                                        _filaTurno(
+                                          'Tarde (13–18)',
+                                          r.cantTardeEx,
+                                          '—',
+                                        ),
+                                        _filaTurno(
+                                          'Noche (19–05)',
+                                          r.cantNocheEx,
+                                          '—',
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              const Divider(height: 12),
+
+                              // Totales generales (pagos + exonerados)
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  0,
+                                  16,
+                                  12,
+                                ),
+                                child: _totalesGeneralesEx(lista),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  // --- CONTADOR DE RESULTADOS ---
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      child: Observer(
+                        builder: (_) => Text(
+                          _ctrl.isAdmin
+                              ? 'Resultados: ${_ctrl.congresistas.length} / ${_ctrl.totalRegistros}'
+                              : 'Resultados: ${_ctrl.congresistas.length}',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: brandPrimary),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // --- LISTA DE ÍTEMS ---
+                  Observer(
+                    builder: (_) {
+                      final isEmpty = _ctrl.congresistas.isEmpty;
+                      final finished = !_ctrl.isLoading; // consulta ya finalizó
+
+                      if (isEmpty && finished) {
+                        return SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+                            child: const EmptyResult(
+                              title: 'La consulta no retornó registros',
+                            ),
+                          ),
+                        );
+                      }
+
+                      return SliverList.builder(
+                        itemCount: _ctrl.congresistas.length,
+                        itemBuilder: (context, index) {
+                          final u = _ctrl.congresistas[index];
+                          return Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                            child: _PagoItem(
                               usuario: u,
                               isMobile: isMobile,
                               onVer: () => _onVerUsuario(u),
@@ -554,17 +670,38 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
                                   : (u.isPago == true
                                         ? null
                                         : () => _onConfirmarPago(u)),
-                            );
-                          },
-                        );
-                      },
-                    ),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
-                ),
+
+                  // --- LOADER / “CARGANDO MÁS” AL FINAL ---
+                  Observer(
+                    builder: (_) {
+                      if (!_ctrl.isLoading || !_ctrl.isLastPage) {
+                        return const SliverToBoxAdapter(
+                          child: SizedBox(height: 16),
+                        );
+                      }
+                      return const SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation(brandPrimary),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -624,6 +761,115 @@ class _PagosPageState extends State<PagosPage> with DefaultStateNotifier {
           ),
         ],
       ),
+    );
+  }
+
+  // helpers UI nuevos:
+  Widget _filaTurno(String label, int cantidad, String montoFmt) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          SizedBox(width: 120, child: Text(label)),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: brandPrimary.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text('x$cantidad'),
+          ),
+          const Spacer(),
+          Text(montoFmt),
+        ],
+      ),
+    );
+  }
+
+  Widget _totalesGeneralesEx(List<ResumenCobradorTurno> xs) {
+    // PAGOS
+    final cantDiaPagos = xs.fold<int>(0, (a, e) => a + e.cantDiaPagos);
+    final cantTardePagos = xs.fold<int>(0, (a, e) => a + e.cantTardePagos);
+    final cantNochePagos = xs.fold<int>(0, (a, e) => a + e.cantNochePagos);
+    final montoDiaPagos = xs.fold<double>(0, (a, e) => a + e.montoDiaPagos);
+    final montoTardePagos = xs.fold<double>(0, (a, e) => a + e.montoTardePagos);
+    final montoNochePagos = xs.fold<double>(0, (a, e) => a + e.montoNochePagos);
+    final montoTotalPagos = montoDiaPagos + montoTardePagos + montoNochePagos;
+    final cantTotalPagos = cantDiaPagos + cantTardePagos + cantNochePagos;
+
+    // EXONERADOS
+    final cantDiaEx = xs.fold<int>(0, (a, e) => a + e.cantDiaEx);
+    final cantTardeEx = xs.fold<int>(0, (a, e) => a + e.cantTardeEx);
+    final cantNocheEx = xs.fold<int>(0, (a, e) => a + e.cantNocheEx);
+    final cantTotalEx = cantDiaEx + cantTardeEx + cantNocheEx;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text('Totales', style: TextStyle(fontWeight: FontWeight.w700)),
+        const SizedBox(height: 6),
+
+        const Text('Pagos', style: TextStyle(fontWeight: FontWeight.w600)),
+        _filaTurno(
+          'Día (06–12)',
+          cantDiaPagos,
+          newFormatNumber(montoDiaPagos, 1),
+        ),
+        _filaTurno(
+          'Tarde (13–18)',
+          cantTardePagos,
+          newFormatNumber(montoTardePagos, 1),
+        ),
+        _filaTurno(
+          'Noche (19–05)',
+          cantNochePagos,
+          newFormatNumber(montoNochePagos, 1),
+        ),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            const Text(
+              'Cobros totales:',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            const Spacer(),
+            Text('$cantTotalPagos'),
+          ],
+        ),
+        Row(
+          children: [
+            const Text(
+              'Monto total pagos:',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            const Spacer(),
+            Text(
+              newFormatNumber(montoTotalPagos, 1),
+              style: const TextStyle(
+                color: brandPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 10),
+        const Text('Exonerados', style: TextStyle(fontWeight: FontWeight.w600)),
+        _filaTurno('Día (06–12)', cantDiaEx, '—'),
+        _filaTurno('Tarde (13–18)', cantTardeEx, '—'),
+        _filaTurno('Noche (19–05)', cantNocheEx, '—'),
+        Row(
+          children: [
+            const Text(
+              'Total exonerados:',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            const Spacer(),
+            Text('$cantTotalEx'),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -852,6 +1098,17 @@ class _PagoItem extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
+        // Cobrador
+        SizedBox(
+          width: 180,
+          child: Text(
+            (usuario.isPago || usuario.isExonerado == true)
+                ? (usuario.usuarioPago ?? '—')
+                : '—',
+            overflow: TextOverflow.clip,
+          ),
+        ),
+        const SizedBox(width: 12),
 
         // Acciones
         Wrap(
@@ -921,6 +1178,10 @@ class _PagoItem extends StatelessWidget {
             ],
           ),
         const SizedBox(height: 8),
+        Text(
+          'Cobrador: ${(usuario.isPago || usuario.isExonerado == true) ? (usuario.usuarioPago ?? '—') : '—'}',
+        ),
+
         // Acciones
         Row(
           spacing: 5,

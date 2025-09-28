@@ -63,7 +63,25 @@ class TrabajoCientificoPaginaCoautor extends StatelessWidget {
                     .map(
                       (f) => DropdownMenuItem(
                         value: f,
-                        child: Text(f, overflow: TextOverflow.ellipsis),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: RichText(
+                            text: TextSpan(
+                              style: const TextStyle(
+                                color: Colors.black,
+                              ), // estilo base
+                              children: [
+                                TextSpan(
+                                  text: '$f ',
+                                  style: const TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     )
                     .toList(),

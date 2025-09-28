@@ -285,21 +285,21 @@ mixin _$PagoPageCtrl on PagoPageCtrlBase, Store {
     });
   }
 
-  late final _$resumenAtom = Atom(
-    name: 'PagoPageCtrlBase.resumen',
+  late final _$resumenTurnoAtom = Atom(
+    name: 'PagoPageCtrlBase.resumenTurno',
     context: context,
   );
 
   @override
-  List<ResumenCobrador> get resumen {
-    _$resumenAtom.reportRead();
-    return super.resumen;
+  List<ResumenCobradorTurno> get resumenTurno {
+    _$resumenTurnoAtom.reportRead();
+    return super.resumenTurno;
   }
 
   @override
-  set resumen(List<ResumenCobrador> value) {
-    _$resumenAtom.reportWrite(value, super.resumen, () {
-      super.resumen = value;
+  set resumenTurno(List<ResumenCobradorTurno> value) {
+    _$resumenTurnoAtom.reportWrite(value, super.resumenTurno, () {
+      super.resumenTurno = value;
     });
   }
 
@@ -435,7 +435,7 @@ mixin _$PagoPageCtrl on PagoPageCtrlBase, Store {
     return '''
 congresistas: ${congresistas},
 agruparPorCobrador: ${agruparPorCobrador},
-resumen: ${resumen},
+resumenTurno: ${resumenTurno},
 filtroEstado: ${filtroEstado},
 filtroPeriodo: ${filtroPeriodo},
 rangoPersonalizado: ${rangoPersonalizado}

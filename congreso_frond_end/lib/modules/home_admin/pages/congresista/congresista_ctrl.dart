@@ -174,6 +174,32 @@ abstract class CongresistaCtrlBase with Store {
   }
 
   @action
+  Future<void> restablecerContrasenha() async {
+    try {
+      changeStatus('Restableciendo contraseña...', StatusEnumGlobal.loading);
+      // Simular un proceso de restablecimiento
+
+      final response = await service.restablecerContrasenha(_congresista!);
+
+      final data = response.data;
+      final code = response.code;
+      final message = response.message;
+
+      if (code != 200) {
+        changeStatus(message, StatusEnumGlobal.errorDialog);
+        return;
+      }
+      _actualizaLista(data);
+      changeStatus(
+        'Congresista restablecido exitosamente',
+        StatusEnumGlobal.success,
+      );
+    } on ServiceException catch (e) {
+      changeStatus(e.message, StatusEnumGlobal.error);
+    }
+  }
+
+  @action
   Future<List<Usuario>> consulta() async {
     try {
       if (_stateClass.status == StatusEnumGlobal.loadingList) {

@@ -128,7 +128,10 @@ class SobreSection extends StatelessWidget {
                       spacing: 10,
                       runSpacing: 10,
                       children: const [
-                        _StatPill(title: '3 días', subtitle: '9–11 oct 2025'),
+                        _StatPill(
+                          title: '3 días',
+                          subtitle: '9,10 y 11 oct 2025',
+                        ),
                         _StatPill(title: '+20', subtitle: 'disertantes'),
                         _StatPill(title: '+900', subtitle: 'participantes'),
                       ],

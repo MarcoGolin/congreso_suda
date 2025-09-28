@@ -3,14 +3,6 @@ import 'dart:math';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:congreso_evento/modules/home/model/organizadores.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-Future<void> _openLink(String url) async {
-  final uri = Uri.tryParse(url);
-  if (uri != null) {
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
-}
 
 class ComiteSection extends StatelessWidget {
   final List<Organizadores> organizadores;
@@ -25,7 +17,6 @@ class ComiteSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const bg = Color(0xFF121A14);
-    const brandPrimary = Color(0xFF387f4d);
     const brandLight = Color(0xFF73c165);
     final width = MediaQuery.of(context).size.width;
 
@@ -295,189 +286,6 @@ class _OrganizerCardState extends State<_OrganizerCard> {
   }
 }
 
-void _showOrganizerDialog(BuildContext context, Organizadores org) {
-  showGeneralDialog(
-    context: context,
-    barrierDismissible: true,
-    barrierLabel: 'Cerrar',
-    barrierColor: Colors.black.withOpacity(0.55),
-    transitionDuration: const Duration(milliseconds: 220),
-    pageBuilder: (ctx, _, __) {
-      final maxW = MediaQuery.of(ctx).size.width;
-      final maxH = MediaQuery.of(ctx).size.height;
-
-      return Center(
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            width: maxW > 900 ? 900 : maxW - 32,
-            constraints: BoxConstraints(maxHeight: maxH - 64),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0F1711),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white10, width: 1),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color.fromRGBO(0, 0, 0, .25),
-                  blurRadius: 24,
-                  offset: Offset(0, 12),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Imagen grande con Hero + zoom
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: AspectRatio(
-                      aspectRatio: 4 / 3,
-                      child: Container(
-                        color: const Color(0xFF1B2A20),
-                        child: org.foto.isNotEmpty
-                            ? Hero(
-                                tag: 'org-photo-${org.foto}-${org.nombre}',
-                                child: InteractiveViewer(
-                                  minScale: 1.0,
-                                  maxScale: 4.0,
-                                  child: Image.network(
-                                    org.foto,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (_, __, ___) =>
-                                        _LargeFallback(
-                                          initials: _initialsFromName(
-                                            org.nombre,
-                                          ),
-                                        ),
-                                  ),
-                                ),
-                              )
-                            : _LargeFallback(
-                                initials: _initialsFromName(org.nombre),
-                              ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                // Nombre y cargo
-                Text(
-                  org.nombre,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w800,
-                    fontSize: 20,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  org.cargo,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: Colors.white.withOpacity(.75),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                // Acciones
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    OutlinedButton.icon(
-                      onPressed: () => Navigator.of(ctx).pop(),
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: Colors.white.withOpacity(.25)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
-                      ),
-                      icon: const Icon(
-                        Icons.close,
-                        size: 18,
-                        color: Colors.white,
-                      ),
-                      label: const Text(
-                        'Cerrar',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    },
-    transitionBuilder: (ctx, anim, _, child) {
-      final curved = CurvedAnimation(parent: anim, curve: Curves.easeOut);
-      return FadeTransition(
-        opacity: curved,
-        child: ScaleTransition(
-          scale: Tween<double>(begin: .98, end: 1.0).animate(curved),
-          child: child,
-        ),
-      );
-    },
-  );
-}
-
-String _badgeFromCargo(String cargo) {
-  final c = cargo.toLowerCase();
-  if (c.contains('presi')) return 'Presidencia';
-  if (c.contains('vice')) return 'Vicepresidencia';
-  if (c.contains('director') || c.contains('dirección')) return 'Dirección';
-  return 'Destacado';
-}
-
-class _BadgeChip extends StatelessWidget {
-  final String label;
-  const _BadgeChip({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: const Color(0xFF16331F),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: const Color(0xFF73c165).withOpacity(.45)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.star_rounded, size: 16, color: Color(0xFF73c165)),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.w800,
-              fontSize: 11.5,
-              color: Colors.white,
-              letterSpacing: .2,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _AvatarFoto extends StatelessWidget {
   final String foto;
   final String nombre;
@@ -554,28 +362,4 @@ String _initialsFromName(String name) {
     0,
     min(2, (pick(parts.first) + pick(parts.last)).length),
   );
-}
-
-class _LargeFallback extends StatelessWidget {
-  final String initials;
-  const _LargeFallback({required this.initials});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF1B2A20),
-      child: Center(
-        child: Text(
-          initials,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            color: Colors.white70,
-            fontSize: 72,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.5,
-          ),
-        ),
-      ),
-    );
-  }
 }

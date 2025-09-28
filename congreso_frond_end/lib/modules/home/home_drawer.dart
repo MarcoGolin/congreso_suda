@@ -85,6 +85,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
                     onTap: () => widget.onTap('Ligas'),
                   ),
                   _NavTile(
+                    icon: Icons.people_outline,
+                    label: 'Comité Organizador',
+                    onTap: () => widget.onTap('Comité'),
+                  ),
+                  _NavTile(
                     icon: Icons.place_outlined,
                     label: 'Lugar',
                     onTap: () => widget.onTap('Lugar'),

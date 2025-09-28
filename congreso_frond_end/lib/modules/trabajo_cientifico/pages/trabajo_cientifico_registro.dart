@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:congreso_evento/core/behahavior/custom_scroll_behavior.dart';
 import 'package:congreso_evento/core/loader_overlau.dart';
 import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/models/coautor.dart';
@@ -139,14 +140,15 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
   ];
 
   final _areasTematicas = [
-    'Salud Pública y Epidemiología',
-    'Promoción de la Salud y Sociedad',
-    'Investigación Biomédica e Innovación',
-    'Ética y Bioética en Salud',
-    'Salud Mental y Conducta',
-    'Tecnologías de la Información en Salud',
-    'Tecnologías Biomédicas y Biotecnología',
-    'Salud Internacional y de Fronteras',
+    'Monitoreo y Análisis de la Situación de Salud – Estudios de situación de salud, acceso, cobertura y calidad de los servicios sanitarios',
+    'Vigilancia Epidemiológica en Salud Pública – Control de riesgos y daños, enfermedades transmisibles y no transmisibles, bioseguridad y bioterrorismo',
+    'Promoción de la Salud, Participación Social y Empoderamiento Ciudadano – Estrategias de promoción, determinantes sociales, estilos de vida, políticas públicas, calidad de vida y participación comunitaria',
+    'Innovaciones en las Investigaciones Biomédicas – Nuevas vacunas, genética, genómica, epidemiología molecular, biobancos, telemedicina y tecnologías biomédicas aplicadas',
+    'Ética en la Investigación en Salud – Principios bioéticos, consentimiento informado, comités de ética, evaluación ética de instituciones y proyectos',
+    'Investigación en Salud Mental – Depresión, suicidio, adicciones, violencia, consumo de sustancias, salud mental en poblaciones vulnerables',
+    'Tecnologías de la Información y la Comunicación en Salud (TICs) – Procesamiento y gestión de datos, seguridad de la información, sistemas digitales aplicados al ámbito sanitario',
+    'Tecnologías Biomédicas – Evaluación de dispositivos médicos, calidad, eficacia y seguridad de tecnologías sanitarias, biotecnología en salud',
+    'Salud Internacional y Salud de Fronteras – Cooperación internacional, vigilancia en zonas fronterizas, inequidades y asimetrías en salud, impacto de la globalización y cambio climático',
   ];
 
   /// Áreas de la Medicina
@@ -363,6 +365,10 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
         default:
       }
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _checkValidForm();
+    });
     super.initState();
   }
 
@@ -440,43 +446,37 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
         Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
+            title: Text(
+              'Trabajo Científico',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
             backgroundColor: Colors.transparent,
             elevation: 0,
             iconTheme: IconThemeData(color: textColor),
           ),
-          extendBodyBehindAppBar: true,
           backgroundColor: Colors.transparent,
-
-          body: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15.0,
-                vertical: 15,
+          body: Align(
+            alignment: Alignment.topCenter,
+            child: Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-              child: Card(
-                elevation: 8,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                color: Colors.white.withOpacity(0.95),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 500),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        Text(
-                          'Carga de Trabajo Científico',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: textColor,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Expanded(
+              color: Colors.white.withOpacity(0.95),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      Expanded(
+                        child: ScrollConfiguration(
+                          behavior: CustomScrollBehavior(),
                           child: PageView(
                             controller: _pageController,
                             physics: const NeverScrollableScrollPhysics(),
@@ -553,73 +553,70 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
                             ],
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              if (_currentPage > 0 && _currentPage != 5)
-                                TextButton(
-                                  onPressed: () {
-                                    FocusScope.of(
-                                      context,
-                                    ).unfocus(); // cerrar teclado
-                                    setState(() => _currentPage--);
-                                    _pageController.animateToPage(
-                                      _currentPage,
-                                      duration: const Duration(
-                                        milliseconds: 300,
-                                      ),
-                                      curve: Curves.easeInOut,
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: const Text(
-                                      'Atrás'
-                                      ' ',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Color(0xFF387f4d),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              const Spacer(),
-                              if (_currentPage != 5)
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 16,
-                                    ),
-                                    backgroundColor: textColor,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  onPressed: _formIsValid
-                                      ? _validarYAvanzar
-                                      : null,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      _currentPage == 4
-                                          ? 'Enviar'
-                                          : 'Siguiente',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 10,
                         ),
-                      ],
-                    ),
+                        child: Row(
+                          children: [
+                            if (_currentPage > 0 && _currentPage != 5)
+                              TextButton(
+                                onPressed: () {
+                                  FocusScope.of(
+                                    context,
+                                  ).unfocus(); // cerrar teclado
+                                  setState(() => _currentPage--);
+                                  _pageController.animateToPage(
+                                    _currentPage,
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                  _checkValidForm();
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: const Text(
+                                    'Atrás'
+                                    ' ',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Color(0xFF387f4d),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            const Spacer(),
+                            if (_currentPage != 5)
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
+                                  backgroundColor: textColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: _formIsValid
+                                    ? _validarYAvanzar
+                                    : null,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    _currentPage == 4 ? 'Enviar' : 'Siguiente',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -691,6 +688,7 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
   void _validarYAvanzar() {
     FocusScope.of(context).unfocus();
 
+    _checkValidForm(); // 👈 recalcula si el botón debe estar habilitado
     if (_currentPage < 4) {
       setState(() => _currentPage++);
       _pageController.animateToPage(
@@ -698,7 +696,6 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
-      _checkValidForm(); // 👈 recalcula si el botón debe estar habilitado
     } else {
       _enviarFormulario();
     }

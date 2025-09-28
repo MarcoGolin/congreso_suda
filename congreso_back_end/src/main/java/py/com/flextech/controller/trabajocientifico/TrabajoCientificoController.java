@@ -1,6 +1,9 @@
 package py.com.flextech.controller.trabajocientifico;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,5 +27,16 @@ public class TrabajoCientificoController {
 	@PostMapping("/save")
 	public GenericResponseEntity<?> save(@RequestAttribute Long idUsuario, @RequestBody TrabajoCientifico data) {
 		return service.save(idUsuario, data);
+	}
+	
+	
+	@GetMapping("/consultaTrabajosPorUsuario")
+	public GenericResponseEntity<List<TrabajoCientifico>> consultaTrabajosPorUsuario(@RequestAttribute Long idUsuario) {
+		return service.consultaTrabajosPorUsuario(idUsuario);
+	}
+
+	@GetMapping("/consultaTodos")
+	public GenericResponseEntity<List<TrabajoCientifico>> consultaTodos() {
+		return service.consultaTodos();
 	}
 }

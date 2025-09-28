@@ -47,6 +47,24 @@ mixin _$HomePageCtrl on HomePageCtrlBase, Store {
     });
   }
 
+  late final _$talleresAtom = Atom(
+    name: 'HomePageCtrlBase.talleres',
+    context: context,
+  );
+
+  @override
+  ObservableList<Taller> get talleres {
+    _$talleresAtom.reportRead();
+    return super.talleres;
+  }
+
+  @override
+  set talleres(ObservableList<Taller> value) {
+    _$talleresAtom.reportWrite(value, super.talleres, () {
+      super.talleres = value;
+    });
+  }
+
   late final _$consultarOrganizadoresAsyncAction = AsyncAction(
     'HomePageCtrlBase.consultarOrganizadores',
     context: context,
@@ -57,6 +75,16 @@ mixin _$HomePageCtrl on HomePageCtrlBase, Store {
     return _$consultarOrganizadoresAsyncAction.run(
       () => super.consultarOrganizadores(),
     );
+  }
+
+  late final _$consultarTalleresAsyncAction = AsyncAction(
+    'HomePageCtrlBase.consultarTalleres',
+    context: context,
+  );
+
+  @override
+  Future<void> consultarTalleres() {
+    return _$consultarTalleresAsyncAction.run(() => super.consultarTalleres());
   }
 
   late final _$HomePageCtrlBaseActionController = ActionController(
@@ -79,7 +107,8 @@ mixin _$HomePageCtrl on HomePageCtrlBase, Store {
   @override
   String toString() {
     return '''
-organizadores: ${organizadores}
+organizadores: ${organizadores},
+talleres: ${talleres}
     ''';
   }
 }

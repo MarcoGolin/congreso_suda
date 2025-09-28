@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,11 +54,11 @@ public class CongresistaController {
 	  return service.consultaConFiltros(nombre, registroAcademico, estado, desde, hasta, pageNr, pageSize);
 	}
 
-	@GetMapping("/resumenCobrador")
-	public GenericResponseEntity<?> resumenCobrador(
+	@GetMapping("/resumenCobradorTurno")
+	public GenericResponseEntity<?> resumenCobradorTurno(
 	    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime desde,
 	    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime hasta) {
-	  return service.resumenCobrador(desde, hasta);
+	  return service.resumenCobradorTurno(desde, hasta);
 	}
 	
 	@GetMapping("/consultaCongresistaPorTipo")
@@ -69,5 +70,16 @@ public class CongresistaController {
 	@GetMapping("/reenviarEmailInscripcion")
 	public GenericResponseEntity<?> reenviarEmailInscripcion() {
 		return service.reenviarEmailInscripcion();
+	}
+	
+	@PutMapping("/restablecerContrasenha")
+	public GenericResponseEntity<?> restablecerContrasenha(@RequestParam Long idCongresista) {
+		return service.restablecerContrasenha(idCongresista);
+	}
+	
+	@GetMapping("/consultaCongresistaPorId")
+	public GenericResponseEntity<?> consultaCongresistaPorId(
+	    @RequestParam(required = true)  Long idUsuario) {
+	  return service.consultaCongresistaPorId(idUsuario);
 	}
 }

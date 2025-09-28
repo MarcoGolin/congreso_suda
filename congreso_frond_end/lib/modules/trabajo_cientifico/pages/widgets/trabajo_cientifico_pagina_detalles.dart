@@ -86,9 +86,44 @@ class TrabajoCientificoPaginaDetalles extends StatelessWidget {
           DropdownButtonFormField<String>(
             value: areaTematica,
             decoration: inputDecoration.copyWith(labelText: 'Área temática'),
-            items: areasTematicas
-                .map((a) => DropdownMenuItem(value: a, child: Text(a)))
-                .toList(),
+            items: areasTematicas.map((a) {
+              final partes = a.split('–');
+              final titulo = partes[0].trim();
+              final detalle = partes.length > 1 ? partes[1].trim() : '';
+
+              return DropdownMenuItem(
+                value: a,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: RichText(
+                    text: TextSpan(
+                      style: const TextStyle(
+                        color: Colors.black,
+                      ), // estilo base
+                      children: [
+                        TextSpan(
+                          text: '$titulo ',
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 16,
+                          ),
+                        ),
+                        if (detalle.isNotEmpty)
+                          TextSpan(
+                            text: '– $detalle',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+            isExpanded: true,
             onChanged: onAreaTematicaChanged,
             validator: (v) => v == null ? 'Seleccione un área temática' : null,
           ),

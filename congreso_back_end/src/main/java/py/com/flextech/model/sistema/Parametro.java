@@ -2,7 +2,6 @@ package py.com.flextech.model.sistema;
 
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,6 +34,10 @@ public class Parametro {
 	@NotNull
 	@Column(name = "BO_MOSTRAR_COMITE")
 	private Boolean mostrarComite;
+
+	@NotNull
+	@Column(name = "BO_MOSTRAR_TALLERES")
+	private Boolean mostrarTalleres;
 		
 	
 	public Parametro(Long id) {

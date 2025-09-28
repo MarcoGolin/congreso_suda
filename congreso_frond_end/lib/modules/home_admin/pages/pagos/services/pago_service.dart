@@ -3,7 +3,7 @@ import 'package:congreso_evento/core/exception/service_exception.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
 import 'package:congreso_evento/modules/auth/models/usuario_pageable.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/models/habilitacion_pagos.dart';
-import 'package:congreso_evento/modules/home_admin/pages/pagos/models/resumen_cobrador.dart';
+import 'package:congreso_evento/modules/home_admin/pages/pagos/models/resumen_cobrador_turno.dart';
 import 'package:congreso_evento/modules/home_admin/pages/pagos/pago_page_ctrl.dart';
 import 'package:congreso_evento/modules/home_admin/pages/pagos/repositories/habilitacion_pagos_repository.dart';
 import 'package:congreso_evento/modules/home_admin/pages/pagos/repositories/pago_repository.dart';
@@ -163,18 +163,21 @@ class PagoService {
     }
   }
 
-  Future<({List<ResumenCobrador> data, int code, String message})>
-  resumenCobrador({required DateTime? desde, required DateTime? hasta}) async {
+  Future<({List<ResumenCobradorTurno> data, int code, String message})>
+  resumenCobradorPorTurno({
+    required DateTime? desde,
+    required DateTime? hasta,
+  }) async {
     try {
-      var response = await pagoRepository.resumenCobrador(
+      final response = await pagoRepository.resumenCobradorTurno(
         desde: desde,
         hasta: hasta,
       );
 
-      List<ResumenCobrador> p = [];
+      List<ResumenCobradorTurno> p = [];
       if (response?.object != null) {
         p = (response!.object as List)
-            .map((e) => ResumenCobrador.fromJson(e))
+            .map((e) => ResumenCobradorTurno.fromJson(e))
             .toList();
       }
 

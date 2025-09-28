@@ -28,6 +28,9 @@ class MyApp extends StatelessWidget {
     final appSupportedLocales = <Locale>[const Locale('es', 'PY')];
     return MaterialApp.router(
       title: 'IVCUSMI 2025',
+      // showPerformanceOverlay: true, // FPS y raster time
+      // checkerboardRasterCacheImages: true, // parpadeo si no cachea bien
+      // checkerboardOffscreenLayers: true,
       supportedLocales: appSupportedLocales,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

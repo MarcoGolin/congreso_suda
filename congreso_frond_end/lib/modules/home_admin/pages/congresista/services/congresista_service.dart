@@ -24,6 +24,20 @@ class CongresistaService {
     }
   }
 
+  Future<({Usuario? data, int code, String message})> restablecerContrasenha(
+    Usuario congresista,
+  ) async {
+    try {
+      var response = await repository.restablecerContrasenha(congresista);
+      Usuario? p = response.object != null
+          ? Usuario.fromJson(response.object)
+          : null;
+      return (data: p, code: response.code, message: response.message);
+    } on Exception catch (e) {
+      throw ServiceException(message: ExceptionUtils.getExceptionMessage(e));
+    }
+  }
+
   Future<
     ({
       List<Usuario> data,
@@ -114,6 +128,20 @@ class CongresistaService {
           ? (response.object as List).map((e) => Usuario.fromJson(e)).toList()
           : [];
       return (data: usuarios, code: response.code, message: response.message);
+    } on Exception catch (e) {
+      throw ServiceException(message: ExceptionUtils.getExceptionMessage(e));
+    }
+  }
+
+  Future<({Usuario? data, int code, String message})> consultaCongresistaPorId(
+    int idUsuario,
+  ) async {
+    try {
+      var response = await repository.consultaCongresistaPorId(idUsuario);
+      Usuario? usuario = response.object != null
+          ? Usuario.fromJson(response.object)
+          : null;
+      return (data: usuario, code: response.code, message: response.message);
     } on Exception catch (e) {
       throw ServiceException(message: ExceptionUtils.getExceptionMessage(e));
     }

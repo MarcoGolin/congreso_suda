@@ -188,7 +188,7 @@ class _DateInputState extends State<DateInput> {
             children: [
               Expanded(
                 child: ScrollConfiguration(
-                  behavior: CustomScollBehavior(),
+                  behavior: CustomScrollBehavior(),
                   child: CupertinoDatePicker(
                     mode: CupertinoDatePickerMode.date,
                     initialDateTime: widget.date ?? DateTime.now(),

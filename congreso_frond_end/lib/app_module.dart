@@ -10,6 +10,11 @@ import 'package:congreso_evento/modules/home/service/organizadores_service.dart'
 import 'package:congreso_evento/modules/home_admin/home_admin_module.dart';
 import 'package:congreso_evento/modules/home_congresista/home_congresista_module.dart';
 import 'package:congreso_evento/modules/inscripcion/Inscripcion_module.dart';
+import 'package:congreso_evento/modules/talleres/repositories/taller_repository.dart';
+import 'package:congreso_evento/modules/talleres/service/taller_service.dart';
+import 'package:congreso_evento/modules/talleres/services/taller_inscripcion_service.dart';
+import 'package:congreso_evento/modules/talleres/stores/mis_talleres_store.dart';
+import 'package:congreso_evento/modules/talleres/taller_module.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/trabajo_cientifico_module.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -19,6 +24,13 @@ class AppModule extends Module {
     i.addLazySingleton(HomePageCtrl.new);
     i.addLazySingleton(OrganizadoresService.new);
     i.addLazySingleton(OrganizadoresRepository.new);
+
+    i.addLazySingleton(TallerService.new);
+    i.addLazySingleton(TallerRepository.new);
+
+    // Mis talleres
+    i.addLazySingleton(TallerInscripcionService.new);
+    i.addLazySingleton(MisTalleresStore.new);
   }
 
   @override
@@ -48,6 +60,12 @@ class AppModule extends Module {
     r.module(
       '/home_congresista',
       module: HomeCongresistaModule(),
+      guards: [AuthGuard()],
+      transition: TransitionType.rightToLeft,
+    );
+    r.module(
+      '/taller_inscripcion',
+      module: TallerModule(),
       guards: [AuthGuard()],
       transition: TransitionType.rightToLeft,
     );
