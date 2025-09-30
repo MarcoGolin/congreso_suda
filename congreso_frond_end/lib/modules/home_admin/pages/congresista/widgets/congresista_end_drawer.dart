@@ -3,6 +3,7 @@ import 'package:congreso_evento/modules/auth/models/usuario.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/congresista_ctrl.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/enums/tipo_usuario_enum.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/utils/carnet_pdf.dart';
+import 'package:congreso_evento/modules/home_admin/pages/congresista/widgets/column_selection_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -156,6 +157,34 @@ class _CongresistaEndDrawerState extends State<CongresistaEndDrawer>
               ),
             ),
 
+            // NUEVO BOTÓN DE EXPORTACIÓN A EXCEL
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Observer(
+                      builder: (_) => OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF059669),
+                          side: const BorderSide(color: Color(0xFF059669)),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: _ctrl.isLoading
+                            ? null
+                            : () => mostrarDialogoEnContext(),
+                        icon: const Icon(Icons.table_chart_outlined, size: 18),
+                        label: const Text('Exportar todos a Excel'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
             const Divider(height: 16),
 
             // LISTA DE TIPOS
@@ -270,6 +299,15 @@ class _CongresistaEndDrawerState extends State<CongresistaEndDrawer>
       todos.addAll(list);
     }
     await printOrShareCarnetsGrid(todos, 'Todos los Carnets (${todos.length})');
+  }
+
+  void mostrarDialogoEnContext() {
+    _ctrl.inicializarSeleccionColumnas();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => ColumnSelectionDialog(controller: _ctrl),
+    );
   }
 }
 

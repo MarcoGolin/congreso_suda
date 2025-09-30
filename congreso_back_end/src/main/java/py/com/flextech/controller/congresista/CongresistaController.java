@@ -82,4 +82,11 @@ public class CongresistaController {
 	    @RequestParam(required = true)  Long idUsuario) {
 	  return service.consultaCongresistaPorId(idUsuario);
 	}
+
+	@GetMapping("/consultaByUUID")
+	public GenericResponseEntity<?> consultaByUUID(
+			@RequestParam(required = true)  String uuid) {
+		return service.consultaByUUID(uuid);
+	}
+
 }

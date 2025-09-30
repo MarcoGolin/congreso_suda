@@ -3,6 +3,8 @@ package py.com.flextech.model.taller;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,15 +15,17 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 
 @Entity
 @Table(name = "TR_TALLER")
+@Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Data
 public class Taller {
 	
 	@Id
@@ -70,6 +74,10 @@ public class Taller {
 	@Column(name = "RESPONSABLE")
 	private String responsable;
 	
+	@JsonIgnore
+	public Taller(Long id) {
+		this.id = id;
+	}
 
 
 }

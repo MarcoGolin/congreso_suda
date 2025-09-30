@@ -116,6 +116,9 @@ public class Usuario  implements Serializable , UserDetails  {
 	@NotNull
 	@Column(name = "UUID")
 	private String uuid;
+	
+	@Column(name = "UUID_BIN", insertable = false, updatable = false)
+	private byte[] uuidBin;
 
 	@Column(name = "BO_ADMIN")
 	private Boolean isAdmin;

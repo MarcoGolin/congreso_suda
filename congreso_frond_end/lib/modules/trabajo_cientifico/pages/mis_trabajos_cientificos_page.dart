@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:congreso_evento/core/js_cross_platform/js_cross_platform.dart'
     as js;
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
+import 'package:congreso_evento/modules/trabajo_cientifico/controllers/mis_trabajos_excel_ctrl.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/models/trabajo_cientifico.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/stores/mis_trabajos_cientificos_store.dart';
+import 'package:congreso_evento/modules/trabajo_cientifico/widgets/trabajos_column_selection_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -28,6 +30,7 @@ class _MisTrabajosCientificosPageState
 
   final _store = Modular.get<MisTrabajosCientificosStore>();
   Usuario? _usuario;
+  final _excelController = MisTrabajosCientificosExcelCtrl();
 
   @override
   void initState() {
@@ -375,6 +378,27 @@ class _MisTrabajosCientificosPageState
     );
   }
 
+  void _mostrarDialogoExportacion() {
+    if (_store.trabajos.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No hay trabajos científicos para exportar'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => TrabajosColumnSelectionDialog(
+        controller: _excelController,
+        trabajos: _store.trabajos,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -383,6 +407,26 @@ class _MisTrabajosCientificosPageState
         backgroundColor: brandLight,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          Observer(
+            builder: (_) => IconButton(
+              onPressed: _excelController.isLoading
+                  ? null
+                  : _mostrarDialogoExportacion,
+              icon: _excelController.isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Icon(Icons.file_download),
+              tooltip: 'Exportar a Excel',
+            ),
+          ),
+        ],
       ),
       body: Observer(
         builder: (_) {

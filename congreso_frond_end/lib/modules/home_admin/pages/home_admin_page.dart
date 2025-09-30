@@ -12,20 +12,48 @@ class HomeAdminPage extends StatefulWidget {
   State<HomeAdminPage> createState() => _HomeAdminPageState();
 }
 
-class _HomeAdminPageState extends State<HomeAdminPage> {
+class _HomeAdminPageState extends State<HomeAdminPage>
+    with TickerProviderStateMixin {
   static const brandPrimary = Color(0xFF387f4d);
   static const brandLight = Color(0xFF73c165);
 
   Usuario? _usuario;
   bool _loading = true;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0.0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutBack,
+          ),
+        );
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _loadUser();
     });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadUser() async {
@@ -39,7 +67,50 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
     } catch (_) {
       _usuario = null; // si hay json viejo/corrupto
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) {
+        setState(() => _loading = false);
+        _animationController.forward();
+      }
+    }
+  }
+
+  Future<void> _signOut() async {
+    try {
+      final storage = const FlutterSecureStorage();
+      await storage.deleteAll();
+
+      if (!mounted) return;
+      Modular.to.pushNamedAndRemoveUntil('/', (_) => false);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pudo cerrar sesión. Intenta de nuevo.'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _confirmAndSignOut() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Cerrar sesión'),
+        content: const Text('¿Seguro que querés cerrar tu sesión?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Cerrar sesión'),
+          ),
+        ],
+      ),
+    );
+    if (ok == true) {
+      await _signOut();
     }
   }
 
@@ -54,103 +125,95 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
-          //cerrar session
           IconButton(
             tooltip: 'Cerrar sesión',
-            onPressed: () async {
-              final storage = const FlutterSecureStorage();
-              await storage.deleteAll();
-              Modular.to.pushNamedAndRemoveUntil('/', (_) => false);
-            },
+            onPressed: _confirmAndSignOut,
             icon: const Icon(Icons.logout),
           ),
         ],
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : LayoutBuilder(
-              builder: (context, cts) {
-                final w = cts.maxWidth;
-                final isMobile = w < 480;
+          : (_usuario == null)
+          ? const Center(
+              child: Text('No se pudo cargar la información del usuario'),
+            )
+          : RefreshIndicator(
+              onRefresh: _loadUser,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16),
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SlideTransition(
+                    position: _slideAnimation,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header de bienvenida
+                        _WelcomeHeader(usuario: _usuario!),
 
-                return Center(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 1100),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _HeaderChip(),
-                          const SizedBox(height: 12),
+                        const SizedBox(height: 24),
 
-                          if (items.isEmpty)
-                            _RestrictedInfoCard(user: _usuario)
-                          else if (isMobile)
-                            Column(
-                              children: [
-                                for (final it in items) ...[
-                                  _AdminActionTile(
-                                    icon: it.icon,
-                                    title: it.title,
-                                    subtitle: it.subtitle,
-                                    onTap: () => Modular.to.pushNamed(it.route),
-                                  ),
-                                  const SizedBox(height: 8),
-                                ],
-                              ],
-                            )
-                          else
-                            GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: items.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: w >= 1000 ? 4 : 2,
-                                    mainAxisSpacing: 12,
-                                    crossAxisSpacing: 12,
-                                    childAspectRatio: 1.25,
-                                  ),
-                              itemBuilder: (_, i) {
-                                final it = items[i];
-                                return _AdminActionCard(
-                                  icon: it.icon,
-                                  title: it.title,
-                                  subtitle: it.subtitle,
-                                  onTap: () => Modular.to.pushNamed(it.route),
-                                );
-                              },
+                        // Título de opciones
+                        Text(
+                          'Panel administrativo',
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: const Color(0xFF111827),
+                              ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        if (items.isEmpty)
+                          _RestrictedInfoCard(user: _usuario)
+                        else ...[
+                          for (final it in items) ...[
+                            _MenuCard(
+                              title: it.title,
+                              subtitle: it.subtitle,
+                              icon: it.icon,
+                              color: _getCardColor(it.icon),
+                              onTap: () => Modular.to.pushNamed(it.route),
                             ),
-
-                          const SizedBox(height: 16),
-                          Row(
-                            children: const [
-                              Icon(
-                                Icons.info_outline,
-                                size: 16,
-                                color: Color(0xFF6B7280),
-                              ),
-                              SizedBox(width: 6),
-                              Expanded(
-                                child: Text(
-                                  'Las opciones visibles dependen de tus permisos.',
-                                  style: TextStyle(
-                                    fontSize: 12.5,
-                                    color: Color(0xFF6B7280),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            const SizedBox(height: 12),
+                          ],
                         ],
-                      ),
+
+                        const SizedBox(height: 32),
+
+                        Center(
+                          child: Text(
+                            'IVCUSMI 2025 • Panel Administrativo',
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(color: const Color(0xFF6B7280)),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              },
+                ),
+              ),
             ),
     );
+  }
+
+  Color _getCardColor(IconData icon) {
+    switch (icon) {
+      case Icons.payments_outlined:
+        return const Color(0xFF10B981); // Verde para pagos
+      case Icons.badge_outlined:
+        return const Color(0xFF3B82F6); // Azul para congresistas
+      case Icons.science_outlined:
+        return const Color(0xFF7C3AED); // Púrpura para trabajos
+      case Icons.qr_code_scanner_outlined:
+        return const Color(0xFFF59E0B); // Amarillo para check-in
+      default:
+        return _HomeAdminPageState.brandPrimary;
+    }
   }
 
   // Reglas de visibilidad por rol
@@ -215,27 +278,158 @@ class _AdminItem {
 
 // ---------- UI components (mismo estilo que páginas anteriores) ----------
 
-class _HeaderChip extends StatelessWidget {
+class _WelcomeHeader extends StatelessWidget {
+  final Usuario usuario;
+
+  const _WelcomeHeader({required this.usuario});
+
+  String _initials(String? name) {
+    if (name == null || name.trim().isEmpty) return 'A';
+    final parts = name.trim().split(RegExp(r'\s+'));
+    final first = parts.isNotEmpty ? parts.first.characters.first : '';
+    final last = parts.length > 1 ? parts.last.characters.first : '';
+    return (first + last).toUpperCase();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final name = usuario.nombreCompleto ?? 'Administrador';
+
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFF7FBF8), Colors.white],
+          colors: [Color(0xFF387f4d), Color(0xFF73c165)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF387f4d).withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
-      child: const Text(
-        'Accesos rápidos',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w800,
-          color: Color(0xFF1F2937),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 32,
+            backgroundColor: Colors.white.withOpacity(0.2),
+            child: Text(
+              _initials(usuario.nombreCompleto),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '¡Bienvenido, Admin!',
+                  style: text.labelMedium?.copyWith(
+                    color: Colors.white70,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  name,
+                  style: text.headlineSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  softWrap: true,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MenuCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _MenuCard({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Color(0xFFE5E7EB)),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              colors: [Colors.white, color.withOpacity(0.02)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: 28),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF111827),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        color: Color(0xFF6B7280),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.arrow_forward_ios, color: color, size: 20),
+            ],
+          ),
         ),
       ),
     );
@@ -279,177 +473,6 @@ class _RestrictedInfoCard extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _AdminActionTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  const _AdminActionTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  static const _brand = _HomeAdminPageState.brandPrimary;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      elevation: Theme.of(context).brightness == Brightness.light ? 1 : 0,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Container(
-          height: 68,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: _brand.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: _brand.withOpacity(0.25)),
-                ),
-                child: Icon(icon, color: _brand, size: 24),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: DefaultTextStyle(
-                  style: const TextStyle(color: Color(0xFF111827)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 12.5,
-                          color: Color(0xFF6B7280),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Icon(
-                Icons.chevron_right,
-                size: 24,
-                color: Color(0xFF9CA3AF),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AdminActionCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  const _AdminActionCard({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  static const _brand = _HomeAdminPageState.brandPrimary;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      elevation: Theme.of(context).brightness == Brightness.light ? 1.5 : 0,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: _brand.withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: _brand.withOpacity(0.25)),
-                    ),
-                    child: Icon(icon, color: _brand, size: 24),
-                  ),
-                  const Spacer(),
-                  const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 14,
-                    color: Color(0xFF9CA3AF),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16.5,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF111827),
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12.5,
-                  color: Color(0xFF6B7280),
-                  height: 1.25,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

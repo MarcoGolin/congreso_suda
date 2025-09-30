@@ -152,4 +152,18 @@ public class CongresistaService {
 			Usuario  usuario = repository.findById(idUsuario).get();
 		    return new GenericResponseEntity<Usuario>("Contraseña establecida con Éxito!", 200, usuario);
 		}
+		
+		static byte[] uuidStringToBytes(String s) {
+			  String hex = s.replace("-", "");
+			  int n = hex.length();
+			  byte[] out = new byte[n/2];
+			  for (int i=0; i<n; i+=2) out[i/2] = (byte) Integer.parseInt(hex.substring(i, i+2), 16);
+			  return out;
+		}
+		
+		public GenericResponseEntity<Usuario> consultaByUUID(String uuid) {
+			Usuario  usuario = repository.findByUuidBin(uuidStringToBytes(uuid)).get();
+			return new GenericResponseEntity<Usuario>("Contraseña establecida con Éxito!", 200, usuario);
+		}
+
 }

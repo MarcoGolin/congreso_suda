@@ -38,7 +38,7 @@ abstract class AdminTrabajosCientificosStoreBase with Store {
 
   TrabajoCientifico? get trabajoSeleccionado => _trabajoSeleccionado;
 
-  List<TrabajoCientifico> get trabajosFiltrados {
+  ObservableList<TrabajoCientifico> get trabajosFiltrados {
     var lista = _items.toList();
 
     if (_filtroTexto.isNotEmpty) {
@@ -59,7 +59,7 @@ abstract class AdminTrabajosCientificosStoreBase with Store {
       lista = lista.where((t) => t.areaTematica == _filtroArea).toList();
     }
 
-    return lista;
+    return lista.asObservable();
   }
 
   List<String> get modalidadesDisponibles {

@@ -127,13 +127,6 @@ class _HomeMenuCongresistaPageState extends State<HomeMenuCongresistaPage>
         backgroundColor: brandLight,
         foregroundColor: Colors.white,
         elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: _confirmAndSignOut,
-            icon: const Icon(Icons.logout),
-            tooltip: 'Cerrar sesión',
-          ),
-        ],
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())

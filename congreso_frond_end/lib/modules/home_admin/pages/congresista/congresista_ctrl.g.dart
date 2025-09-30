@@ -247,6 +247,118 @@ mixin _$CongresistaCtrl on CongresistaCtrlBase, Store {
     });
   }
 
+  late final _$ordenamientoSeleccionadoAtom = Atom(
+    name: 'CongresistaCtrlBase.ordenamientoSeleccionado',
+    context: context,
+  );
+
+  @override
+  String get ordenamientoSeleccionado {
+    _$ordenamientoSeleccionadoAtom.reportRead();
+    return super.ordenamientoSeleccionado;
+  }
+
+  @override
+  set ordenamientoSeleccionado(String value) {
+    _$ordenamientoSeleccionadoAtom.reportWrite(
+      value,
+      super.ordenamientoSeleccionado,
+      () {
+        super.ordenamientoSeleccionado = value;
+      },
+    );
+  }
+
+  late final _$mostrarDialogoExportacionAtom = Atom(
+    name: 'CongresistaCtrlBase.mostrarDialogoExportacion',
+    context: context,
+  );
+
+  @override
+  bool get mostrarDialogoExportacion {
+    _$mostrarDialogoExportacionAtom.reportRead();
+    return super.mostrarDialogoExportacion;
+  }
+
+  @override
+  set mostrarDialogoExportacion(bool value) {
+    _$mostrarDialogoExportacionAtom.reportWrite(
+      value,
+      super.mostrarDialogoExportacion,
+      () {
+        super.mostrarDialogoExportacion = value;
+      },
+    );
+  }
+
+  late final _$categoriasSeleccionadasAtom = Atom(
+    name: 'CongresistaCtrlBase.categoriasSeleccionadas',
+    context: context,
+  );
+
+  @override
+  ObservableMap<String, bool> get categoriasSeleccionadas {
+    _$categoriasSeleccionadasAtom.reportRead();
+    return super.categoriasSeleccionadas;
+  }
+
+  @override
+  set categoriasSeleccionadas(ObservableMap<String, bool> value) {
+    _$categoriasSeleccionadasAtom.reportWrite(
+      value,
+      super.categoriasSeleccionadas,
+      () {
+        super.categoriasSeleccionadas = value;
+      },
+    );
+  }
+
+  late final _$columnasPorCategoriaAtom = Atom(
+    name: 'CongresistaCtrlBase.columnasPorCategoria',
+    context: context,
+  );
+
+  @override
+  ObservableMap<String, ObservableList<String>> get columnasPorCategoria {
+    _$columnasPorCategoriaAtom.reportRead();
+    return super.columnasPorCategoria;
+  }
+
+  @override
+  set columnasPorCategoria(
+    ObservableMap<String, ObservableList<String>> value,
+  ) {
+    _$columnasPorCategoriaAtom.reportWrite(
+      value,
+      super.columnasPorCategoria,
+      () {
+        super.columnasPorCategoria = value;
+      },
+    );
+  }
+
+  late final _$columnasSeleccionadasAtom = Atom(
+    name: 'CongresistaCtrlBase.columnasSeleccionadas',
+    context: context,
+  );
+
+  @override
+  ObservableList<String> get columnasSeleccionadas {
+    _$columnasSeleccionadasAtom.reportRead();
+    return super.columnasSeleccionadas;
+  }
+
+  @override
+  set columnasSeleccionadas(ObservableList<String> value) {
+    _$columnasSeleccionadasAtom.reportWrite(
+      value,
+      super.columnasSeleccionadas,
+      () {
+        super.columnasSeleccionadas = value;
+      },
+    );
+  }
+
   late final _$guardarAsyncAction = AsyncAction(
     'CongresistaCtrlBase.guardar',
     context: context,
@@ -293,6 +405,30 @@ mixin _$CongresistaCtrl on CongresistaCtrlBase, Store {
     );
   }
 
+  late final _$exportarTodosAExcelAsyncAction = AsyncAction(
+    'CongresistaCtrlBase.exportarTodosAExcel',
+    context: context,
+  );
+
+  @override
+  Future<void> exportarTodosAExcel() {
+    return _$exportarTodosAExcelAsyncAction.run(
+      () => super.exportarTodosAExcel(),
+    );
+  }
+
+  late final _$confirmarExportacionAsyncAction = AsyncAction(
+    'CongresistaCtrlBase.confirmarExportacion',
+    context: context,
+  );
+
+  @override
+  Future<void> confirmarExportacion() {
+    return _$confirmarExportacionAsyncAction.run(
+      () => super.confirmarExportacion(),
+    );
+  }
+
   late final _$CongresistaCtrlBaseActionController = ActionController(
     name: 'CongresistaCtrlBase',
     context: context,
@@ -311,9 +447,98 @@ mixin _$CongresistaCtrl on CongresistaCtrlBase, Store {
   }
 
   @override
+  void toggleCategoria(String categoria) {
+    final _$actionInfo = _$CongresistaCtrlBaseActionController.startAction(
+      name: 'CongresistaCtrlBase.toggleCategoria',
+    );
+    try {
+      return super.toggleCategoria(categoria);
+    } finally {
+      _$CongresistaCtrlBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void toggleColumna(String categoria, String columna) {
+    final _$actionInfo = _$CongresistaCtrlBaseActionController.startAction(
+      name: 'CongresistaCtrlBase.toggleColumna',
+    );
+    try {
+      return super.toggleColumna(categoria, columna);
+    } finally {
+      _$CongresistaCtrlBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void seleccionarTodasLasColumnas() {
+    final _$actionInfo = _$CongresistaCtrlBaseActionController.startAction(
+      name: 'CongresistaCtrlBase.seleccionarTodasLasColumnas',
+    );
+    try {
+      return super.seleccionarTodasLasColumnas();
+    } finally {
+      _$CongresistaCtrlBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void deseleccionarTodasLasColumnas() {
+    final _$actionInfo = _$CongresistaCtrlBaseActionController.startAction(
+      name: 'CongresistaCtrlBase.deseleccionarTodasLasColumnas',
+    );
+    try {
+      return super.deseleccionarTodasLasColumnas();
+    } finally {
+      _$CongresistaCtrlBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setOrdenamientoSeleccionado(String ordenamiento) {
+    final _$actionInfo = _$CongresistaCtrlBaseActionController.startAction(
+      name: 'CongresistaCtrlBase.setOrdenamientoSeleccionado',
+    );
+    try {
+      return super.setOrdenamientoSeleccionado(ordenamiento);
+    } finally {
+      _$CongresistaCtrlBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void mostrarDialogoSeleccionColumnas() {
+    final _$actionInfo = _$CongresistaCtrlBaseActionController.startAction(
+      name: 'CongresistaCtrlBase.mostrarDialogoSeleccionColumnas',
+    );
+    try {
+      return super.mostrarDialogoSeleccionColumnas();
+    } finally {
+      _$CongresistaCtrlBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void ocultarDialogoSeleccionColumnas() {
+    final _$actionInfo = _$CongresistaCtrlBaseActionController.startAction(
+      name: 'CongresistaCtrlBase.ocultarDialogoSeleccionColumnas',
+    );
+    try {
+      return super.ocultarDialogoSeleccionColumnas();
+    } finally {
+      _$CongresistaCtrlBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
-congresistas: ${congresistas}
+congresistas: ${congresistas},
+ordenamientoSeleccionado: ${ordenamientoSeleccionado},
+mostrarDialogoExportacion: ${mostrarDialogoExportacion},
+categoriasSeleccionadas: ${categoriasSeleccionadas},
+columnasPorCategoria: ${columnasPorCategoria},
+columnasSeleccionadas: ${columnasSeleccionadas}
     ''';
   }
 }

@@ -1,7 +1,9 @@
 import 'package:congreso_evento/core/js_cross_platform/js_cross_platform.dart'
     as js;
 import 'package:congreso_evento/modules/home_admin/pages/trabajos_cientificos/stores/admin_trabajos_cientificos_store.dart';
+import 'package:congreso_evento/modules/trabajo_cientifico/controllers/mis_trabajos_excel_ctrl.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/models/trabajo_cientifico.dart';
+import 'package:congreso_evento/modules/trabajo_cientifico/widgets/trabajos_column_selection_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -23,6 +25,7 @@ class _AdminTrabajosCientificosPageState
 
   final _store = Modular.get<AdminTrabajosCientificosStore>();
   final _searchController = TextEditingController();
+  final _excelController = MisTrabajosCientificosExcelCtrl();
 
   @override
   void initState() {
@@ -142,19 +145,65 @@ class _AdminTrabajosCientificosPageState
     await _store.cargarTodos();
   }
 
+  void _mostrarDialogoExportacion() {
+    if (_store.trabajosFiltrados.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No hay trabajos científicos para exportar'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => TrabajosColumnSelectionDialog(
+        controller: _excelController,
+        trabajos: _store.trabajosFiltrados,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          'Trabajos Científicos - Admin',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: LayoutBuilder(
+          builder: (context, constraints) {
+            final isSmallScreen = MediaQuery.of(context).size.width < 600;
+            return Text(
+              isSmallScreen
+                  ? 'Trabajos - Admin'
+                  : 'Trabajos Científicos - Admin',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            );
+          },
         ),
         backgroundColor: brandPrimary,
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
+          Observer(
+            builder: (_) => IconButton(
+              onPressed: _excelController.isLoading
+                  ? null
+                  : _mostrarDialogoExportacion,
+              icon: _excelController.isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Icon(Icons.file_download),
+              tooltip: 'Exportar a Excel',
+            ),
+          ),
           Observer(
             builder: (_) => Container(
               margin: const EdgeInsets.all(8),
@@ -163,12 +212,21 @@ class _AdminTrabajosCientificosPageState
                 color: Colors.white.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Text(
-                '${_store.trabajosFiltrados.length} trabajos',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final isSmallScreen = MediaQuery.of(context).size.width < 600;
+                  return Observer(
+                    builder: (_) => Text(
+                      isSmallScreen
+                          ? '${_store.trabajosFiltrados.length}'
+                          : '${_store.trabajosFiltrados.length} trabajos',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -262,81 +320,172 @@ class _AdminTrabajosCientificosPageState
           ),
           const SizedBox(height: 12),
           Observer(
-            builder: (_) => Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: _store.filtroModalidad.isEmpty
-                        ? null
-                        : _store.filtroModalidad,
-                    onChanged: (value) =>
-                        _store.setFiltroModalidad(value ?? ''),
-                    decoration: InputDecoration(
-                      labelText: 'Modalidad',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                    ),
-                    items: [
-                      const DropdownMenuItem<String>(
-                        value: '',
-                        child: Text('Todas'),
-                      ),
-                      ..._store.modalidadesDisponibles.map(
-                        (modalidad) => DropdownMenuItem<String>(
-                          value: modalidad,
-                          child: Text(modalidad),
+            builder: (_) {
+              // Detectar si es móvil
+              final isSmallScreen = MediaQuery.of(context).size.width < 600;
+
+              if (isSmallScreen) {
+                // Layout vertical para móvil
+                return Column(
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value: _store.filtroModalidad.isEmpty
+                          ? null
+                          : _store.filtroModalidad,
+                      onChanged: (value) =>
+                          _store.setFiltroModalidad(value ?? ''),
+                      decoration: InputDecoration(
+                        labelText: 'Modalidad',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: _store.filtroArea.isEmpty ? null : _store.filtroArea,
-                    onChanged: (value) => _store.setFiltroArea(value ?? ''),
-                    decoration: InputDecoration(
-                      labelText: 'Área Temática',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: '',
+                          child: Text('Todas'),
+                        ),
+                        ..._store.modalidadesDisponibles.map(
+                          (modalidad) => DropdownMenuItem<String>(
+                            value: modalidad,
+                            child: Text(
+                              modalidad,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    items: [
-                      const DropdownMenuItem<String>(
-                        value: '',
-                        child: Text('Todas'),
-                      ),
-                      ..._store.areasDisponibles.map(
-                        (area) => DropdownMenuItem<String>(
-                          value: area,
-                          child: Text(area),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<String>(
+                      value: _store.filtroArea.isEmpty
+                          ? null
+                          : _store.filtroArea,
+                      onChanged: (value) => _store.setFiltroArea(value ?? ''),
+                      decoration: InputDecoration(
+                        labelText: 'Área Temática',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                OutlinedButton(
-                  onPressed: () {
-                    _searchController.clear();
-                    _store.limpiarFiltros();
-                  },
-                  child: const Text('Limpiar'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: brandPrimary,
-                  ),
-                ),
-              ],
-            ),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: '',
+                          child: Text('Todas'),
+                        ),
+                        ..._store.areasDisponibles.map(
+                          (area) => DropdownMenuItem<String>(
+                            value: area,
+                            child: Text(area, overflow: TextOverflow.ellipsis),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          _searchController.clear();
+                          _store.limpiarFiltros();
+                        },
+                        child: const Text('Limpiar Filtros'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: brandPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                // Layout horizontal para desktop/tablet
+                return Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: _store.filtroModalidad.isEmpty
+                            ? null
+                            : _store.filtroModalidad,
+                        onChanged: (value) =>
+                            _store.setFiltroModalidad(value ?? ''),
+                        decoration: InputDecoration(
+                          labelText: 'Modalidad',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                        ),
+                        items: [
+                          const DropdownMenuItem<String>(
+                            value: '',
+                            child: Text('Todas'),
+                          ),
+                          ..._store.modalidadesDisponibles.map(
+                            (modalidad) => DropdownMenuItem<String>(
+                              value: modalidad,
+                              child: Text(modalidad),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: _store.filtroArea.isEmpty
+                            ? null
+                            : _store.filtroArea,
+                        onChanged: (value) => _store.setFiltroArea(value ?? ''),
+                        decoration: InputDecoration(
+                          labelText: 'Área Temática',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                        ),
+                        items: [
+                          const DropdownMenuItem<String>(
+                            value: '',
+                            child: Text('Todas'),
+                          ),
+                          ..._store.areasDisponibles.map(
+                            (area) => DropdownMenuItem<String>(
+                              value: area,
+                              child: Text(area),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    OutlinedButton(
+                      onPressed: () {
+                        _searchController.clear();
+                        _store.limpiarFiltros();
+                      },
+                      child: const Text('Limpiar'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: brandPrimary,
+                      ),
+                    ),
+                  ],
+                );
+              }
+            },
           ),
         ],
       ),
@@ -411,234 +560,258 @@ class _TrabajoCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header con título y modalidad
-              Row(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isSmallScreen = constraints.maxWidth < 400;
+            return Padding(
+              padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          trabajo.titulo,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF1F2937),
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                  // Header con título y modalidad
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              trabajo.titulo,
+                              style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width < 600
+                                    ? 14
+                                    : 16,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF1F2937),
+                              ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF387f4d).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                trabajo.modalidad,
+                                style: const TextStyle(
+                                  color: Color(0xFF387f4d),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 4),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF387f4d).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            trabajo.modalidad,
-                            style: const TextStyle(
-                              color: Color(0xFF387f4d),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                      ),
+                      const SizedBox(width: 12),
+                      Icon(Icons.chevron_right, color: Colors.grey[400]),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Información del autor
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isSmallScreen = constraints.maxWidth < 400;
+                      return Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              Icons.person,
+                              size: isSmallScreen ? 14 : 16,
+                              color: Colors.blue,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Icon(Icons.chevron_right, color: Colors.grey[400]),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              // Información del autor
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.person,
-                      size: 16,
-                      color: Colors.blue,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          trabajo.autorNombre,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  trabajo.autorNombre,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: isSmallScreen ? 13 : 14,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  trabajo.autorEmail,
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: isSmallScreen ? 11 : 12,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Text(
-                          trabajo.autorEmail,
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
+                        ],
+                      );
+                    },
+                  ),
+
+                  const Divider(height: 24),
+
+                  // Información adicional en chips
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isSmallScreen = constraints.maxWidth < 400;
+                      return Wrap(
+                        spacing: isSmallScreen ? 4 : 8,
+                        runSpacing: isSmallScreen ? 4 : 8,
+                        children: [
+                          _InfoChip(
+                            icon: Icons.category,
+                            label: trabajo.areaTematica,
+                            color: Colors.purple,
+                            isCompact: isSmallScreen,
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              const Divider(height: 24),
-
-              // Información adicional en chips
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _InfoChip(
-                    icon: Icons.category,
-                    label: trabajo.areaTematica,
-                    color: Colors.purple,
-                  ),
-                  _InfoChip(
-                    icon: Icons.medical_services,
-                    label: trabajo.areaDeLaMedicina,
-                    color: Colors.orange,
-                  ),
-                  _InfoChip(
-                    icon: Icons.schedule,
-                    label: 'Reg: ${_fmtDate(trabajo.fechaRegistro)}',
-                    color: Colors.green,
-                  ),
-                  if (trabajo.coautores.isNotEmpty)
-                    _InfoChip(
-                      icon: Icons.group,
-                      label: '${trabajo.coautores.length} coautores',
-                      color: Colors.blue,
-                    ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              // Archivos disponibles con botones de descarga
-              Row(
-                children: [
-                  if (trabajo.archivoWordUrl.isNotEmpty)
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () => onDescargar(
-                          trabajo.archivoWordUrl,
-                          '${trabajo.titulo}_trabajo.docx',
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
+                          _InfoChip(
+                            icon: Icons.medical_services,
+                            label: trabajo.areaDeLaMedicina,
+                            color: Colors.orange,
+                            isCompact: isSmallScreen,
                           ),
-                          decoration: BoxDecoration(
-                            color: Colors.blue[50],
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.blue[200]!),
+                          _InfoChip(
+                            icon: Icons.schedule,
+                            label: 'Reg: ${_fmtDate(trabajo.fechaRegistro)}',
+                            color: Colors.green,
+                            isCompact: isSmallScreen,
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.download,
-                                size: 14,
-                                color: Colors.blue[700],
+                          if (trabajo.coautores.isNotEmpty)
+                            _InfoChip(
+                              icon: Icons.group,
+                              label: '${trabajo.coautores.length} coautores',
+                              color: Colors.blue,
+                              isCompact: isSmallScreen,
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Archivos disponibles con botones de descarga
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isSmallScreen = constraints.maxWidth < 400;
+
+                      if (isSmallScreen) {
+                        // Layout vertical para móvil
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              children: [
+                                if (trabajo.archivoWordUrl.isNotEmpty)
+                                  Expanded(
+                                    child: _DownloadButton(
+                                      onTap: () => onDescargar(
+                                        trabajo.archivoWordUrl,
+                                        '${trabajo.titulo}_trabajo.docx',
+                                      ),
+                                      label: 'Word',
+                                      color: Colors.blue,
+                                      isCompact: true,
+                                    ),
+                                  ),
+                                if (trabajo.archivoWordUrl.isNotEmpty &&
+                                    trabajo.archivoPdfUrl != null &&
+                                    trabajo.archivoPdfUrl!.isNotEmpty)
+                                  const SizedBox(width: 8),
+                                if (trabajo.archivoPdfUrl != null &&
+                                    trabajo.archivoPdfUrl!.isNotEmpty)
+                                  Expanded(
+                                    child: _DownloadButton(
+                                      onTap: () => onDescargar(
+                                        trabajo.archivoPdfUrl!,
+                                        '${trabajo.titulo}_trabajo.pdf',
+                                      ),
+                                      label: 'PDF',
+                                      color: Colors.red,
+                                      isCompact: true,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Tocar para descargar • Ver detalles completos',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey[500],
+                                fontStyle: FontStyle.italic,
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Word',
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        );
+                      } else {
+                        // Layout horizontal para desktop/tablet
+                        return Row(
+                          children: [
+                            if (trabajo.archivoWordUrl.isNotEmpty)
+                              _DownloadButton(
+                                onTap: () => onDescargar(
+                                  trabajo.archivoWordUrl,
+                                  '${trabajo.titulo}_trabajo.docx',
+                                ),
+                                label: 'Word',
+                                color: Colors.blue,
+                              ),
+                            if (trabajo.archivoWordUrl.isNotEmpty &&
+                                trabajo.archivoPdfUrl != null &&
+                                trabajo.archivoPdfUrl!.isNotEmpty)
+                              const SizedBox(width: 8),
+                            if (trabajo.archivoPdfUrl != null &&
+                                trabajo.archivoPdfUrl!.isNotEmpty)
+                              _DownloadButton(
+                                onTap: () => onDescargar(
+                                  trabajo.archivoPdfUrl!,
+                                  '${trabajo.titulo}_trabajo.pdf',
+                                ),
+                                label: 'PDF',
+                                color: Colors.red,
+                              ),
+                            const Spacer(),
+                            Flexible(
+                              child: Text(
+                                'Descargar archivos • Ver detalles',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.blue[700],
-                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[500],
+                                  fontStyle: FontStyle.italic,
                                 ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (trabajo.archivoWordUrl.isNotEmpty &&
-                      trabajo.archivoPdfUrl != null &&
-                      trabajo.archivoPdfUrl!.isNotEmpty)
-                    const SizedBox(width: 8),
-                  if (trabajo.archivoPdfUrl != null &&
-                      trabajo.archivoPdfUrl!.isNotEmpty)
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () => onDescargar(
-                          trabajo.archivoPdfUrl!,
-                          '${trabajo.titulo}_trabajo.pdf',
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.red[50],
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.red[200]!),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.download,
-                                size: 14,
-                                color: Colors.red[700],
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'PDF',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.red[700],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  const Spacer(),
-                  Text(
-                    'Descargar archivos • Ver detalles',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[500],
-                      fontStyle: FontStyle.italic,
-                    ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
                 ],
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -649,35 +822,118 @@ class _InfoChip extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
+  final bool isCompact;
 
   const _InfoChip({
     required this.icon,
     required this.label,
     required this.color,
+    this.isCompact = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(
+        horizontal: isCompact ? 6 : 8,
+        vertical: isCompact ? 3 : 4,
+      ),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(isCompact ? 8 : 12),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: color,
-              fontWeight: FontWeight.w500,
+          Icon(icon, size: isCompact ? 12 : 14, color: color),
+          SizedBox(width: isCompact ? 3 : 4),
+          Flexible(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: isCompact ? 10 : 12,
+                color: color,
+                fontWeight: FontWeight.w500,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _DownloadButton extends StatelessWidget {
+  final VoidCallback onTap;
+  final String label;
+  final Color color;
+  final bool isCompact;
+
+  const _DownloadButton({
+    required this.onTap,
+    required this.label,
+    required this.color,
+    this.isCompact = false,
+  });
+
+  Color get _lightColor {
+    if (color == Colors.blue) return Colors.blue[50]!;
+    if (color == Colors.red) return Colors.red[50]!;
+    return color.withOpacity(0.1);
+  }
+
+  Color get _borderColor {
+    if (color == Colors.blue) return Colors.blue[200]!;
+    if (color == Colors.red) return Colors.red[200]!;
+    return color.withOpacity(0.3);
+  }
+
+  Color get _darkColor {
+    if (color == Colors.blue) return Colors.blue[700]!;
+    if (color == Colors.red) return Colors.red[700]!;
+    return color;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(isCompact ? 8 : 12),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isCompact ? 6 : 8,
+            vertical: isCompact ? 3 : 4,
+          ),
+          decoration: BoxDecoration(
+            color: _lightColor,
+            borderRadius: BorderRadius.circular(isCompact ? 8 : 12),
+            border: Border.all(color: _borderColor),
+          ),
+          child: Row(
+            mainAxisSize: isCompact ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.download,
+                size: isCompact ? 12 : 14,
+                color: _darkColor,
+              ),
+              SizedBox(width: isCompact ? 3 : 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: isCompact ? 10 : 12,
+                  color: _darkColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
