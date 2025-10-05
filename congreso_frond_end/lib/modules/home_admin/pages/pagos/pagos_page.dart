@@ -8,11 +8,9 @@ import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
 import 'package:congreso_evento/modules/home_admin/pages/pagos/models/resumen_cobrador_turno.dart';
 import 'package:congreso_evento/modules/home_admin/pages/pagos/pago_page_ctrl.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:mobx/mobx.dart';
 
 const brandPrimary = Color(0xFF387f4d); // ya lo tenés
@@ -1224,76 +1222,6 @@ class _PagoItem extends StatelessWidget {
       side: BorderSide(color: chipColor.withOpacity(0.5)), // <—
       backgroundColor: chipColor.withOpacity(0.12), // <—
       labelStyle: TextStyle(color: chipColor), // <—
-    );
-  }
-}
-
-// ==========================
-// Diálogo de QR (MobileScanner)
-// ==========================
-class _QRScannerDialog extends StatefulWidget {
-  final void Function(String code) onCode;
-
-  const _QRScannerDialog({required this.onCode});
-
-  @override
-  State<_QRScannerDialog> createState() => _QRScannerDialogState();
-}
-
-class _QRScannerDialogState extends State<_QRScannerDialog> {
-  bool _handled = false;
-  String? _error;
-
-  @override
-  Widget build(BuildContext context) {
-    final canUseCameraOnWeb = kIsWeb;
-    return AlertDialog(
-      title: const Text('Escanear QR'),
-      content: SizedBox(
-        width: 480,
-        height: 360,
-        child: _error != null
-            ? Center(child: Text('No se pudo iniciar la cámara:\n$_error'))
-            : ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: MobileScanner(
-                  fit: BoxFit.cover,
-                  onDetect: (capture) {
-                    if (_handled) return;
-                    final barcodes = capture.barcodes;
-                    if (barcodes.isEmpty) return;
-                    final value = barcodes.first.rawValue ?? '';
-                    if (value.isEmpty) return;
-                    _handled = true;
-                    widget.onCode(value);
-                  },
-                  errorBuilder: (ctx, err) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(
-                          'Error con la cámara o permisos.\n'
-                          'En Web, probá en Chrome/Edge y autorizá el acceso.\n'
-                          'En producción usá HTTPS.',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-      ),
-      actions: [
-        if (!canUseCameraOnWeb)
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cerrar'),
-          ),
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancelar'),
-        ),
-      ],
     );
   }
 }

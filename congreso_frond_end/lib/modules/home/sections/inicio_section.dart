@@ -1,7 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:congreso_evento/modules/home/sections/widgets/count_down_timer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
 class InicioSection extends StatefulWidget {
   // Add a ScrollController to listen for scroll events
@@ -15,12 +14,14 @@ class InicioSection extends StatefulWidget {
 
 class _InicioSectionState extends State<InicioSection>
     with AutomaticKeepAliveClientMixin {
-  final DateTime _targetDate = DateTime(2025, 10, 09, 0, 0, 0);
+  final DateTime _targetDate = DateTime(2025, 10, 09, 8, 0, 0);
 
   double _backgroundOffset = 0.0; // This will control the parallax movement
 
   @override
   bool get wantKeepAlive => true;
+
+  final bool inscripcionesCerradas = true;
 
   @override
   void initState() {
@@ -54,8 +55,8 @@ class _InicioSectionState extends State<InicioSection>
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        double logoWidth = isMobile ? 300 : constraints.maxWidth * 0.50;
-        // if (logoWidth > 150) logoWidth = 150;
+        double logoWidth = isMobile ? 280 : constraints.maxWidth * 0.50;
+        // if (logoWidth > 150) logoWid0th = 150;
 
         return Stack(
           fit: StackFit.expand,
@@ -208,44 +209,226 @@ class _InicioSectionState extends State<InicioSection>
                                           padding: EdgeInsets.symmetric(
                                             horizontal: isMobile ? 20 : 50,
                                           ),
-                                          child: SizedBox(
-                                            width: 400,
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: const Color(
-                                                  0xFF387f4d,
-                                                ),
-                                                foregroundColor: Colors.white,
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: isMobile
-                                                      ? 20
-                                                      : 40,
-                                                  vertical: isMobile ? 15 : 20,
-                                                ),
-                                                textStyle: TextStyle(
-                                                  fontSize: isMobile ? 18 : 22,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                ),
-                                                elevation: 10,
-                                              ),
-                                              onPressed: () => Modular.to
-                                                  .pushNamedAndRemoveUntil(
-                                                    '/congresista/',
-                                                    ModalRoute.withName('/'),
+                                          child: Column(
+                                            children: [
+                                              // Reemplaza el SizedBox + ElevatedButton.icon por:
+                                              SizedBox(
+                                                width: 420,
+                                                child: Tooltip(
+                                                  message:
+                                                      'Las inscripciones han finalizado. Te esperamos en el próximo congreso.',
+                                                  child: DecoratedBox(
+                                                    decoration: BoxDecoration(
+                                                      gradient: LinearGradient(
+                                                        begin:
+                                                            Alignment.topLeft,
+                                                        end: Alignment
+                                                            .bottomRight,
+                                                        colors: [
+                                                          const Color(
+                                                            0xFF9CA3AF,
+                                                          ).withOpacity(
+                                                            0.3,
+                                                          ), // gris medio
+                                                          const Color(
+                                                            0xFF6B7280,
+                                                          ).withOpacity(
+                                                            0.3,
+                                                          ), // gris oscuro
+                                                        ],
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            18,
+                                                          ),
+                                                      border: Border.all(
+                                                        color:
+                                                            const Color(
+                                                              0xFF73c165,
+                                                            ).withOpacity(
+                                                              0.65,
+                                                            ), // borde verde sutil
+                                                        width: 1.2,
+                                                      ),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.black
+                                                              .withOpacity(
+                                                                0.25,
+                                                              ),
+                                                          blurRadius: 14,
+                                                          offset: const Offset(
+                                                            0,
+                                                            8,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Material(
+                                                      color: Colors.transparent,
+                                                      child: InkWell(
+                                                        // Estado “finalizado”: sin acción
+                                                        onTap: null,
+                                                        splashColor:
+                                                            Colors.white24,
+                                                        highlightColor:
+                                                            Colors.transparent,
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                    isMobile
+                                                                    ? 18
+                                                                    : 24,
+                                                                vertical:
+                                                                    isMobile
+                                                                    ? 14
+                                                                    : 18,
+                                                              ),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              const Icon(
+                                                                Icons
+                                                                    .lock_clock_rounded,
+                                                                color: Colors
+                                                                    .white,
+                                                                size: 24,
+                                                              ),
+                                                              const SizedBox(
+                                                                width: 12,
+                                                              ),
+                                                              Flexible(
+                                                                child: Column(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  children: [
+                                                                    Text(
+                                                                      'INSCRIPCIONES FINALIZADAS',
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      style: TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontSize:
+                                                                            isMobile
+                                                                            ? 16
+                                                                            : 20,
+                                                                        fontWeight:
+                                                                            FontWeight.w800,
+                                                                        letterSpacing:
+                                                                            0.8,
+                                                                        shadows: [
+                                                                          Shadow(
+                                                                            offset: const Offset(
+                                                                              0,
+                                                                              1,
+                                                                            ),
+                                                                            blurRadius:
+                                                                                2,
+                                                                            color: Colors.black.withOpacity(
+                                                                              0.35,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              // Chip "Próximo año"
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ),
-
-                                              child: const Text(
-                                                'INSCRÍBETE AHORA',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
                                                 ),
-                                                textAlign: TextAlign.center,
                                               ),
-                                            ),
+
+                                              const SizedBox(height: 20),
+                                              if (inscripcionesCerradas)
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      '✨ Las inscripciones para el #IVCIUSMI 2025 han finalizado.',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: isMobile
+                                                            ? 13
+                                                            : 17,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: Colors.white,
+                                                        shadows: [
+                                                          Shadow(
+                                                            offset:
+                                                                const Offset(
+                                                                  0,
+                                                                  1,
+                                                                ),
+                                                            blurRadius: 2,
+                                                            color: Colors.black
+                                                                .withOpacity(
+                                                                  0.3,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Text(
+                                                      '💚 Agradecemos profundamente a todos los participantes\n'
+                                                      'y te invitamos a ser parte del próximo congreso el año que viene.',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: isMobile
+                                                            ? 12
+                                                            : 16,
+                                                        color: Colors.white
+                                                            .withOpacity(0.9),
+                                                        height: 1.4,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 10),
+                                                    Text(
+                                                      '¡Nos vemos pronto!',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: isMobile
+                                                            ? 14
+                                                            : 20,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: const Color(
+                                                          0xFF73c165,
+                                                        ),
+                                                        shadows: [
+                                                          Shadow(
+                                                            offset:
+                                                                const Offset(
+                                                                  0,
+                                                                  1,
+                                                                ),
+                                                            blurRadius: 2,
+                                                            color: Colors.black
+                                                                .withOpacity(
+                                                                  0.3,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                            ],
                                           ),
                                         ),
                                       ),

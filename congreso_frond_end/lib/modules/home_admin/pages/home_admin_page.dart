@@ -246,7 +246,7 @@ class _HomeAdminPageState extends State<HomeAdminPage>
         icon: Icons.qr_code_scanner_outlined,
         title: 'Check-In',
         subtitle: 'Control de ingreso y presencia',
-        route: '/admin/checkin/',
+        route: '/checkin',
       ),
     ];
 

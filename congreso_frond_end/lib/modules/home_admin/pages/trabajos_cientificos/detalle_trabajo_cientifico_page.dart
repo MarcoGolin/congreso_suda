@@ -1,40 +1,62 @@
+import 'package:congreso_evento/modules/home_admin/pages/trabajos_cientificos/helpers/trabajo_cientifico_helpers.dart';
+import 'package:congreso_evento/modules/home_admin/pages/trabajos_cientificos/stores/admin_trabajos_cientificos_store.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/models/trabajo_cientifico.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class DetalleTrabajoCientificoPage extends StatelessWidget {
+class DetalleTrabajoCientificoPage extends StatefulWidget {
   final TrabajoCientifico trabajo;
 
-  const DetalleTrabajoCientificoPage({
-    super.key,
-    required this.trabajo,
-  });
+  const DetalleTrabajoCientificoPage({super.key, required this.trabajo});
+
+  @override
+  State<DetalleTrabajoCientificoPage> createState() =>
+      _DetalleTrabajoCientificoPageState();
+}
+
+class _DetalleTrabajoCientificoPageState
+    extends State<DetalleTrabajoCientificoPage> {
+  final _store = Modular.get<AdminTrabajosCientificosStore>();
+
+  static const brandPrimary = Color(0xFF387f4d);
+  static const brandGreyTitle = Color(0xFF1F2937);
+
+  late String _estado; // estado local para reflejar cambios
+
+  final List<String> _estadosDisponibles = const [
+    'Recibido',
+    'En revisión',
+    'Observado',
+    'Aceptado',
+    'Rechazado',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _estado = (widget.trabajo.estado ?? '').trim();
+  }
 
   String _fmtDate(DateTime? dt) {
     if (dt == null) return 'N/A';
     return DateFormat('dd/MM/yyyy HH:mm').format(dt);
   }
 
-  /// Construye la URL completa de Supabase a partir del path almacenado en la BD
   String _construirUrlSupabase(String pathBD) {
     const baseUrl =
         'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public';
-    // El path ya incluye el bucket, solo agregamos la base
     return '$baseUrl/$pathBD';
   }
 
   Future<void> _descargarArchivo(String pathBD, String nombreArchivo) async {
     try {
-      // Construir URL completa de Supabase
       final urlCompleta = _construirUrlSupabase(pathBD);
-
       if (kIsWeb) {
-        // Mostrar diálogo de descarga con progreso
         await _mostrarDialogoDescarga(urlCompleta, nombreArchivo);
       } else {
-        // Para móvil: usar url_launcher
         final uri = Uri.parse(urlCompleta);
         if (await canLaunchUrl(uri)) {
           await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -43,20 +65,127 @@ class DetalleTrabajoCientificoPage extends StatelessWidget {
         }
       }
     } catch (e) {
-      // Manejar errores - se podría agregar SnackBar aquí
-      debugPrint('Error al descargar: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error al descargar: $e')));
     }
   }
 
-  /// Muestra diálogo de descarga con progreso, tamaño y tiempo estimado
   Future<void> _mostrarDialogoDescarga(String url, String nombreArchivo) async {
-    // Implementación del diálogo de descarga
-    // Por simplicidad, aquí se podría usar el mismo _DialogoDescarga
-    // que ya existe en la página principal
+    // Reutiliza tu _DialogoDescarga si lo tienes en otra página
+  }
+
+  Future<void> _confirmEliminar(TrabajoCientifico t) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Eliminar trabajo'),
+        content: Text(
+          '¿Seguro que deseas eliminar “${t.titulo}”? Esta acción no se puede deshacer.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Eliminar'),
+          ),
+        ],
+      ),
+    );
+
+    if (ok == true) {
+      await _store.cancelar(t.id!); // mantener nombre de tu Store
+      if (!mounted) return;
+      Modular.to.pop(); // volver a la lista
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Trabajo eliminado'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _cambiarEstado(String nuevo) async {
+    await _store.cambiarEstado(widget.trabajo.id!, nuevo);
+    if (!mounted) return;
+    setState(() => _estado = nuevo);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Estado cambiado a $nuevo'),
+        backgroundColor: brandPrimary,
+      ),
+    );
+  }
+
+  Widget _chip({required String texto, required Color color}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        texto,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
+      ),
+    );
+  }
+
+  InputDecoration _estadoInputDecoration(Color accent) => InputDecoration(
+    labelText: 'Cambiar estado',
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: accent.withOpacity(0.25)),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: accent, width: 2),
+    ),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+  );
+
+  Widget _estadoChip(EstadoStyle s) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: s.color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: s.color.withOpacity(0.25)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(s.icon, size: 14, color: s.color),
+          const SizedBox(width: 6),
+          Text(
+            s.label,
+            style: TextStyle(
+              color: s.color,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final trabajo = widget.trabajo;
+
+    final style = estadoStyleFor(_estado);
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -64,21 +193,20 @@ class DetalleTrabajoCientificoPage extends StatelessWidget {
           'Detalle del Trabajo Científico',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF387f4d),
+        backgroundColor: brandPrimary,
         foregroundColor: Colors.white,
         elevation: 0,
+        // 👇 sin acciones aquí; van al final
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header con título
+            // Header con título + chips de estado/aprobado
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -87,54 +215,80 @@ class DetalleTrabajoCientificoPage extends StatelessWidget {
                     offset: const Offset(0, 2),
                   ),
                 ],
+                // Degradé suave según estado
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [style.color.withOpacity(0.06), Colors.white],
+                ),
+                color: Colors.white, // fallback
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Stack(
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
+                  // Barra lateral de estado
+                  Positioned.fill(
+                    left: 0,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        width: 6,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF387f4d).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.science,
-                          color: Color(0xFF387f4d),
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          trabajo.titulo,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF1F2937),
+                          color: style.color,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(16),
+                            bottomLeft: Radius.circular(16),
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF387f4d).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      trabajo.modalidad,
-                      style: const TextStyle(
-                        color: Color(0xFF387f4d),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: brandPrimary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.science,
+                                color: brandPrimary,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Text(
+                                trabajo.titulo,
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: brandGreyTitle,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            _chip(
+                              texto: trabajo.modalidad,
+                              color: brandPrimary,
+                            ),
+                            _estadoChip(
+                              style,
+                            ), // 👈 chip de estado con ícono y color
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -143,30 +297,31 @@ class DetalleTrabajoCientificoPage extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // Archivos disponibles - PRIMERO para fácil acceso
+            // Descargas
             if (trabajo.archivoWordUrl.isNotEmpty ||
-                (trabajo.archivoPdfUrl != null && trabajo.archivoPdfUrl!.isNotEmpty))
+                (trabajo.archivoPdfUrl != null &&
+                    trabajo.archivoPdfUrl!.isNotEmpty))
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF387f4d).withOpacity(0.05),
+                  color: brandPrimary.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFF387f4d).withOpacity(0.2)),
+                  border: Border.all(color: brandPrimary.withOpacity(0.2)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Row(
                       children: [
-                        Icon(Icons.cloud_download, color: Color(0xFF387f4d)),
+                        Icon(Icons.cloud_download, color: brandPrimary),
                         SizedBox(width: 12),
                         Text(
                           'Descargar Archivos',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF387f4d),
+                            color: brandPrimary,
                           ),
                         ),
                       ],
@@ -187,7 +342,8 @@ class DetalleTrabajoCientificoPage extends StatelessWidget {
                         trabajo.archivoPdfUrl != null &&
                         trabajo.archivoPdfUrl!.isNotEmpty)
                       const SizedBox(height: 12),
-                    if (trabajo.archivoPdfUrl != null && trabajo.archivoPdfUrl!.isNotEmpty)
+                    if (trabajo.archivoPdfUrl != null &&
+                        trabajo.archivoPdfUrl!.isNotEmpty)
                       _ArchivoButton(
                         icono: Icons.picture_as_pdf,
                         titulo: 'Documento PDF',
@@ -203,10 +359,11 @@ class DetalleTrabajoCientificoPage extends StatelessWidget {
               ),
 
             if (trabajo.archivoWordUrl.isNotEmpty ||
-                (trabajo.archivoPdfUrl != null && trabajo.archivoPdfUrl!.isNotEmpty))
+                (trabajo.archivoPdfUrl != null &&
+                    trabajo.archivoPdfUrl!.isNotEmpty))
               const SizedBox(height: 24),
 
-            // Información del autor
+            // Autor
             _SeccionDetalle(
               titulo: 'Información del Autor',
               icono: Icons.person,
@@ -216,15 +373,21 @@ class DetalleTrabajoCientificoPage extends StatelessWidget {
                   _DetalleRow(label: 'Nombre:', value: trabajo.autorNombre),
                   _DetalleRow(label: 'Email:', value: trabajo.autorEmail),
                   if (trabajo.autorTelefono.isNotEmpty)
-                    _DetalleRow(label: 'Teléfono:', value: trabajo.autorTelefono),
-                  _DetalleRow(label: 'Filiación:', value: trabajo.autorFiliacion),
+                    _DetalleRow(
+                      label: 'Teléfono:',
+                      value: trabajo.autorTelefono,
+                    ),
+                  _DetalleRow(
+                    label: 'Filiación:',
+                    value: trabajo.autorFiliacion,
+                  ),
                 ],
               ),
             ),
 
             const SizedBox(height: 20),
 
-            // Información del trabajo
+            // Detalles del trabajo
             _SeccionDetalle(
               titulo: 'Detalles del Trabajo',
               icono: Icons.info,
@@ -232,8 +395,14 @@ class DetalleTrabajoCientificoPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _DetalleRow(label: 'Modalidad:', value: trabajo.modalidad),
-                  _DetalleRow(label: 'Área temática:', value: trabajo.areaTematica),
-                  _DetalleRow(label: 'Área de medicina:', value: trabajo.areaDeLaMedicina),
+                  _DetalleRow(
+                    label: 'Área temática:',
+                    value: trabajo.areaTematica,
+                  ),
+                  _DetalleRow(
+                    label: 'Área de medicina:',
+                    value: trabajo.areaDeLaMedicina,
+                  ),
                   if (trabajo.fechaRegistro != null)
                     _DetalleRow(
                       label: 'Fecha de registro:',
@@ -247,7 +416,7 @@ class DetalleTrabajoCientificoPage extends StatelessWidget {
               ),
             ),
 
-            // Resumen si existe
+            // Resumen
             if (trabajo.resumen != null && trabajo.resumen!.isNotEmpty) ...[
               const SizedBox(height: 20),
               _SeccionDetalle(
@@ -264,7 +433,7 @@ class DetalleTrabajoCientificoPage extends StatelessWidget {
               ),
             ],
 
-            // Coautores si existen
+            // Coautores
             if (trabajo.coautores.isNotEmpty) ...[
               const SizedBox(height: 20),
               _SeccionDetalle(
@@ -285,7 +454,10 @@ class DetalleTrabajoCientificoPage extends StatelessWidget {
                         children: [
                           _DetalleRow(label: 'Nombre:', value: coautor.nombre),
                           _DetalleRow(label: 'Email:', value: coautor.email),
-                          _DetalleRow(label: 'Filiación:', value: coautor.filiacion ?? 'N/A'),
+                          _DetalleRow(
+                            label: 'Filiación:',
+                            value: coautor.filiacion ?? 'N/A',
+                          ),
                         ],
                       ),
                     );
@@ -295,12 +467,121 @@ class DetalleTrabajoCientificoPage extends StatelessWidget {
             ],
 
             const SizedBox(height: 24),
+
+            // ======= ACCIONES (al final) =======
+            _SeccionDetalle(
+              titulo: 'Acciones',
+              icono: Icons.checklist,
+              contenido: LayoutBuilder(
+                builder: (context, c) {
+                  final isSmall = c.maxWidth < 520;
+                  if (isSmall) {
+                    // Column (mobile)
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 12),
+                        // Cambiar estado
+                        DropdownButtonFormField<String>(
+                          value: _estado.isEmpty ? null : _estado,
+                          decoration: InputDecoration(
+                            labelText: 'Cambiar estado',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 10,
+                            ),
+                          ),
+                          items: [
+                            const DropdownMenuItem(
+                              value: '',
+                              child: Text('— Seleccionar —'),
+                            ),
+                            ..._estadosDisponibles.map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)),
+                            ),
+                          ],
+                          onChanged: (v) {
+                            if (v == null || v.isEmpty) return;
+                            _cambiarEstado(v);
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        // Eliminar
+                        ElevatedButton.icon(
+                          onPressed: () => _confirmEliminar(trabajo),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          icon: const Icon(Icons.delete_outline),
+                          label: const Text('Eliminar trabajo'),
+                        ),
+                      ],
+                    );
+                  }
+
+                  // Row (desktop/tablet)
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          value: _estado.isEmpty ? null : _estado,
+                          decoration: _estadoInputDecoration(style.color),
+                          items: [
+                            const DropdownMenuItem(
+                              value: '',
+                              child: Text('— Seleccionar —'),
+                            ),
+                            ..._estadosDisponibles.map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)),
+                            ),
+                          ],
+                          onChanged: (v) {
+                            if (v == null || v.isEmpty) return;
+                            _cambiarEstado(v);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      SizedBox(
+                        width: 220,
+                        child: ElevatedButton.icon(
+                          onPressed: () => _confirmEliminar(trabajo),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            padding: const EdgeInsets.symmetric(vertical: 25),
+                          ),
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.white,
+                          ),
+                          label: const Text(
+                            'Eliminar',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 12),
           ],
         ),
       ),
     );
   }
 }
+
+// ======= Widgets reutilizables =======
 
 class _SeccionDetalle extends StatelessWidget {
   final String titulo;
@@ -315,6 +596,8 @@ class _SeccionDetalle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const brandPrimary = _DetalleConst.brandPrimary;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -334,14 +617,14 @@ class _SeccionDetalle extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icono, size: 24, color: const Color(0xFF387f4d)),
+              Icon(icono, size: 24, color: brandPrimary),
               const SizedBox(width: 12),
               Text(
                 titulo,
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF387f4d),
+                  color: brandPrimary,
                 ),
               ),
             ],
@@ -409,10 +692,7 @@ class _ArchivoButton extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       subtitulo,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 14,
-                      ),
+                      style: TextStyle(color: Colors.grey[600], fontSize: 14),
                     ),
                   ],
                 ),
@@ -429,11 +709,7 @@ class _ArchivoButton extends StatelessWidget {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.download,
-                      color: Colors.white,
-                      size: 18,
-                    ),
+                    Icon(Icons.download, color: Colors.white, size: 18),
                     SizedBox(width: 6),
                     Text(
                       'Descargar',
@@ -492,4 +768,45 @@ class _DetalleRow extends StatelessWidget {
       ),
     );
   }
+}
+
+class _AprobadoTile extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  const _AprobadoTile({required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    const brandPrimary = _DetalleConst.brandPrimary;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.verified, color: brandPrimary),
+          const SizedBox(width: 10),
+          const Expanded(
+            child: Text(
+              'Aprobado',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+          Switch(
+            value: value,
+            activeColor: Colors.white,
+            activeTrackColor: brandPrimary,
+            onChanged: onChanged,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DetalleConst {
+  static const brandPrimary = Color(0xFF387f4d);
 }

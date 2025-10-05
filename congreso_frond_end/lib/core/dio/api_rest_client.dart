@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -183,6 +185,7 @@ class Api implements IRestClient {
   }
 
   _errorManager(eX) {
+    // Sin respuesta -> problema de red
     if (eX.response == null) {
       throw DioException(
         message: "Connection timedout",
@@ -190,81 +193,61 @@ class Api implements IRestClient {
         error: "Cannot established connection with server",
       );
     }
-    if (eX.error != null) {
-      if (eX.type == DioExceptionType.unknown) {
-        debugPrint("Connection failed");
-        // Sentry.captureException(
-        //   eX,
-        //   stackTrace: eX.error,
-        // );
-        Modular.to.pushNamedAndRemoveUntil('/error_conexion', (p0) => false);
-        throw RestClientException(
-          statusMessage: eX.error.toString(),
-          statusCode: eX.response!.statusCode!,
-          error: eX,
-        );
-      }
-      if (eX.response?.statusCode == 500) {
-        // Alert.show('No fue posible completar la operación', Alert.WARNING);
 
-        throw RestClientException(
-          statusMessage: eX.error.toString(),
-          statusCode: eX.response!.statusCode!,
-          error: eX,
-        );
-      }
-      if (eX.response?.statusCode == 202) {
-        throw RestClientResponse(
-          data: eX.response!.data,
-          statusCode: 202,
-          statusMessage: eX.response!.data['message'],
-        );
-      }
-      if (eX.response?.statusCode == 401) {
-        debugPrint('Error de Autenticación!');
-        // Alert.show(
-        //   'Usuario o contraseña incorrectos',
-        //   Alert.ERROR,
-        // );
-        if (Modular.to.path.toString().compareTo('/login') == 0) {
-          // Modular.to.pop();
-        } else {
-          Modular.to.pushNamedAndRemoveUntil('/login', (p0) => false);
-        }
+    final status = eX.response?.statusCode;
 
-        throw RestClientException(
-          statusMessage: eX.error.toString(),
-          statusCode: eX.response?.statusCode!,
-          error: eX,
-        );
-      }
+    // === Manejo explícito de 400 / 409 / 404 ===
+    if (status == 400 || status == 409 || status == 404) {
+      final msg = _extractServerMessage(eX.response?.data);
+      throw RestClientException(
+        statusMessage: msg,
+        statusCode: status,
+        error: eX,
+      );
     }
 
-    if (eX.error is String) {
-      debugPrint("Connection failed");
+    // 401: mantener tu lógica actual de redirect a /login
+    if (status == 401) {
+      debugPrint('Error de Autenticación!');
+      if (Modular.to.path.toString().compareTo('/login') != 0) {
+        Modular.to.pushNamedAndRemoveUntil('/login', (p0) => false);
+      }
+      throw RestClientException(
+        statusMessage: eX.error?.toString() ?? 'No autorizado',
+        statusCode: status,
+        error: eX,
+      );
+    }
+
+    // 500 u otros: propagar mensaje (o uno genérico si viene vacío)
+    if (status == 500) {
+      final msg = _extractServerMessage(eX.response?.data);
+      throw RestClientException(
+        statusMessage: msg.isEmpty
+            ? 'No fue posible completar la operación'
+            : msg,
+        statusCode: status,
+        error: eX,
+      );
+    }
+
+    // Desconocido / red
+    if (eX.type == DioExceptionType.unknown) {
       Modular.to.pushNamedAndRemoveUntil('/error_conexion', (p0) => false);
       throw RestClientException(
-        statusMessage: eX.error.toString(),
-        statusCode: eX.response!.statusCode!,
-        error: eX,
-      );
-    } else {
-      if (eX.response != null) {
-        if (eX.response != null) {
-          throw RestClientException(
-            statusMessage: eX.response.data,
-            statusCode: eX.response.statusCode,
-            error: eX,
-          );
-        }
-      }
-
-      throw RestClientException(
-        statusMessage: eX.message,
-        statusCode: eX.response?.statusCode,
+        statusMessage: 'Falla de conexión',
+        statusCode: status,
         error: eX,
       );
     }
+
+    // Fallback genérico
+    final fallback = _extractServerMessage(eX.response?.data);
+    throw RestClientException(
+      statusMessage: fallback,
+      statusCode: status,
+      error: eX,
+    );
   }
 
   RestClientResponse<T> _sucessManager<T>(Response<dynamic> response) {
@@ -273,5 +256,39 @@ class Api implements IRestClient {
       statusCode: response.statusCode!,
       statusMessage: response.statusMessage!,
     );
+  }
+
+  String _extractServerMessage(dynamic data) {
+    if (data == null) return 'Ocurrió un error desconocido';
+
+    // Si ya es Mapa (Dio suele decodificar JSON)
+    if (data is Map) {
+      // RFC 7807 -> "detail", o tu propio JSON -> "message"
+      return data['detail']?.toString() ??
+          data['message']?.toString() ??
+          data['error_description']?.toString() ??
+          data['error']?.toString() ??
+          data.toString();
+    }
+
+    // Si viene String, intento parsear JSON
+    if (data is String) {
+      try {
+        final parsed = jsonDecode(data);
+        if (parsed is Map) {
+          return parsed['detail']?.toString() ??
+              parsed['message']?.toString() ??
+              parsed['error_description']?.toString() ??
+              parsed['error']?.toString() ??
+              data;
+        }
+      } catch (_) {
+        /* no es json */
+      }
+      return data; // texto plano
+    }
+
+    // fallback
+    return data.toString();
   }
 }

@@ -32,6 +32,12 @@ class LigasAcademicasSection extends StatelessWidget {
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LACIS-SDG.png',
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAOH-US-SDG.png',
       'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LACARDIUS-SDG.png',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAFISIO-US-SDG.png',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAMEFUS-SDG.png',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAMPREV-US-SDG.png',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAOT-US-SDG.png',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAPMUS-SDG.png',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/NUTRILAUS-SDG.png',
     ];
 
     // tamaño responsivo para logos

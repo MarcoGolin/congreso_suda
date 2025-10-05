@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -38,5 +40,15 @@ public class TrabajoCientificoController {
 	@GetMapping("/consultaTodos")
 	public GenericResponseEntity<List<TrabajoCientifico>> consultaTodos() {
 		return service.consultaTodos();
+	}
+	
+	@PutMapping("/cancelar")
+	public GenericResponseEntity<TrabajoCientifico> cancelar(@RequestParam Long idTrabajo) {
+		return service.cancelar(idTrabajo);
+	}
+
+	@PutMapping("/cambiarEstado")
+	public GenericResponseEntity<TrabajoCientifico> cambiarEstado(@RequestParam Long idTrabajo, @RequestParam String estado) {
+		return service.cambiarEstado(idTrabajo, estado);
 	}
 }

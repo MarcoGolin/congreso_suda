@@ -12,5 +12,7 @@ import py.com.flextech.model.sistema.Usuario;
 
 public interface TrabajoCientificoRepository extends JpaRepository<TrabajoCientifico, Long> {
 	
-	List<TrabajoCientifico> findByUsuario(Usuario usuario);
+	List<TrabajoCientifico> findByUsuarioAndCancelado(Usuario usuario, Boolean cancelado);
+	
+	List<TrabajoCientifico> findByCancelado(Boolean cancelado);
 }

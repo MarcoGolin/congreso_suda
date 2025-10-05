@@ -1,3 +1,6 @@
+import 'package:congreso_evento/core/exception/service_exception.dart';
+import 'package:congreso_evento/core/models/global_state_class.dart';
+import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/home_admin/pages/trabajos_cientificos/services/admin_trabajos_cientificos_service.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/models/trabajo_cientifico.dart';
 import 'package:mobx/mobx.dart';
@@ -37,6 +40,17 @@ abstract class AdminTrabajosCientificosStoreBase with Store {
   TrabajoCientifico? _trabajoSeleccionado;
 
   TrabajoCientifico? get trabajoSeleccionado => _trabajoSeleccionado;
+
+  @readonly
+  GlobalStateClass _stateClass = GlobalStateClass(
+    status: StatusEnumGlobal.loaded,
+    message: '',
+  );
+
+  @action
+  void changeStatus(String message, StatusEnumGlobal status) {
+    _stateClass = _stateClass.copyWith(message: message, status: status);
+  }
 
   ObservableList<TrabajoCientifico> get trabajosFiltrados {
     var lista = _items.toList();
@@ -119,6 +133,56 @@ abstract class AdminTrabajosCientificosStoreBase with Store {
       return _items.firstWhere((trabajo) => trabajo.id == id);
     } catch (e) {
       return null;
+    }
+  }
+
+  @action
+  Future<void> cancelar(int idTrabajo) async {
+    try {
+      changeStatus('Cancelando trabajo...', StatusEnumGlobal.loading);
+      final response = await service.cancelar(idTrabajo);
+      // final data = response.data;
+      final code = response.code;
+      final message = response.message;
+
+      if (code != 200) {
+        changeStatus(message, StatusEnumGlobal.errorDialog);
+        return;
+      }
+      _items.removeWhere((t) => t.id == idTrabajo);
+      changeStatus('Trabajo guardado correctamente', StatusEnumGlobal.success);
+    } on ServiceException catch (e) {
+      changeStatus(e.message, StatusEnumGlobal.error);
+    }
+  }
+
+  @action
+  Future<void> cambiarEstado(int id, String nuevoEstado) async {
+    try {
+      changeStatus('Cancelando trabajo...', StatusEnumGlobal.loading);
+      final response = await service.cambiarEstado(id, nuevoEstado);
+      // final data = response.data;
+      final code = response.code;
+      final message = response.message;
+
+      if (code != 200) {
+        changeStatus(message, StatusEnumGlobal.errorDialog);
+        return;
+      }
+      _actualizarTrabajoEnLista(response.data);
+
+      changeStatus('Trabajo guardado correctamente', StatusEnumGlobal.success);
+    } on ServiceException catch (e) {
+      changeStatus(e.message, StatusEnumGlobal.error);
+    }
+  }
+
+  void _actualizarTrabajoEnLista(TrabajoCientifico? data) {
+    if (data != null) {
+      final index = _items.indexWhere((t) => t.id == data.id);
+      if (index != -1) {
+        _items[index] = data;
+      }
     }
   }
 }

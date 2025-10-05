@@ -38,7 +38,7 @@ class _TextFieldCelularState extends State<TextFieldCelular> {
       'code': '+55',
       'name': 'Brasil',
       'hint': 'Ej. +55 DD 9XXXX-XXXX',
-      'maxLength': '17',
+      'maxLength': '19',
     },
   ];
 
@@ -104,9 +104,9 @@ class _TextFieldCelularState extends State<TextFieldCelular> {
                     _selectedCountryCodePrefix,
                   );
                 },
-                validator: (value) {
-                  return _validarTelefono(widget.telefoneController.text, true);
-                },
+                // validator: (value) {
+                //   return _validarTelefono(widget.telefoneController.text, true);
+                // },
               ),
             ),
             const SizedBox(width: 8),
@@ -130,15 +130,15 @@ class _TextFieldCelularState extends State<TextFieldCelular> {
                     });
                   } else if (value.startsWith('+55')) {
                     setState(() {
-                      _phoneMaxLength = 17;
                       _selectedCountryHintText = 'Ej. +55 DD 9XXXX-XXXX';
                       _selectedCountryCodePrefix = '+55';
+                      _phoneMaxLength = 19;
                     });
                   } else if (value.isEmpty || !value.startsWith('+')) {
                     setState(() {
                       _selectedCountryCodePrefix = '+595';
                       _selectedCountryHintText = 'Ej. +595 9XX XXX XXX';
-                      _phoneMaxLength = 16;
+                      _phoneMaxLength = 19;
                     });
                   }
                   widget.onChanged?.call(value, _selectedCountryCodePrefix);
@@ -146,9 +146,9 @@ class _TextFieldCelularState extends State<TextFieldCelular> {
                 maxLength: _phoneMaxLength,
                 hintText: _selectedCountryHintText,
                 onTap: () => setState(() => _rowError = null),
-                validator: (value) {
-                  return _validarTelefono(value, true);
-                },
+                // validator: (value) {
+                //   return _validarTelefono(value, true);
+                // },
                 onFieldSubmitted: (_) {
                   if (widget.focusNode != null) {
                     FocusScope.of(context).requestFocus(widget.focusNode);
@@ -158,39 +158,39 @@ class _TextFieldCelularState extends State<TextFieldCelular> {
             ),
           ],
         ),
-        if (_rowError != null)
-          Positioned(
-            top: 41,
-            left:
-                15, // Adjust this value to position the error message correctly
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                _rowError!,
-                style: const TextStyle(color: Colors.red, fontSize: 12),
-              ),
-            ),
-          ),
+        // if (_rowError != null)
+        //   Positioned(
+        //     top: 41,
+        //     left:
+        //         15, // Adjust this value to position the error message correctly
+        //     child: Align(
+        //       alignment: Alignment.centerLeft,
+        //       child: Text(
+        //         _rowError!,
+        //         style: const TextStyle(color: Colors.red, fontSize: 12),
+        //       ),
+        //     ),
+        //   ),
       ],
     );
   }
 
-  String? _validarTelefono(String? value, bool isOnChanged) {
-    setState(() {
-      if (value == null || value.isEmpty) {
-        _rowError = 'Campo requerido';
-      } else {
-        final py = RegExp(r'^\+595\s9\d{2}\s\d{3}\s\d{3}$');
-        final br = RegExp(r'^\+55\s\d{2}\s9\d{4}-\d{4}$');
-        _rowError = (py.hasMatch(value) || br.hasMatch(value))
-            ? null
-            : 'Ej. PY: +595 9XX XXX XXX o BR: +55 DD 9XXXX-XXXX';
-      }
-    });
-    return isOnChanged
-        ? (_rowError != null || _rowError?.isNotEmpty == true)
-              ? ''
-              : null
-        : _rowError;
-  }
+  // String? _validarTelefono(String? value, bool isOnChanged) {
+  //   setState(() {
+  //     if (value == null || value.isEmpty) {
+  //       _rowError = 'Campo requerido';
+  //     } else {
+  //       final py = RegExp(r'^\+595\s9\d{2}\s\d{3}\s\d{3}$');
+  //       final br = RegExp(r'^\+55\s\d{2}\s9\d{4}-\d{4}$');
+  //       _rowError = (py.hasMatch(value) || br.hasMatch(value))
+  //           ? null
+  //           : 'Ej. PY: +595 9XX XXX XXX o BR: +55 DD 9XXXX-XXXX';
+  //     }
+  //   });
+  //   return isOnChanged
+  //       ? (_rowError != null || _rowError?.isNotEmpty == true)
+  //             ? ''
+  //             : null
+  //       : _rowError;
+  // }
 }

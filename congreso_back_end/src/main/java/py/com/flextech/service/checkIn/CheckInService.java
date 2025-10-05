@@ -36,6 +36,9 @@ public class CheckInService {
 			    // 1) Resolver congresista por UUID
 			    Usuario congresista = usuarioRepository.findByUuidBin(uuidStringToBytes(uuid))
 			        .orElseThrow(() -> new BadRequestException("QR inválido: no existe un usuario con ese UUID."));
+			    
+			    
+			    
 
 			    // 2) Validaciones por tipo
 			    switch (tipo) {

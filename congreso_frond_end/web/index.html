@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
   <base href="/">
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
@@ -12,15 +13,22 @@
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <link rel="canonical" href="https://congresounisud.com/">
 
-  <!-- Theming / PWA -->
-  <meta name="theme-color" content="#121a14">
+  <!-- Apariencia / PWA -->
+  <meta name="application-name" content="IVCIUSMI 2025">
+  <!-- Color del navegador (light/dark) -->
+  <meta name="theme-color" content="#387f4d" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121a14" media="(prefers-color-scheme: dark)">
+  <!-- Compatibilidad PWA -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <!-- iOS (instalada) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="IVCIUSMI 2025">
 
   <!-- Icons -->
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/Icon-192.png">
+  <!-- Manifest con íconos (incluí maskable en el manifest.json) -->
   <link rel="manifest" href="manifest.json">
 
   <!-- Open Graph -->
@@ -41,9 +49,8 @@
   <meta name="twitter:image" content="https://congresounisud.com/assets/imagenes/logo/logo_congreso_solo.png">
 
   <!-- Preload de activos críticos -->
-  <link rel="preload" as="image" href="assets/imagenes/logo/logo_congreso_largo.png" fetchpriority="high">
-  <!-- Si tenés versión WebP del fondo, mejor -->
-  <link rel="preload" as="image" href="assets/imagenes/fondo/fondo_liviano.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/imagenes/logo/logo_congreso_largo.png?v=1" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/imagenes/fondo/fondo_liviano.webp?v=1" fetchpriority="high">
 
   <!-- Datos estructurados (Evento) -->
   <script type="application/ld+json">
@@ -89,11 +96,10 @@
       background:
         radial-gradient(1200px 800px at 50% -10%, #2e6b40 0%, #121a14 60%);
     }
-    /* Fondo opcional blur (usá un archivo MUY liviano) */
     #preloader::before {
       content: "";
       position: absolute; inset: 0;
-      background: url("assets/imagenes/fondo/fondo_liviano.webp") center/cover no-repeat;
+      background: url("assets/imagenes/fondo/fondo_liviano.webp?v=1") center/cover no-repeat;
       filter: brightness(.9);
       opacity: .55;
     }
@@ -116,8 +122,6 @@
       animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Accesibilidad: oculta si preloader se remueve */
     #preloader[aria-hidden="true"] { display: none; }
   </style>
 </head>
@@ -125,85 +129,75 @@
   <!-- Preloader accesible -->
   <div id="preloader" role="status" aria-live="polite" aria-busy="true">
     <div class="splash-card">
-      <img src="assets/imagenes/logo/logo_congreso_largo.png" alt="IVCIUSMI 2025">
+      <img src="assets/imagenes/logo/logo_congreso_largo.png?v=1" alt="IVCIUSMI 2025">
       <div class="spinner" aria-hidden="true"></div>
     </div>
   </div>
 
-	<script>
+  <!-- Redirección solo si no hay SW ni modo standalone (no rompe PWA instalada) -->
+  <script>
     (function () {
-      // Soporta base href distinto a "/"
+      var isStandalone =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true;
+      var hasSW = 'serviceWorker' in navigator && navigator.serviceWorker.controller;
+      if (isStandalone || hasSW) return;
+
       var baseEl = document.querySelector('base');
       var basePath = baseEl ? new URL(baseEl.href, location.href).pathname : '/';
       if (!basePath.endsWith('/')) basePath += '/';
 
-      var isAtRoot =
+      var atRoot =
         location.pathname === basePath ||
         location.pathname === basePath + 'index.html';
 
-      var hasHashRoute = !!location.hash && location.hash.length > 1; // p.ej. "#/home_admin/pagos"
-
-      // Si NO estamos en la raíz o hay hash routing, redirigimos al home
-      if (!isAtRoot || hasHashRoute) {
-        // (Opcional) guardá a dónde quisieron entrar
-        sessionStorage.setItem(
-          'flutter_intended_route',
-          (location.pathname + location.search + location.hash) || '/'
-        );
-        // Ir al home (respeta basePath)
+      if (!atRoot) {
+        sessionStorage.setItem('flutter_intended_route',
+          (location.pathname + location.search + location.hash) || '/');
         location.replace(basePath);
       }
     })();
   </script>
 
-	<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
   <!-- Bootstrap de Flutter -->
   <script src="flutter_bootstrap.js" defer></script>
 
-  <!-- Remueve el preloader en el primer frame de Flutter (rápido) -->
-<script>
-  (function () {
-    const pre = document.getElementById('preloader');
-    const start = performance.now();
+  <!-- Preloader: se apaga al primer frame o a los 6s -->
+  <script>
+    (function () {
+      const pre = document.getElementById('preloader');
+      const start = performance.now();
 
-    // Fade & remove con mínimo visible
-    function fadeOutAndRemove(minVisibleMs) {
-      const elapsed = performance.now() - start;
-      const wait = Math.max(0, (minVisibleMs || 700) - elapsed); // min 700ms de splash
-      setTimeout(() => {
-        if (!pre) return;
-        pre.style.opacity = '0';
+      function fadeOutAndRemove(minVisibleMs) {
+        const elapsed = performance.now() - start;
+        const wait = Math.max(0, (minVisibleMs || 700) - elapsed);
         setTimeout(() => {
-          pre.setAttribute('aria-hidden', 'true');
-          pre.remove();
-          document.body.classList.remove('preload-lock');
-        }, 320);
-      }, wait);
-    }
-
-    // 1) Señal primaria: cuando Flutter (tu código) diga que está listo
-    window.addEventListener('app-ready', () => fadeOutAndRemove(700));
-
-    // 2) Fallback: 150ms DESPUÉS del primer frame de Flutter (da tiempo a Material/primer build)
-    window.addEventListener('flutter-first-frame', () => {
-      // solo si aún no se disparó app-ready
-      if (document.getElementById('preloader')) {
-        setTimeout(() => fadeOutAndRemove(700), 150);
+          if (!pre) return;
+          pre.style.opacity = '0';
+          setTimeout(() => {
+            pre.setAttribute('aria-hidden', 'true');
+            pre.remove();
+            document.body.classList.remove('preload-lock');
+          }, 320);
+        }, wait);
       }
-    });
 
-    // 3) Safety timeout: si nada llegó, apagá a los 6s
-    setTimeout(() => {
-      if (document.getElementById('preloader')) fadeOutAndRemove(700);
-    }, 6000);
+      window.addEventListener('app-ready', () => fadeOutAndRemove(700));
+      window.addEventListener('flutter-first-frame', () => {
+        if (document.getElementById('preloader')) {
+          setTimeout(() => fadeOutAndRemove(700), 150);
+        }
+      });
+      setTimeout(() => {
+        if (document.getElementById('preloader')) fadeOutAndRemove(700);
+      }, 6000);
 
-    // Precalienta la imagen de fondo liviana (opcional)
-    const hero = new Image();
-    hero.src = 'assets/imagenes/fondo/fondo_liviano.webp';
-  })();
-</script>
+      const hero = new Image();
+      hero.src = 'assets/imagenes/fondo/fondo_liviano.webp?v=1';
+    })();
+  </script>
 
   <noscript>
     <style>#preloader{display:none!important}</style>

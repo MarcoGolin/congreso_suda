@@ -292,6 +292,7 @@ class _TrabajoCientificoRegistroState extends State<TrabajoCientificoRegistro> {
       archivoWordUrl: _archivoWord ?? '',
       archivoPdfUrl: _archivoPdf,
       aceptaDeclaracion: _aceptaDeclaracion,
+      estado: 'En revisión',
     );
     final Future<void> registrationFuture = _ctrl.save(trabajo);
 

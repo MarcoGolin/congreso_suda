@@ -2,6 +2,7 @@ package py.com.flextech.model.trabajocientifico;
 
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -89,5 +90,14 @@ public class TrabajoCientifico {
 	@ManyToOne
 	@JoinColumn(name = "ID_USUARIO", referencedColumnName = "ID_USUARIO")
 	private Usuario usuario;
+	
+	@Column(name = "ESTADO")
+	private String estado;
+	
+	@Column(name = "BO_CANCELADO")
+	private Boolean cancelado;
+
+	@Column(name = "FC_CANCELADO")
+	private LocalDateTime fechaCancelado;
 	
 }

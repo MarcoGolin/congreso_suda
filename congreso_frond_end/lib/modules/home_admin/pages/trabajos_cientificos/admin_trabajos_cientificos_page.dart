@@ -11,6 +11,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'helpers/trabajo_cientifico_helpers.dart';
+
 class AdminTrabajosCientificosPage extends StatefulWidget {
   const AdminTrabajosCientificosPage({super.key});
 
@@ -204,30 +206,28 @@ class _AdminTrabajosCientificosPageState
               tooltip: 'Exportar a Excel',
             ),
           ),
-          Observer(
-            builder: (_) => Container(
-              margin: const EdgeInsets.all(8),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final isSmallScreen = MediaQuery.of(context).size.width < 600;
-                  return Observer(
-                    builder: (_) => Text(
-                      isSmallScreen
-                          ? '${_store.trabajosFiltrados.length}'
-                          : '${_store.trabajosFiltrados.length} trabajos',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
+          Container(
+            margin: const EdgeInsets.all(8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isSmallScreen = MediaQuery.of(context).size.width < 600;
+                return Observer(
+                  builder: (_) => Text(
+                    isSmallScreen
+                        ? '${_store.trabajosFiltrados.length}'
+                        : '${_store.trabajosFiltrados.length} trabajos',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -397,10 +397,10 @@ class _AdminTrabajosCientificosPageState
                           _searchController.clear();
                           _store.limpiarFiltros();
                         },
-                        child: const Text('Limpiar Filtros'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: brandPrimary,
                         ),
+                        child: const Text('Limpiar Filtros'),
                       ),
                     ),
                   ],
@@ -414,6 +414,7 @@ class _AdminTrabajosCientificosPageState
                         value: _store.filtroModalidad.isEmpty
                             ? null
                             : _store.filtroModalidad,
+                        isExpanded: true,
                         onChanged: (value) =>
                             _store.setFiltroModalidad(value ?? ''),
                         decoration: InputDecoration(
@@ -447,6 +448,7 @@ class _AdminTrabajosCientificosPageState
                             ? null
                             : _store.filtroArea,
                         onChanged: (value) => _store.setFiltroArea(value ?? ''),
+                        isExpanded: true,
                         decoration: InputDecoration(
                           labelText: 'Área Temática',
                           border: OutlineInputBorder(
@@ -477,10 +479,10 @@ class _AdminTrabajosCientificosPageState
                         _searchController.clear();
                         _store.limpiarFiltros();
                       },
-                      child: const Text('Limpiar'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: brandPrimary,
                       ),
+                      child: const Text('Limpiar'),
                     ),
                   ],
                 );
@@ -535,6 +537,7 @@ class _AdminTrabajosCientificosPageState
   }
 }
 
+// ---------- Reemplazo de _TrabajoCard ----------
 class _TrabajoCard extends StatelessWidget {
   final TrabajoCientifico trabajo;
   final VoidCallback onTap;
@@ -553,6 +556,8 @@ class _TrabajoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = estadoStyleFor(trabajo.estado);
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
@@ -560,258 +565,292 @@ class _TrabajoCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final isSmallScreen = constraints.maxWidth < 400;
-            return Padding(
-              padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header con título y modalidad
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              trabajo.titulo,
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width < 600
-                                    ? 14
-                                    : 16,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF1F2937),
-                              ),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF387f4d).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                trabajo.modalidad,
-                                style: const TextStyle(
-                                  color: Color(0xFF387f4d),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            // Degradé suave desde el color del estado
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [style.color.withOpacity(0.06), Colors.white],
+            ),
+          ),
+          child: Stack(
+            children: [
+              // Barra lateral del color del estado
+              Positioned.fill(
+                left: 0,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    width: 6,
+                    decoration: BoxDecoration(
+                      color: style.color,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
                       ),
-                      const SizedBox(width: 12),
-                      Icon(Icons.chevron_right, color: Colors.grey[400]),
-                    ],
+                    ),
                   ),
+                ),
+              ),
 
-                  const SizedBox(height: 12),
-
-                  // Información del autor
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      final isSmallScreen = constraints.maxWidth < 400;
-                      return Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(isSmallScreen ? 6 : 8),
-                            decoration: BoxDecoration(
-                              color: Colors.blue.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              Icons.person,
-                              size: isSmallScreen ? 14 : 16,
-                              color: Colors.blue,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  trabajo.autorNombre,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: isSmallScreen ? 13 : 14,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Text(
-                                  trabajo.autorEmail,
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: isSmallScreen ? 11 : 12,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-
-                  const Divider(height: 24),
-
-                  // Información adicional en chips
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      final isSmallScreen = constraints.maxWidth < 400;
-                      return Wrap(
-                        spacing: isSmallScreen ? 4 : 8,
-                        runSpacing: isSmallScreen ? 4 : 8,
-                        children: [
-                          _InfoChip(
-                            icon: Icons.category,
-                            label: trabajo.areaTematica,
-                            color: Colors.purple,
-                            isCompact: isSmallScreen,
-                          ),
-                          _InfoChip(
-                            icon: Icons.medical_services,
-                            label: trabajo.areaDeLaMedicina,
-                            color: Colors.orange,
-                            isCompact: isSmallScreen,
-                          ),
-                          _InfoChip(
-                            icon: Icons.schedule,
-                            label: 'Reg: ${_fmtDate(trabajo.fechaRegistro)}',
-                            color: Colors.green,
-                            isCompact: isSmallScreen,
-                          ),
-                          if (trabajo.coautores.isNotEmpty)
-                            _InfoChip(
-                              icon: Icons.group,
-                              label: '${trabajo.coautores.length} coautores',
-                              color: Colors.blue,
-                              isCompact: isSmallScreen,
-                            ),
-                        ],
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Archivos disponibles con botones de descarga
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      final isSmallScreen = constraints.maxWidth < 400;
-
-                      if (isSmallScreen) {
-                        // Layout vertical para móvil
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Row(
-                              children: [
-                                if (trabajo.archivoWordUrl.isNotEmpty)
-                                  Expanded(
-                                    child: _DownloadButton(
-                                      onTap: () => onDescargar(
-                                        trabajo.archivoWordUrl,
-                                        '${trabajo.titulo}_trabajo.docx',
-                                      ),
-                                      label: 'Word',
-                                      color: Colors.blue,
-                                      isCompact: true,
-                                    ),
-                                  ),
-                                if (trabajo.archivoWordUrl.isNotEmpty &&
-                                    trabajo.archivoPdfUrl != null &&
-                                    trabajo.archivoPdfUrl!.isNotEmpty)
-                                  const SizedBox(width: 8),
-                                if (trabajo.archivoPdfUrl != null &&
-                                    trabajo.archivoPdfUrl!.isNotEmpty)
-                                  Expanded(
-                                    child: _DownloadButton(
-                                      onTap: () => onDescargar(
-                                        trabajo.archivoPdfUrl!,
-                                        '${trabajo.titulo}_trabajo.pdf',
-                                      ),
-                                      label: 'PDF',
-                                      color: Colors.red,
-                                      isCompact: true,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Tocar para descargar • Ver detalles completos',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey[500],
-                                fontStyle: FontStyle.italic,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        );
-                      } else {
-                        // Layout horizontal para desktop/tablet
-                        return Row(
-                          children: [
-                            if (trabajo.archivoWordUrl.isNotEmpty)
-                              _DownloadButton(
-                                onTap: () => onDescargar(
-                                  trabajo.archivoWordUrl,
-                                  '${trabajo.titulo}_trabajo.docx',
-                                ),
-                                label: 'Word',
-                                color: Colors.blue,
-                              ),
-                            if (trabajo.archivoWordUrl.isNotEmpty &&
-                                trabajo.archivoPdfUrl != null &&
-                                trabajo.archivoPdfUrl!.isNotEmpty)
-                              const SizedBox(width: 8),
-                            if (trabajo.archivoPdfUrl != null &&
-                                trabajo.archivoPdfUrl!.isNotEmpty)
-                              _DownloadButton(
-                                onTap: () => onDescargar(
-                                  trabajo.archivoPdfUrl!,
-                                  '${trabajo.titulo}_trabajo.pdf',
-                                ),
-                                label: 'PDF',
-                                color: Colors.red,
-                              ),
-                            const Spacer(),
-                            Flexible(
-                              child: Text(
-                                'Descargar archivos • Ver detalles',
+              // Contenido
+              Padding(
+                padding: EdgeInsets.all(
+                  MediaQuery.of(context).size.width < 600 ? 12 : 16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header: título + chips
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                trabajo.titulo,
                                 style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 600
+                                      ? 14
+                                      : 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF1F2937),
+                                ),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 6),
+
+                              // Chips: modalidad + estado coloreado
+                              Wrap(
+                                spacing: 6,
+                                runSpacing: 6,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(
+                                        0xFF387f4d,
+                                      ).withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: const Text(
+                                      'Modalidad',
+                                      style: TextStyle(
+                                        color: Color(0xFF387f4d),
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  _InfoChip(
+                                    icon: style.icon,
+                                    label: style.label,
+                                    color: style.color,
+                                    isCompact: true,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Icon(Icons.chevron_right, color: Colors.grey[400]),
+                      ],
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Autor
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.person,
+                            size: 16,
+                            color: Colors.blue,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                trabajo.autorNombre,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                trabajo.autorEmail,
+                                style: TextStyle(
+                                  color: Colors.grey[600],
                                   fontSize: 12,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const Divider(height: 24),
+
+                    // Info chips
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        _InfoChip(
+                          icon: Icons.category,
+                          label: trabajo.areaTematica,
+                          color: Colors.purple,
+                          isCompact: false,
+                        ),
+                        _InfoChip(
+                          icon: Icons.medical_services,
+                          label: trabajo.areaDeLaMedicina,
+                          color: Colors.orange,
+                          isCompact: false,
+                        ),
+                        _InfoChip(
+                          icon: Icons.schedule,
+                          label: 'Reg: ${_fmtDate(trabajo.fechaRegistro)}',
+                          color: Colors.green,
+                          isCompact: false,
+                        ),
+                        if (trabajo.coautores.isNotEmpty)
+                          _InfoChip(
+                            icon: Icons.group,
+                            label: '${trabajo.coautores.length} coautores',
+                            color: Colors.blue,
+                            isCompact: false,
+                          ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Descargas
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isSmall = constraints.maxWidth < 400;
+                        if (isSmall) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                children: [
+                                  if (trabajo.archivoWordUrl.isNotEmpty)
+                                    Expanded(
+                                      child: _DownloadButton(
+                                        onTap: () => onDescargar(
+                                          trabajo.archivoWordUrl,
+                                          '${trabajo.titulo}_trabajo.docx',
+                                        ),
+                                        label: 'Word',
+                                        color: Colors.blue,
+                                        isCompact: true,
+                                      ),
+                                    ),
+                                  if (trabajo.archivoWordUrl.isNotEmpty &&
+                                      trabajo.archivoPdfUrl != null &&
+                                      trabajo.archivoPdfUrl!.isNotEmpty)
+                                    const SizedBox(width: 8),
+                                  if (trabajo.archivoPdfUrl != null &&
+                                      trabajo.archivoPdfUrl!.isNotEmpty)
+                                    Expanded(
+                                      child: _DownloadButton(
+                                        onTap: () => onDescargar(
+                                          trabajo.archivoPdfUrl!,
+                                          '${trabajo.titulo}_trabajo.pdf',
+                                        ),
+                                        label: 'PDF',
+                                        color: Colors.red,
+                                        isCompact: true,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Tocar para descargar • Ver detalles completos',
+                                style: TextStyle(
+                                  fontSize: 11,
                                   color: Colors.grey[500],
                                   fontStyle: FontStyle.italic,
                                 ),
-                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
                               ),
-                            ),
-                          ],
-                        );
-                      }
-                    },
-                  ),
-                ],
+                            ],
+                          );
+                        } else {
+                          return Row(
+                            children: [
+                              if (trabajo.archivoWordUrl.isNotEmpty)
+                                _DownloadButton(
+                                  onTap: () => onDescargar(
+                                    trabajo.archivoWordUrl,
+                                    '${trabajo.titulo}_trabajo.docx',
+                                  ),
+                                  label: 'Word',
+                                  color: Colors.blue,
+                                ),
+                              if (trabajo.archivoWordUrl.isNotEmpty &&
+                                  trabajo.archivoPdfUrl != null &&
+                                  trabajo.archivoPdfUrl!.isNotEmpty)
+                                const SizedBox(width: 8),
+                              if (trabajo.archivoPdfUrl != null &&
+                                  trabajo.archivoPdfUrl!.isNotEmpty)
+                                _DownloadButton(
+                                  onTap: () => onDescargar(
+                                    trabajo.archivoPdfUrl!,
+                                    '${trabajo.titulo}_trabajo.pdf',
+                                  ),
+                                  label: 'PDF',
+                                  color: Colors.red,
+                                ),
+                              const Spacer(),
+                              Flexible(
+                                child: Text(
+                                  'Descargar archivos • Ver detalles',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[500],
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
     );

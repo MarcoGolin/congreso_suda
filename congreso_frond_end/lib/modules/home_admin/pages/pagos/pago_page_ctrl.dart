@@ -289,6 +289,12 @@ abstract class PagoPageCtrlBase with Store {
       if (_stateClass.status == StatusEnumGlobal.loading) {
         return null; // Evita múltiples llamadas simultáneas
       }
+
+      if (_usuario == null) {
+        changeStatus('Usuario no cargado', StatusEnumGlobal.errorAndAction);
+        return null;
+      }
+
       changeStatus('', StatusEnumGlobal.loading);
       final response = await service.consultarSiEstaHabilitado(
         idUsuario: _usuario?.id ?? 0,
@@ -298,7 +304,7 @@ abstract class PagoPageCtrlBase with Store {
 
       if (data == null) {
         changeStatus(
-          'No está habilitado para realizar pagos!',
+          'No está habilitado para realizar pagos! , U: ${_usuario?.nombreCompleto}',
           StatusEnumGlobal.errorAndAction,
         );
         return null;

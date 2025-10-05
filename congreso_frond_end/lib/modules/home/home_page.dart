@@ -1,9 +1,12 @@
 import 'package:congreso_evento/core/behahavior/custom_scroll_behavior.dart';
 import 'package:congreso_evento/core/web_helper/web_helper_stub.dart'
     if (dart.library.html) 'package:congreso_evento/core/web_helper/web_helper.dart';
+import 'package:congreso_evento/modules/disertante/model/disertante.dart';
 import 'package:congreso_evento/modules/home/home_drawer.dart';
 import 'package:congreso_evento/modules/home/home_page_ctrl.dart';
+import 'package:congreso_evento/modules/home/sections/auspiciantes_section.dart';
 import 'package:congreso_evento/modules/home/sections/comite_section.dart';
+import 'package:congreso_evento/modules/home/sections/disertantes_section.dart';
 import 'package:congreso_evento/modules/home/sections/inicio_section.dart';
 import 'package:congreso_evento/modules/home/sections/ligas_academicas_section.dart';
 import 'package:congreso_evento/modules/home/sections/sobre_section.dart';
@@ -16,6 +19,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:yaml/yaml.dart';
 
+import '../auspiciantes/model/auspiciante.dart';
+import 'sections/actividades_ligas_section.dart';
 import 'sections/footer_section.dart';
 import 'sections/lugar_section.dart';
 
@@ -33,12 +38,14 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey _inicioSectionKey = GlobalKey();
   final GlobalKey _sobreSectionKey = GlobalKey();
   // final GlobalKey _agendaSectionKey = GlobalKey();
-  // final GlobalKey _disertantesSectionKey = GlobalKey();
+  final GlobalKey _disertantesSectionKey = GlobalKey();
   final GlobalKey _trabajosCientificosSectionKey = GlobalKey();
   final GlobalKey _ligasAcademicasSectionKey = GlobalKey();
+  final GlobalKey _actividadesLigasSectionKey = GlobalKey();
   final GlobalKey _tallerSectionKey = GlobalKey();
   final GlobalKey _lugarEventoSectionKey = GlobalKey();
   final GlobalKey _comiteSectionKey = GlobalKey();
+  final GlobalKey _auspiciantesSectionKey = GlobalKey();
   // final GlobalKey _reconocimientosApoyoSectionKey = GlobalKey();
 
   // final GlobalKey _precioSectionKey = GlobalKey();
@@ -57,20 +64,21 @@ class _HomePageState extends State<HomePage> {
     _sectionKeys = {
       'Inicio': _inicioSectionKey,
       'Sobre': _sobreSectionKey,
-      // 'Disertantes': _disertantesSectionKey,
+      'Disertantes': _disertantesSectionKey,
       'Trabajos': _trabajosCientificosSectionKey,
       'Ligas': _ligasAcademicasSectionKey,
+      'Actividades': _actividadesLigasSectionKey,
       'Talleres': _tallerSectionKey,
       'Comité': _comiteSectionKey,
       'Lugar': _lugarEventoSectionKey,
-      // 'Precios': _precioSectionKey,
+      'Auspiciantes': _auspiciantesSectionKey,
       'Contacto': _contactoSectionKey,
     };
     _scrollController.addListener(_onScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _ctrl.consultarOrganizadores();
-      _ctrl.consultarTalleres();
+      // _ctrl.consultarOrganizadores();
+      // _ctrl.consultarTalleres();
       cierraPreLoader();
       var y = await rootBundle.loadString("pubspec.yaml");
       String nrBuild = loadYaml(y)["version"];
@@ -196,12 +204,23 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(key: _sobreSectionKey, child: const SobreSection()),
             SizedBox(
+              key: _disertantesSectionKey,
+              child: DisertantesCarouselSection(
+                titulo: 'Conocé a nuestros disertantes',
+                disertantes: Disertante.disertantesEjemplo, // tu lista (20+)
+              ),
+            ),
+            SizedBox(
               key: _trabajosCientificosSectionKey,
               child: const TrabajoCientificoSection(),
             ),
             SizedBox(
               key: _ligasAcademicasSectionKey,
               child: const LigasAcademicasSection(),
+            ),
+            SizedBox(
+              key: _actividadesLigasSectionKey,
+              child: const ActividadesLigasSection(),
             ),
             //seccion talleres
             Observer(
@@ -230,7 +249,13 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
-
+            SizedBox(
+              key: _auspiciantesSectionKey,
+              child: AuspiciantesCarouselSection(
+                titulo: 'Auspiciantes',
+                sponsors: Auspiciante.all(), // tu lista (20+)
+              ),
+            ),
             SizedBox(
               key: _lugarEventoSectionKey,
               child:

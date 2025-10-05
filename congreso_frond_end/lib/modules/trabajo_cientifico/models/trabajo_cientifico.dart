@@ -24,6 +24,8 @@ class TrabajoCientifico {
   final String? archivoPdfUrl;
   final bool? aceptaDeclaracion;
 
+  final String? estado;
+
   TrabajoCientifico({
     this.id,
     this.fechaRegistro,
@@ -40,6 +42,7 @@ class TrabajoCientifico {
     required this.archivoWordUrl,
     this.archivoPdfUrl,
     this.aceptaDeclaracion,
+    this.estado,
   });
 
   factory TrabajoCientifico.fromJson(Map<String, dynamic> json) =>

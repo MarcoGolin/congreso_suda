@@ -1,6 +1,7 @@
 package py.com.flextech.service.trabajocientifico;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -106,7 +107,7 @@ public class TrabajoCientificoService {
 	
 	public GenericResponseEntity<List<TrabajoCientifico>> consultaTrabajosPorUsuario(Long idUsuario){
 		
-		List<TrabajoCientifico> trabajos = repository.findByUsuario(new Usuario(idUsuario));
+		List<TrabajoCientifico> trabajos = repository.findByUsuarioAndCancelado(new Usuario(idUsuario), false);
 		
 		 return new GenericResponseEntity<List<TrabajoCientifico>>("Consulta con Éxito!", 200, trabajos);
 		
@@ -114,10 +115,26 @@ public class TrabajoCientificoService {
 
 	public GenericResponseEntity<List<TrabajoCientifico>> consultaTodos(){
 		
-		List<TrabajoCientifico> trabajos = repository.findAll();
+		List<TrabajoCientifico> trabajos = repository.findByCancelado(false);
 		
 		return new GenericResponseEntity<List<TrabajoCientifico>>("Consulta con Éxito!", 200, trabajos);
 		
+	}
+	
+	
+	public GenericResponseEntity<TrabajoCientifico> cancelar(Long idTrabajo){
+		TrabajoCientifico trabajo = repository.findById(idTrabajo).get();
+		trabajo.setCancelado(true);
+		trabajo.setFechaCancelado(LocalDateTime.now());
+		trabajo = repository.saveAndFlush(trabajo);
+		return new GenericResponseEntity<TrabajoCientifico>("Consulta con Éxito!", 200, trabajo);
+	}
+
+	public GenericResponseEntity<TrabajoCientifico> cambiarEstado(Long idTrabajo, String estado){
+		TrabajoCientifico trabajo = repository.findById(idTrabajo).get();
+		trabajo.setEstado(estado);
+		trabajo = repository.saveAndFlush(trabajo);
+		return new GenericResponseEntity<TrabajoCientifico>("Consulta con Éxito!", 200, trabajo);
 	}
 }
 

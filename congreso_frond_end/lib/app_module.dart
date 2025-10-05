@@ -18,6 +18,11 @@ import 'package:congreso_evento/modules/talleres/taller_module.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/trabajo_cientifico_module.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
+import 'modules/checkin/controllers/checkin_store.dart';
+import 'modules/checkin/pages/checkin_page.dart';
+import 'modules/checkin/repositories/checkin_repository.dart';
+import 'modules/checkin/services/checkin_service.dart';
+
 class AppModule extends Module {
   @override
   void binds(i) {
@@ -31,6 +36,10 @@ class AppModule extends Module {
     // Mis talleres
     i.addLazySingleton(TallerInscripcionService.new);
     i.addLazySingleton(MisTalleresStore.new);
+
+    i.addLazySingleton(CheckinService.new);
+    i.addLazySingleton(CheckinRepository.new);
+    i.add(CheckinStore.new);
   }
 
   @override
@@ -73,6 +82,11 @@ class AppModule extends Module {
     r.child(
       '/ingreso_restringido',
       child: (_) => const IngresoRestringidoPage(),
+    );
+    r.child(
+      '/checkin',
+      child: (_) => const CheckinPage(),
+      guards: [AuthGuard()],
     );
     // r.wildcard(child: (context) => const PaginaNoEncontradaPage());
   }

@@ -30,6 +30,7 @@ TrabajoCientifico _$TrabajoCientificoFromJson(Map<String, dynamic> json) =>
       archivoWordUrl: json['archivoWordUrl'] as String,
       archivoPdfUrl: json['archivoPdfUrl'] as String?,
       aceptaDeclaracion: json['aceptaDeclaracion'] as bool?,
+      estado: json['estado'] as String?,
     );
 
 Map<String, dynamic> _$TrabajoCientificoToJson(TrabajoCientifico instance) =>
@@ -52,6 +53,7 @@ Map<String, dynamic> _$TrabajoCientificoToJson(TrabajoCientifico instance) =>
       'archivoWordUrl': instance.archivoWordUrl,
       'archivoPdfUrl': instance.archivoPdfUrl,
       'aceptaDeclaracion': instance.aceptaDeclaracion,
+      'estado': instance.estado,
     };
 
 Value? _$JsonConverterFromJson<Json, Value>(

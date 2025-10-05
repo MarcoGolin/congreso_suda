@@ -18,7 +18,7 @@ class SobreSection extends StatelessWidget {
       width: double.infinity,
       color: Colors.white, // 👈 fondo blanco (pedido)
       padding: EdgeInsets.symmetric(
-        vertical: isMobile ? 44 : 64,
+        vertical: isMobile ? 44 : 20,
         horizontal: isMobile ? 20 : 0,
       ),
       child: Center(
@@ -236,14 +236,16 @@ class _Bullet extends StatelessWidget {
           color: SobreSection.brandLight,
         ),
         const SizedBox(width: 8),
-        Text(
-          text,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 15,
-            height: 1.5,
-            color: SobreSection.ink,
-            fontWeight: FontWeight.w600,
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 15,
+              height: 1.5,
+              color: SobreSection.ink,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ],

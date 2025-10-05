@@ -111,6 +111,10 @@ abstract class CongresistaCtrlBase with Store {
     _congresista = _congresista?.copyWith(isDisertante: value);
   }
 
+  set setRegistroAcademico(String? value) {
+    _congresista = _congresista?.copyWith(registroAcademico: value);
+  }
+
   @action
   void changeStatus(String message, StatusEnumGlobal status) {
     _stateClass = _stateClass.copyWith(message: message, status: status);

@@ -1,35 +1,40 @@
 {
-    "name": "congreso_evento",
-    "short_name": "congreso_evento",
-    "start_url": ".",
-    "display": "standalone",
-    "background_color": "#hexcode",
-    "theme_color": "#hexcode",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
-    "prefer_related_applications": false,
-    "icons": [
-        {
-            "src": "icons/Icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/Icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/Icon-maskable-192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "maskable"
-        },
-        {
-            "src": "icons/Icon-maskable-512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "maskable"
-        }
-    ]
+  "id": "https://congresounisud.com/",
+  "name": "IVCIUSMI 2025 · Congreso de Medicina · UNISUD",
+  "short_name": "IVCIUSMI 2025",
+  "description": "Congreso de medicina de la UNISUD en Saltos del Guairá · 9–11 de octubre de 2025.",
+  "lang": "es-PY",
+  "dir": "ltr",
+
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+
+  "theme_color": "#387f4d",
+  "background_color": "#121a14",
+
+  "icons": [
+    { "src": "icons/Icon-192.png",          "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/Icon-512.png",          "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png",      "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Programa",
+      "short_name": "Programa",
+      "url": "/#programa",
+      "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Inscripción",
+      "short_name": "Inscripción",
+      "url": "/#inscripcion",
+      "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
+
+  "categories": ["health", "education", "events"],
+  "prefer_related_applications": false
 }

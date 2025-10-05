@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import py.com.flextech.model.checkin.Checkin;
 import py.com.flextech.model.checkin.enums.CheckinTipoEnum;
 import py.com.flextech.model.checkin.enums.CoffeeBreakEnum;
 import py.com.flextech.model.dto.GenericResponseEntity;
@@ -25,7 +24,7 @@ public class CheckInController {
 
 
 	@PostMapping("/checkin")
-	public GenericResponseEntity<Checkin> checkin(@RequestAttribute Long idUsuario,
+	public GenericResponseEntity<?> checkin(@RequestAttribute Long idUsuario,
 			@RequestParam(required = true)  String uuid,
 			@RequestParam(required = true)  CheckinTipoEnum tipo,
 			@RequestParam(required = false)  Long idTaller,

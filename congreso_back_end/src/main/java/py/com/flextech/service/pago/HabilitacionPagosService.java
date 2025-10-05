@@ -43,16 +43,48 @@ public class HabilitacionPagosService {
 	}
 	
 	public GenericResponseEntity<HabilitacionPagos> consultarSiEstaHabilitado(Long idUsuario) {
-	 
-		
+	    System.out.println("********* consultarSiEstaHabilitado *************");
+	    System.out.println("USUARIO ID: " + idUsuario);
+
 	    List<HabilitacionPagos> lista = repository.findByUsuario(new Usuario(idUsuario));
 	    LocalDateTime ahora = LocalDateTime.now();
-	    
-	    Optional<HabilitacionPagos> habilitacionExistente = Optional.ofNullable(lista.stream()
-                .filter(h -> ( !ahora.isBefore(h.getInicio()) && !ahora.isAfter(h.getFin()) ))
-                .findFirst().orElse(null));
-		
-		
-		return new GenericResponseEntity<HabilitacionPagos>("Guardado con Éxito!", 200, habilitacionExistente);
+
+	    System.out.println("Ahora: " + ahora);
+	    System.out.println("Total habilitaciones encontradas: " + (lista != null ? lista.size() : 0));
+
+	    if (lista != null) {
+	        int i = 1;
+	        for (HabilitacionPagos h : lista) {
+	            System.out.println("---- Habilitacion #" + i + " ----");
+	            System.out.println("ID: " + h.getId());
+	            System.out.println("Inicio: " + h.getInicio());
+	            System.out.println("Fin: " + h.getFin());
+	            System.out.println("Usuario: " + (h.getUsuario() != null ? h.getUsuario().getId() : "null"));
+	            System.out.println("Activo? " + (!ahora.isBefore(h.getInicio()) && !ahora.isAfter(h.getFin())));
+	            System.out.println("toString(): " + h.toString());
+	            i++;
+	        }
+	    }
+
+	    Optional<HabilitacionPagos> habilitacionExistente = Optional.ofNullable(
+	        lista.stream()
+	             .filter(h -> (!ahora.isBefore(h.getInicio()) && !ahora.isAfter(h.getFin())))
+	             .findFirst()
+	             .orElse(null)
+	    );
+
+	    System.out.println("Resultado habilitacionExistente.isPresent(): " + habilitacionExistente.isPresent());
+	    habilitacionExistente.ifPresent(h -> {
+	        System.out.println("Habilitación seleccionada -> ID: " + h.getId());
+	        System.out.println("Inicio: " + h.getInicio());
+	        System.out.println("Fin: " + h.getFin());
+	    });
+
+	    return new GenericResponseEntity<HabilitacionPagos>(
+	        "Guardado con Éxito!",
+	        200,
+	        habilitacionExistente
+	    );
 	}
+
 }

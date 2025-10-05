@@ -154,6 +154,26 @@ mixin _$AdminTrabajosCientificosStore
     );
   }
 
+  late final _$_stateClassAtom = Atom(
+    name: 'AdminTrabajosCientificosStoreBase._stateClass',
+    context: context,
+  );
+
+  GlobalStateClass get stateClass {
+    _$_stateClassAtom.reportRead();
+    return super._stateClass;
+  }
+
+  @override
+  GlobalStateClass get _stateClass => stateClass;
+
+  @override
+  set _stateClass(GlobalStateClass value) {
+    _$_stateClassAtom.reportWrite(value, super._stateClass, () {
+      super._stateClass = value;
+    });
+  }
+
   late final _$cargarTodosAsyncAction = AsyncAction(
     'AdminTrabajosCientificosStoreBase.cargarTodos',
     context: context,
@@ -164,11 +184,46 @@ mixin _$AdminTrabajosCientificosStore
     return _$cargarTodosAsyncAction.run(() => super.cargarTodos());
   }
 
+  late final _$cancelarAsyncAction = AsyncAction(
+    'AdminTrabajosCientificosStoreBase.cancelar',
+    context: context,
+  );
+
+  @override
+  Future<void> cancelar(int idTrabajo) {
+    return _$cancelarAsyncAction.run(() => super.cancelar(idTrabajo));
+  }
+
+  late final _$cambiarEstadoAsyncAction = AsyncAction(
+    'AdminTrabajosCientificosStoreBase.cambiarEstado',
+    context: context,
+  );
+
+  @override
+  Future<void> cambiarEstado(int id, String nuevoEstado) {
+    return _$cambiarEstadoAsyncAction.run(
+      () => super.cambiarEstado(id, nuevoEstado),
+    );
+  }
+
   late final _$AdminTrabajosCientificosStoreBaseActionController =
       ActionController(
         name: 'AdminTrabajosCientificosStoreBase',
         context: context,
       );
+
+  @override
+  void changeStatus(String message, StatusEnumGlobal status) {
+    final _$actionInfo = _$AdminTrabajosCientificosStoreBaseActionController
+        .startAction(name: 'AdminTrabajosCientificosStoreBase.changeStatus');
+    try {
+      return super.changeStatus(message, status);
+    } finally {
+      _$AdminTrabajosCientificosStoreBaseActionController.endAction(
+        _$actionInfo,
+      );
+    }
+  }
 
   @override
   void setFiltroTexto(String texto) {

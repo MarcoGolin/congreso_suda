@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:congreso_evento/core/js_cross_platform/js_cross_platform.dart'
     as js;
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
+import 'package:congreso_evento/modules/home_admin/pages/trabajos_cientificos/helpers/trabajo_cientifico_helpers.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/controllers/mis_trabajos_excel_ctrl.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/models/trabajo_cientifico.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/stores/mis_trabajos_cientificos_store.dart';
@@ -505,12 +506,12 @@ class _TrabajoCard extends StatelessWidget {
     this.onDescargarPdf,
   });
 
-  String _fmtDate(DateTime dt) {
-    return DateFormat('dd/MM/yyyy').format(dt);
-  }
+  String _fmtDate(DateTime dt) => DateFormat('dd/MM/yyyy').format(dt);
 
   @override
   Widget build(BuildContext context) {
+    final style = estadoStyleFor(trabajo.estado);
+
     return Card(
       elevation: 0,
       margin: const EdgeInsets.only(bottom: 12),
@@ -521,181 +522,248 @@ class _TrabajoCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            // Degradé suave según estado + fallback
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [style.color.withOpacity(0.06), Colors.white],
+            ),
+          ),
+          child: Stack(
             children: [
-              // Título
-              Text(
-                trabajo.titulo,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF111827),
-                ),
-                softWrap: true,
-              ),
-
-              const SizedBox(height: 8),
-
-              // Autor y modalidad
-              Row(
-                children: [
-                  Icon(
-                    Icons.person_outline,
-                    size: 16,
-                    color: const Color(0xFF6B7280),
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      'Autor: ${trabajo.autorNombre}',
-                      style: const TextStyle(
-                        color: Color(0xFF374151),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      softWrap: true,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
+              // Barra lateral del color del estado
+              Positioned.fill(
+                left: 0,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    width: 6,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF387f4d).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: const Color(0xFF387f4d).withOpacity(0.3),
-                      ),
-                    ),
-                    child: Text(
-                      trabajo.modalidad,
-                      style: const TextStyle(
-                        color: Color(0xFF387f4d),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
+                      color: style.color,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        bottomLeft: Radius.circular(16),
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
 
-              const SizedBox(height: 8),
-
-              // Áreas
-              Row(
-                children: [
-                  Icon(
-                    Icons.category_outlined,
-                    size: 16,
-                    color: const Color(0xFF6B7280),
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      '${trabajo.areaTematica} • ${trabajo.areaDeLaMedicina}',
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Título
+                    Text(
+                      trabajo.titulo,
                       style: const TextStyle(
-                        color: Color(0xFF6B7280),
-                        fontSize: 12,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF111827),
                       ),
                       softWrap: true,
                     ),
-                  ),
-                ],
-              ),
 
-              if (trabajo.fechaRegistro != null) ...[
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today_outlined,
-                      size: 16,
-                      color: const Color(0xFF6B7280),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Registrado: ${_fmtDate(trabajo.fechaRegistro!)}',
-                      style: const TextStyle(
-                        color: Color(0xFF6B7280),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                    const SizedBox(height: 8),
 
-              const SizedBox(height: 12),
-
-              // Botones de descarga y ver detalle
-              Row(
-                children: [
-                  // Botón Word con mejor feedback
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: onDescargarWord,
-                      icon: const Icon(Icons.download, size: 16),
-                      label: const Text('Descargar Word'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1565C0),
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(0, 36),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                    // Autor + chips
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(
+                          Icons.person_outline,
+                          size: 16,
+                          color: Color(0xFF6B7280),
                         ),
-                      ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Autor: ${trabajo.autorNombre}',
+                            style: const TextStyle(
+                              color: Color(0xFF374151),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            softWrap: true,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // Chip de modalidad
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF387f4d).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: const Color(0xFF387f4d).withOpacity(0.3),
+                            ),
+                          ),
+                          child: Text(
+                            trabajo.modalidad,
+                            style: const TextStyle(
+                              color: Color(0xFF387f4d),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
 
-                  const SizedBox(width: 8),
+                    const SizedBox(height: 8),
 
-                  // Botón PDF (si existe) con mejor feedback
-                  if (onDescargarPdf != null)
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: onDescargarPdf,
-                        icon: const Icon(Icons.download, size: 16),
-                        label: const Text('Descargar PDF'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFDC2626),
-                          foregroundColor: Colors.white,
+                    // Chip de ESTADO coloreado
+                    _estadoChip(style),
+
+                    const SizedBox(height: 8),
+
+                    // Áreas
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.category_outlined,
+                          size: 16,
+                          color: Color(0xFF6B7280),
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            '${trabajo.areaTematica} • ${trabajo.areaDeLaMedicina}',
+                            style: const TextStyle(
+                              color: Color(0xFF6B7280),
+                              fontSize: 12,
+                            ),
+                            softWrap: true,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    if (trabajo.fechaRegistro != null) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today_outlined,
+                            size: 16,
+                            color: Color(0xFF6B7280),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Registrado: ${_fmtDate(trabajo.fechaRegistro!)}',
+                            style: const TextStyle(
+                              color: Color(0xFF6B7280),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+
+                    const SizedBox(height: 12),
+
+                    // Botones de descarga
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: onDescargarWord,
+                            icon: const Icon(Icons.download, size: 16),
+                            label: const Text('Descargar Word'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1565C0),
+                              foregroundColor: Colors.white,
+                              minimumSize: const Size(0, 36),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        if (onDescargarPdf != null)
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: onDescargarPdf,
+                              icon: const Icon(Icons.download, size: 16),
+                              label: const Text('Descargar PDF'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFDC2626),
+                                foregroundColor: Colors.white,
+                                minimumSize: const Size(0, 36),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // Ver detalle
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: onTap,
+                        icon: const Icon(Icons.info_outline, size: 16),
+                        label: const Text('Ver detalles completos'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF387f4d),
+                          side: const BorderSide(color: Color(0xFF387f4d)),
                           minimumSize: const Size(0, 36),
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                       ),
                     ),
-                ],
-              ),
-
-              const SizedBox(height: 8),
-
-              // Botón ver detalle separado
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: onTap,
-                  icon: const Icon(Icons.info_outline, size: 16),
-                  label: const Text('Ver detalles completos'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF387f4d),
-                    side: const BorderSide(color: Color(0xFF387f4d)),
-                    minimumSize: const Size(0, 36),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _estadoChip(EstadoStyle s) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: s.color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: s.color.withOpacity(0.25)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(s.icon, size: 14, color: s.color),
+          const SizedBox(width: 6),
+          Text(
+            s.label,
+            style: TextStyle(
+              color: s.color,
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+          ),
+        ],
       ),
     );
   }

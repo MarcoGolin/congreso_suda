@@ -54,4 +54,40 @@ class TrabajoCientificoRepository {
       throw RepositoryException.toException(e);
     }
   }
+
+  Future<GenericResponseEntity> cancelar(int idTrabajo) async {
+    try {
+      final response = await api.put(
+        '/trabajo_cientifico/cancelar',
+        queryParameters: {'idTrabajo': idTrabajo},
+      );
+
+      if (response.data == null) {
+        throw RepositoryException.toException(
+          'No se recibió respuesta del servidor',
+        );
+      }
+      return GenericResponseEntity.fromJson(response.data);
+    } on Exception catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
+
+  Future<GenericResponseEntity> cambiarEstado(int id, String estado) async {
+    try {
+      final response = await api.put(
+        '/trabajo_cientifico/cambiarEstado',
+        queryParameters: {'idTrabajo': id, 'estado': estado},
+      );
+
+      if (response.data == null) {
+        throw RepositoryException.toException(
+          'No se recibió respuesta del servidor',
+        );
+      }
+      return GenericResponseEntity.fromJson(response.data);
+    } on Exception catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
 }

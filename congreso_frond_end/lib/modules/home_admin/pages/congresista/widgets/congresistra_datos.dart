@@ -179,6 +179,7 @@ class _CongresistraDatosState extends State<CongresistraDatos> {
               TextFieldCustom(
                 label: 'Otra institución (escribí el nombre)',
                 controller: instCtrl,
+                onChanged: (v) => _ctrl.setInstitucion = v,
                 validator: (v) {
                   if (_ctrl.congresista?.institucion != 'OTROS') return null;
                   if (v == null || v.trim().isEmpty) {
@@ -191,7 +192,11 @@ class _CongresistraDatosState extends State<CongresistraDatos> {
                 },
               ),
 
-            TextFieldCustom(label: 'Registro académico', controller: regCtrl),
+            TextFieldCustom(
+              label: 'Registro académico',
+              controller: regCtrl,
+              onChanged: (v) => _ctrl.setRegistroAcademico = v,
+            ),
 
             // ===== Semestre y Sección con dropdowns (igual a Inscripción) =====
             Row(
