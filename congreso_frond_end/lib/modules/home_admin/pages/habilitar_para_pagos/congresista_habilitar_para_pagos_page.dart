@@ -166,7 +166,8 @@ class _CongresistaHabilitarParaPagosPageState
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 860),
-          child: CustomScrollView(
+          child: Observer(builder: (_) {
+            return CustomScrollView(
             slivers: [
               // Padding global
               const SliverToBoxAdapter(child: SizedBox(height: 16)),
@@ -525,22 +526,18 @@ class _CongresistaHabilitarParaPagosPageState
               ),
 
               // Loading barra
-              Observer(
-                builder: (_) {
-                  if (_ctrl.isLoading) {
-                    return SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                      sliver: SliverToBoxAdapter(
-                        child: LinearProgressIndicator(
-                          color: brandPrimary,
-                          backgroundColor: brandPrimary.withOpacity(.2),
-                        ),
-                      ),
-                    );
-                  }
-                  return const SliverToBoxAdapter(child: SizedBox.shrink());
-                },
-              ),
+              if (_ctrl.isLoading)
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  sliver: SliverToBoxAdapter(
+                    child: LinearProgressIndicator(
+                      color: brandPrimary,
+                      backgroundColor: brandPrimary.withOpacity(.2),
+                    ),
+                  ),
+                )
+              else
+                const SliverToBoxAdapter(child: SizedBox.shrink()),
 
               // Título historial
               const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -567,56 +564,53 @@ class _CongresistaHabilitarParaPagosPageState
 
               const SliverToBoxAdapter(child: SizedBox(height: 24)),
             ],
-          ),
+          );
+        }),
         ),
       ),
     );
   }
 
   Widget _buildHistorialSliver() {
-    return Observer(
-      builder: (_) {
-        final lista = _ctrl.listaHabilitacionPagos.toList();
-        if (lista.isEmpty) {
-          return const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("No hay habilitaciones registradas."),
-            ),
-          );
-        }
+    final lista = _ctrl.listaHabilitacionPagos.toList();
+    if (lista.isEmpty) {
+      return const SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text("No hay habilitaciones registradas."),
+        ),
+      );
+    }
 
-        final now = DateTime.now();
+    final now = DateTime.now();
 
-        int rank(DateTime n, HabilitacionPagos h) {
-          if (h.fin.isBefore(n)) return 2; // expirada
-          if (h.inicio.isAfter(n)) return 1; // próxima
-          return 0; // vigente
-        }
+    int rank(DateTime n, HabilitacionPagos h) {
+      if (h.fin.isBefore(n)) return 2; // expirada
+      if (h.inicio.isAfter(n)) return 1; // próxima
+      return 0; // vigente
+    }
 
-        lista.sort((a, b) {
-          final r = rank(now, a).compareTo(rank(now, b));
-          if (r != 0) return r;
-          return a.inicio.compareTo(b.inicio);
-        });
+    lista.sort((a, b) {
+      final r = rank(now, a).compareTo(rank(now, b));
+      if (r != 0) return r;
+      return a.inicio.compareTo(b.inicio);
+    });
 
-        // Construimos children intercalando separadores
-        final children = <Widget>[];
-        for (var i = 0; i < lista.length; i++) {
-          children.add(
-            _HabilitacionItemTile(
-              item: lista[i],
-              fmtFechaHora: (dt) => _fmtFechaHora(context, dt),
-            ),
-          );
-          if (i != lista.length - 1) {
-            children.add(const SizedBox(height: 8));
-          }
-        }
+    // Construimos children intercalando separadores
+    final children = <Widget>[];
+    for (var i = 0; i < lista.length; i++) {
+      children.add(
+        _HabilitacionItemTile(
+          item: lista[i],
+          fmtFechaHora: (dt) => _fmtFechaHora(context, dt),
+        ),
+      );
+      if (i != lista.length - 1) {
+        children.add(const SizedBox(height: 8));
+      }
+    }
 
-        return SliverList(delegate: SliverChildListDelegate(children));
-      },
-    );
+    return SliverList(delegate: SliverChildListDelegate(children));
   }
 
   void _limpiarCampos() {

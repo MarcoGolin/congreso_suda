@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:flutter/material.dart';
@@ -285,7 +286,6 @@ class _RoundLogo extends StatefulWidget {
 
 class _RoundLogoState extends State<_RoundLogo> {
   bool _hover = false;
-  double _opacity = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -321,30 +321,13 @@ class _RoundLogoState extends State<_RoundLogo> {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Container(color: const Color(0xFFF0F0F0)),
-          Image.network(
-            widget.url,
+          CachedNetworkImage(
+            imageUrl: widget.url,
             fit: BoxFit.cover,
-            filterQuality: FilterQuality.high,
             width: s,
             height: s,
-            loadingBuilder: (_, child, progress) {
-              if (progress == null) {
-                if (_opacity == 0) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (mounted) setState(() => _opacity = 1.0);
-                  });
-                }
-                return AnimatedOpacity(
-                  opacity: _opacity,
-                  duration: const Duration(milliseconds: 240),
-                  curve: Curves.easeOut,
-                  child: child,
-                );
-              }
-              return const SizedBox.shrink();
-            },
-            errorBuilder: (_, __, ___) =>
+            placeholder: (context, url) => Container(color: const Color(0xFFF0F0F0)),
+            errorWidget: (context, url, error) =>
                 const Icon(Icons.broken_image, color: Colors.black26),
           ),
           IgnorePointer(

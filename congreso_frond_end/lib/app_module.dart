@@ -1,4 +1,5 @@
 import 'package:congreso_evento/core_module.dart';
+import 'package:congreso_evento/modules/admin/sorteo/sorteo_module.dart';
 import 'package:congreso_evento/modules/auth/auth_guard.dart';
 import 'package:congreso_evento/modules/auth/pages/ingreso_restringido/ingreso_restringido_page.dart';
 import 'package:congreso_evento/modules/auth/pages/login/auth/auth_loader_page.dart';
@@ -88,6 +89,7 @@ class AppModule extends Module {
       child: (_) => const CheckinPage(),
       guards: [AuthGuard()],
     );
+    r.module('/sorteo', module: SorteoModule());
     // r.wildcard(child: (context) => const PaginaNoEncontradaPage());
   }
 }

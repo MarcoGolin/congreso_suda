@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:congreso_evento/core/empty_result.dart';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:congreso_evento/modules/disertante/model/disertante.dart';
@@ -211,9 +212,14 @@ class _DisertantesCarouselSectionState
                 viewportFraction: fraction,
                 initialPage: _virtualPage,
               )..addListener(() {
-                if (!_ctrl.hasClients) return;
-                if (!mounted) return;
-                setState(() => _page = _ctrl.page ?? _virtualPage.toDouble());
+                if (!_ctrl.hasClients || !mounted) return;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted && _ctrl.hasClients) {
+                    setState(() {
+                      _page = _ctrl.page ?? _virtualPage.toDouble();
+                    });
+                  }
+                });
               });
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (_ctrl.hasClients) _ctrl.jumpToPage(_virtualPage);
@@ -463,26 +469,23 @@ class _DisertanteSlide extends StatelessWidget {
                   Positioned.fill(
                     child: Hero(
                       tag: 'flyer_${disertante.nombre}_$heroIndex',
-                      child: Image.network(
-                        img,
+                      child: CachedNetworkImage(
+                        imageUrl: img,
                         fit: BoxFit.cover,
                         alignment: Alignment.topCenter,
-                        loadingBuilder: (context, child, progress) =>
-                            progress == null
-                            ? child
-                            : const Center(
-                                child: SizedBox(
-                                  width: 28,
-                                  height: 28,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      _brandPrimary,
-                                    ),
-                                  ),
-                                ),
+                        placeholder: (context, url) => const Center(
+                          child: SizedBox(
+                            width: 28,
+                            height: 28,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                _brandPrimary,
                               ),
-                        errorBuilder: (_, __, ___) => const Center(
+                            ),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => const Center(
                           child: Icon(
                             Icons.image_not_supported_outlined,
                             color: Colors.grey,

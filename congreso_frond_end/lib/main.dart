@@ -3,6 +3,7 @@
 // ignore: deprecated_member_use
 
 import 'package:congreso_evento/app_module.dart';
+import 'package:congreso_evento/core/behahavior/custom_scroll_behavior.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -16,7 +17,7 @@ void main() async {
     url: 'https://lkuedzsknoimbhwlavcy.supabase.co',
     anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
   );
-  return runApp(ModularApp(module: AppModule(), child: MyApp()));
+  return runApp(ModularApp(module: AppModule(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       // showPerformanceOverlay: true, // FPS y raster time
       // checkerboardRasterCacheImages: true, // parpadeo si no cachea bien
       // checkerboardOffscreenLayers: true,
+      scrollBehavior: CustomScrollBehavior(),
       supportedLocales: appSupportedLocales,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

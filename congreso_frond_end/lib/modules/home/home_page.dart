@@ -159,6 +159,63 @@ class _HomePageState extends State<HomePage> {
         : Colors.white;
     // final appBarColor = Colors.transparent;
 
+    final sections = [
+      SizedBox(
+        key: _inicioSectionKey,
+        height: MediaQuery.of(context).size.height,
+        child: InicioSection(scrollController: _scrollController),
+      ),
+      SizedBox(key: _sobreSectionKey, child: const SobreSection()),
+      SizedBox(
+        key: _disertantesSectionKey,
+        child: DisertantesCarouselSection(
+          titulo: 'Conocé a nuestros disertantes',
+          disertantes: Disertante.disertantesEjemplo, // tu lista (20+)
+        ),
+      ),
+      SizedBox(
+        key: _trabajosCientificosSectionKey,
+        child: const TrabajoCientificoSection(),
+      ),
+      SizedBox(
+        key: _ligasAcademicasSectionKey,
+        child: const LigasAcademicasSection(),
+      ),
+      SizedBox(
+        key: _actividadesLigasSectionKey,
+        child: const ActividadesLigasSection(),
+      ),
+      Observer(
+        builder: (_) {
+          if (_ctrl.talleres.isEmpty) return const SizedBox.shrink();
+          return SizedBox(
+            key: _tallerSectionKey,
+            child: TallerInscripcionSection(talleres: _ctrl.talleres),
+          );
+        },
+      ),
+      Observer(
+        builder: (_) {
+          if (_ctrl.organizadores.isEmpty) return const SizedBox.shrink();
+          final lista = _ctrl.organizadores; // MobX observable
+          final isLoading = _ctrl.isLoading == true;
+          return SizedBox(
+            key: _comiteSectionKey,
+            child: ComiteSection(organizadores: lista, isLoading: isLoading),
+          );
+        },
+      ),
+      SizedBox(
+        key: _auspiciantesSectionKey,
+        child: AuspiciantesCarouselSection(
+          titulo: 'Auspiciantes',
+          sponsors: Auspiciante.all(), // tu lista (20+)
+        ),
+      ),
+      SizedBox(key: _lugarEventoSectionKey, child: const LugarSection()),
+      SizedBox(key: _contactoSectionKey, child: const FooterSection()),
+    ];
+
     return Scaffold(
       //  background: rgba(255,255,255,.06);
       backgroundColor: const Color(0xFF121A14),
@@ -190,80 +247,16 @@ class _HomePageState extends State<HomePage> {
       resizeToAvoidBottomInset: false,
       body: ScrollConfiguration(
         behavior: CustomScrollBehavior(),
-        child: ListView(
+        child: ListView.builder(
           padding: EdgeInsets.zero,
           controller: _scrollController,
           scrollDirection: Axis.vertical,
           cacheExtent: MediaQuery.of(context).size.height * 3,
           physics: const ClampingScrollPhysics(),
-          children: [
-            SizedBox(
-              key: _inicioSectionKey,
-              height: MediaQuery.of(context).size.height,
-              child: InicioSection(scrollController: _scrollController),
-            ),
-            SizedBox(key: _sobreSectionKey, child: const SobreSection()),
-            SizedBox(
-              key: _disertantesSectionKey,
-              child: DisertantesCarouselSection(
-                titulo: 'Conocé a nuestros disertantes',
-                disertantes: Disertante.disertantesEjemplo, // tu lista (20+)
-              ),
-            ),
-            SizedBox(
-              key: _trabajosCientificosSectionKey,
-              child: const TrabajoCientificoSection(),
-            ),
-            SizedBox(
-              key: _ligasAcademicasSectionKey,
-              child: const LigasAcademicasSection(),
-            ),
-            SizedBox(
-              key: _actividadesLigasSectionKey,
-              child: const ActividadesLigasSection(),
-            ),
-            //seccion talleres
-            Observer(
-              builder: (_) {
-                if (_ctrl.talleres.isEmpty) return const SizedBox.shrink();
-                return SizedBox(
-                  key: _tallerSectionKey,
-                  child: TallerInscripcionSection(talleres: _ctrl.talleres),
-                );
-              },
-            ),
-            //seccion organizadores
-            Observer(
-              builder: (_) {
-                if (_ctrl.organizadores.isEmpty) return const SizedBox.shrink();
-                final lista = _ctrl.organizadores; // MobX observable
-                final isLoading =
-                    _ctrl.isLoading ==
-                    true; // Si tenés un flag; si no, dejá false
-                return SizedBox(
-                  key: _comiteSectionKey,
-                  child: ComiteSection(
-                    organizadores: lista,
-                    isLoading: isLoading,
-                  ),
-                );
-              },
-            ),
-            SizedBox(
-              key: _auspiciantesSectionKey,
-              child: AuspiciantesCarouselSection(
-                titulo: 'Auspiciantes',
-                sponsors: Auspiciante.all(), // tu lista (20+)
-              ),
-            ),
-            SizedBox(
-              key: _lugarEventoSectionKey,
-              child:
-                  const LugarSection(), // Placeholder for Trabajos Científicos
-            ),
-            // SizedBox(key: _precioSectionKey, child: const PrecioSection()),
-            SizedBox(key: _contactoSectionKey, child: const FooterSection()),
-          ],
+          itemCount: sections.length,
+          itemBuilder: (context, index) {
+            return sections[index];
+          },
         ),
       ),
     );

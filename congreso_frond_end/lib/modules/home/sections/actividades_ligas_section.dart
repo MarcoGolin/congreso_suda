@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:congreso_evento/modules/home/widgets/flayer_ligth_box.dart';
 import 'package:flutter/material.dart';
@@ -535,10 +536,18 @@ class _ActividadCard extends StatelessWidget {
                     width: _thumbW,
                     child: AspectRatio(
                       aspectRatio: _thumbRatio,
-                      child: Image.network(
-                        item.flyerUrl,
+                      child: CachedNetworkImage(
+                        imageUrl: item.flyerUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
+                        placeholder: (context, url) => Container(
+                          color: const Color(0xFFF4F6F8),
+                          alignment: Alignment.center,
+                          child: const Icon(
+                            Icons.image_not_supported_outlined,
+                            color: Colors.black38,
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
                           color: const Color(0xFFF4F6F8),
                           alignment: Alignment.center,
                           child: const Icon(

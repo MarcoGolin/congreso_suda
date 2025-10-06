@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:math';
 
 import 'package:congreso_evento/core/header_section.dart';
@@ -310,14 +311,21 @@ class _AvatarFoto extends StatelessWidget {
         width: size,
         color: const Color(0xFF1B2A20),
         child: (foto.isNotEmpty)
-            ? Image.network(
-                foto,
+            ? CachedNetworkImage(
+                imageUrl: foto,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _fallback(initials),
-                loadingBuilder: (ctx, child, progress) {
-                  if (progress == null) return child;
-                  return _fallback(initials);
-                },
+                placeholder: (context, url) => const Center(
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Color(0xFF73c165)),
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => _fallback(initials),
               )
             : _fallback(initials),
       ),

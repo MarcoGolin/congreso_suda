@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +36,13 @@ class TrabajoCientificoSection extends StatelessWidget {
         children: [
           // Fondo
           Positioned.fill(
-            child: Image.network(
-              'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/fotos_evento/congreso_02.webp',
+            child: CachedNetworkImage(
+              imageUrl:
+                  'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/fotos_evento/congreso_02.webp',
               fit: BoxFit.cover,
+              placeholder: (context, url) => Container(color: Colors.black),
+              errorWidget: (context, url, error) =>
+                  Container(color: Colors.black),
             ),
           ),
           // Overlay oscuro con leve viñeta
@@ -358,7 +363,6 @@ class _FramedImage extends StatefulWidget {
 }
 
 class _FramedImageState extends State<_FramedImage> {
-  double _opacity = 0.0;
   bool _hover = false;
 
   @override
@@ -394,27 +398,12 @@ class _FramedImageState extends State<_FramedImage> {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Container(color: const Color(0xFFEAEAEA)),
-                Image.network(
-                  widget.url,
+                CachedNetworkImage(
+                  imageUrl: widget.url,
                   fit: BoxFit.cover,
-                  loadingBuilder: (_, child, progress) {
-                    if (progress == null) {
-                      if (_opacity == 0) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (mounted) setState(() => _opacity = 1.0);
-                        });
-                      }
-                      return AnimatedOpacity(
-                        opacity: _opacity,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeOut,
-                        child: child,
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                  errorBuilder: (_, __, ___) => const Center(
+                  placeholder: (context, url) =>
+                      Container(color: const Color(0xFFEAEAEA)),
+                  errorWidget: (context, url, error) => const Center(
                     child: Icon(
                       Icons.broken_image,
                       size: 42,

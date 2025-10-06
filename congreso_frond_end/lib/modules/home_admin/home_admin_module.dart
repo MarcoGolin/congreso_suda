@@ -1,4 +1,5 @@
 import 'package:congreso_evento/core_module.dart';
+import 'package:congreso_evento/modules/admin/sorteo/sorteo_module.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/congresista_module.dart';
 import 'package:congreso_evento/modules/home_admin/pages/home_admin_page.dart';
 import 'package:congreso_evento/modules/home_admin/pages/pagos/pago_module.dart';
@@ -28,6 +29,11 @@ class HomeAdminModule extends Module {
     r.module(
       '/trabajos',
       module: AdminTrabajosCientificosModule(),
+      transition: TransitionType.rightToLeft,
+    );
+    r.module(
+      '/sorteo',
+      module: SorteoModule(),
       transition: TransitionType.rightToLeft,
     );
   }

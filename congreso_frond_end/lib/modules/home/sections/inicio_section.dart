@@ -71,7 +71,7 @@ class _InicioSectionState extends State<InicioSection>
                   _backgroundOffset,
                 ), // mover en sentido inverso si querés efecto suave
                 child: Image.asset(
-                  'assets/imagenes/fondo/fondo.webp',
+                  'assets/imagenes/fondo/fondo_liviano.webp',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -114,12 +114,12 @@ class _InicioSectionState extends State<InicioSection>
                                         Visibility(
                                           visible: !isMobile,
                                           replacement: Image.asset(
-                                            'assets/imagenes/logo/logo_congreso.png',
+                                            'assets/imagenes/logo/logo_congreso.webp',
                                             width: logoWidth,
                                             fit: BoxFit.fitWidth,
                                           ),
                                           child: Image.asset(
-                                            'assets/imagenes/logo/logo_congreso_largo.png',
+                                            'assets/imagenes/logo/logo_congreso_largo.webp',
                                             width: logoWidth,
                                             fit: BoxFit.fitWidth,
                                           ),

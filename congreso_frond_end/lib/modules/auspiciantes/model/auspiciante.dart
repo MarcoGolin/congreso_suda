@@ -126,7 +126,7 @@ class Auspiciante {
       Auspiciante('FARMASUL POPULAR.png'),
       Auspiciante('FERREXMAXX.png'),
       Auspiciante('FRK STORE.png'),
-      Auspiciante('FV EMPRENDIMENTOS.png'),
+      Auspiciante('FV EMPRENDIMIENTOS.png'),
       Auspiciante('GIORE SEMIJOAIS.png'),
       Auspiciante('LETICIA MANCUELLO.png'),
       Auspiciante('LIZ FERREIRA.png'),

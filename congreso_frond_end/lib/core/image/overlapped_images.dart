@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -176,7 +177,6 @@ class _HoverImageCard extends StatefulWidget {
 
 class _HoverImageCardState extends State<_HoverImageCard> {
   bool _hover = false;
-  double _opacity = 0.0;
 
   void _setHover(bool v) {
     if (widget.isMobile) return; // sin hover en mobile
@@ -246,9 +246,6 @@ class _HoverImageCardState extends State<_HoverImageCard> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // Placeholder
-              Container(color: Colors.black12),
-
               // Imagen con filtros (blur + desaturación cuando está atrás)
               ColorFiltered(
                 colorFilter: ColorFilter.matrix(
@@ -256,34 +253,17 @@ class _HoverImageCardState extends State<_HoverImageCard> {
                 ),
                 child: ImageFiltered(
                   enabled: widget.blurSigma > 0,
-                  // imageFilter: ImageFilter.blur(
-                  //   sigmaX: widget.blurSigma,
-                  //   sigmaY: widget.blurSigma,
-                  // ),
                   imageFilter: ImageFilter.blur(
                     sigmaX: widget.blurSigma,
                     sigmaY: widget.blurSigma,
                   ),
-                  child: Image.network(
-                    widget.url,
+                  child: CachedNetworkImage(
+                    imageUrl: widget.url,
                     fit: BoxFit.cover,
-                    loadingBuilder: (_, child, progress) {
-                      if (progress == null) {
-                        if (_opacity == 0) {
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            if (mounted) setState(() => _opacity = 1.0);
-                          });
-                        }
-                        return AnimatedOpacity(
-                          opacity: _opacity,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOut,
-                          child: child,
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                    errorBuilder: (_, __, ___) => const Center(
+                    fadeInDuration: const Duration(milliseconds: 300),
+                    placeholder: (context, url) =>
+                        Container(color: Colors.black12),
+                    errorWidget: (context, url, error) => const Center(
                       child: Icon(
                         Icons.broken_image,
                         size: 40,

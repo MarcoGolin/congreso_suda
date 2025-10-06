@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 const _brandPrimary = Color(0xFF387f4d);
@@ -74,19 +75,16 @@ class _FlyerLightboxState extends State<FlyerLightbox> {
                 panEnabled: _zoomed,
                 child: Hero(
                   tag: i == 0 ? widget.heroTag : '${widget.heroTag}_$i',
-                  child: Image.network(
-                    widget.images[i],
+                  child: CachedNetworkImage(
+                    imageUrl: widget.images[i],
                     fit: BoxFit.contain,
-                    loadingBuilder: (c, child, p) => p == null
-                        ? child
-                        : const Center(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                _brandPrimary,
-                              ),
-                            ),
-                          ),
-                    errorBuilder: (_, __, ___) => const Center(
+                    placeholder: (context, url) => const Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(_brandPrimary),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => const Center(
                       child: Icon(
                         Icons.broken_image_outlined,
                         color: Colors.white,

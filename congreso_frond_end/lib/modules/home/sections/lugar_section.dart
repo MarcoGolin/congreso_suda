@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:congreso_evento/core/web_helper/web_helper_stub.dart'
@@ -33,9 +34,13 @@ class _LugarSectionState extends State<LugarSection>
         clipBehavior: Clip.none,
         children: [
           Positioned.fill(
-            child: Image.network(
-              'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/fotos_evento/local_evento.webp',
+            child: CachedNetworkImage(
+              imageUrl:
+                  'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/fotos_evento/local_evento.webp',
               fit: BoxFit.cover,
+              placeholder: (context, url) => Container(color: Colors.black),
+              errorWidget: (context, url, error) =>
+                  Container(color: Colors.black),
             ),
           ),
           // Fondo: gradiente suave (menos abrupto que dos colores duros)

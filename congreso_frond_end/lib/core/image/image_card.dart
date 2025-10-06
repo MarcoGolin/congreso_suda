@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ImageCard extends StatefulWidget {
@@ -18,7 +19,6 @@ class ImageCard extends StatefulWidget {
 
 class _ImageCardState extends State<ImageCard> {
   bool _hover = false;
-  double _opacity = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -50,42 +50,19 @@ class _ImageCardState extends State<ImageCard> {
             child: AspectRatio(
               aspectRatio:
                   4 / 3, // ajustá si tu foto es más vertical/horizontal
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Placeholder gris suave
-                  Container(color: Colors.black12),
-
-                  // Imagen real con fade-in
-                  Image.network(
-                    widget.url,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, progress) {
-                      if (progress == null) {
-                        // cuando termina de cargar, hacemos fade-in
-                        if (_opacity == 0) {
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            if (mounted) setState(() => _opacity = 1.0);
-                          });
-                        }
-                        return AnimatedOpacity(
-                          opacity: _opacity,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOut,
-                          child: child,
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                    errorBuilder: (_, __, ___) => const Center(
-                      child: Icon(
-                        Icons.broken_image,
-                        size: 40,
-                        color: Colors.black38,
-                      ),
-                    ),
+              child: CachedNetworkImage(
+                imageUrl: widget.url,
+                fit: BoxFit.cover,
+                fadeInDuration: const Duration(milliseconds: 300),
+                placeholder: (context, url) =>
+                    Container(color: Colors.black12),
+                errorWidget: (context, url, error) => const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    size: 40,
+                    color: Colors.black38,
                   ),
-                ],
+                ),
               ),
             ),
           ),

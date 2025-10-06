@@ -248,6 +248,12 @@ class _HomeAdminPageState extends State<HomeAdminPage>
         subtitle: 'Control de ingreso y presencia',
         route: '/checkin',
       ),
+      const _AdminItem(
+        icon: Icons.qr_code_scanner_outlined,
+        title: 'Sorteo',
+        subtitle: 'Gestión y realización de sorteos',
+        route: '/sorteo',
+      ),
     ];
 
     if (isAdmin) return all;

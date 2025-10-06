@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:congreso_evento/modules/auspiciantes/model/auspiciante.dart';
 import 'package:flutter/material.dart';
@@ -189,36 +190,24 @@ class _HeroSponsorLogo extends StatefulWidget {
 
 class _HeroSponsorLogoState extends State<_HeroSponsorLogo> {
   bool _hover = false;
-  double _opacity = 0.0;
 
   @override
   Widget build(BuildContext context) {
     final h = widget.maxHeight;
     final w = widget.maxWidth;
 
-    final img = Image.network(
-      widget.url,
+    final img = CachedNetworkImage(
+      imageUrl: widget.url,
       fit: BoxFit.contain,
-      filterQuality: FilterQuality.high,
       width: w,
       height: h,
-      loadingBuilder: (_, child, progress) {
-        if (progress == null) {
-          if (_opacity == 0) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) setState(() => _opacity = 1.0);
-            });
-          }
-          return AnimatedOpacity(
-            opacity: _opacity,
-            duration: const Duration(milliseconds: 240),
-            curve: Curves.easeOut,
-            child: child,
-          );
-        }
-        return const SizedBox.shrink();
-      },
-      errorBuilder: (_, __, ___) =>
+      fadeInDuration: const Duration(milliseconds: 240),
+      placeholder: (context, url) => Container(
+        width: w,
+        height: h,
+        color: Colors.grey[200],
+      ),
+      errorWidget: (context, url, error) =>
           const Icon(Icons.broken_image, color: Colors.black26, size: 20),
     );
 
@@ -309,11 +298,12 @@ class _LogoTileState extends State<_LogoTile> {
       child: ConstrainedBox(
         constraints: BoxConstraints(maxHeight: widget.maxHeight),
         child: Center(
-          child: Image.network(
-            widget.url,
+          child: CachedNetworkImage(
+            imageUrl: widget.url,
             fit: BoxFit.contain,
-            filterQuality: FilterQuality.medium,
-            errorBuilder: (_, __, ___) => const Icon(
+            placeholder: (context, url) =>
+                Container(color: Colors.grey[100]),
+            errorWidget: (context, url, error) => const Icon(
               Icons.image_not_supported_outlined,
               color: Colors.black38,
               size: 18,
