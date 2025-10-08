@@ -138,6 +138,9 @@ public class Usuario  implements Serializable , UserDetails  {
 	@Column(name = "BO_DISERTANTE")
 	private Boolean isDisertante;
 	
+	@Column(name = "BO_AUDIOVISUAL")
+	private Boolean isAudioVisual;
+	
 	@JsonIgnore
 	public Usuario(Long id) {
 		this.id = id;

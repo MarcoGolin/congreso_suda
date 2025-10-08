@@ -38,6 +38,7 @@ Usuario _$UsuarioFromJson(Map<String, dynamic> json) => Usuario(
   isActivado: json['isActivado'] as bool? ?? true,
   isInvitado: json['isInvitado'] as bool? ?? false,
   isDisertante: json['isDisertante'] as bool? ?? false,
+  isAudioVisual: json['isAudioVisual'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$UsuarioToJson(Usuario instance) => <String, dynamic>{
@@ -71,6 +72,7 @@ Map<String, dynamic> _$UsuarioToJson(Usuario instance) => <String, dynamic>{
   'isCongresista': instance.isCongresista,
   'isInvitado': instance.isInvitado,
   'isDisertante': instance.isDisertante,
+  'isAudioVisual': instance.isAudioVisual,
   'isActivado': instance.isActivado,
 };
 

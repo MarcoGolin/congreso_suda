@@ -12,8 +12,8 @@ import 'package:printing/printing.dart';
 const double _CARD_W = 10.5; // cm
 const double _CARD_H = 14.8; // cm
 
-const _assetCarnetParticipante = 'assets/carnet/participante.jpg';
-const _assetCarnetStaff = 'assets/carnet/staff.jpg';
+const _assetCarnetParticipante = 'assets/carnet/participante.webp';
+const _assetCarnetStaff = 'assets/carnet/staff.webp';
 
 /// ---------- (A) WIDGET REUTILIZABLE DEL CARNET 10x15 ----------
 pw.Widget _buildCarnetWidget(
@@ -41,7 +41,7 @@ pw.Widget _buildCarnetWidget(
         crossAxisAlignment: pw.CrossAxisAlignment.center,
         children: [
           pw.Container(
-            margin: const pw.EdgeInsets.only(top: 195),
+            margin: const pw.EdgeInsets.only(top: 183),
             child: pw.Text(
               user.getTipo(),
               style: pw.TextStyle(
@@ -55,7 +55,7 @@ pw.Widget _buildCarnetWidget(
 
           pw.Container(
             width: 260,
-            margin: const pw.EdgeInsets.only(top: 17),
+            margin: const pw.EdgeInsets.only(top: 40),
             padding: const pw.EdgeInsets.all(10.0),
             decoration: pw.BoxDecoration(
               color: PdfColor.fromInt(0xFFFFFFFF),

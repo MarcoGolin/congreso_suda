@@ -114,10 +114,14 @@ class CongresistaService {
   }
 
   Future<({List<Usuario> data, int code, String message})>
-  consultaCongresistaPorTipo(TipoUsuarioEnum tipoUsuario) async {
+  consultaCongresistaPorTipo(
+    TipoUsuarioEnum tipoUsuario, {
+    required bool soloPagados,
+  }) async {
     try {
       var response = await repository.consultaCongresistaPorTipo(
         tipoUsuario: tipoUsuario,
+        soloPagados: soloPagados,
       );
       if (response == null) {
         throw ServiceException(

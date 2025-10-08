@@ -262,7 +262,10 @@ abstract class CongresistaCtrlBase with Store {
         return []; // Evita múltiples llamadas simultáneas
       }
       changeStatus('', StatusEnumGlobal.loading);
-      final response = await service.consultaCongresistaPorTipo(tipoUsuario);
+      final response = await service.consultaCongresistaPorTipo(
+        tipoUsuario,
+        soloPagados: true,
+      );
       final data = response.data;
       if (data.isEmpty) {
         changeStatus(

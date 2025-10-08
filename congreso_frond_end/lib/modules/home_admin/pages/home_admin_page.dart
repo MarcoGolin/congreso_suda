@@ -222,6 +222,7 @@ class _HomeAdminPageState extends State<HomeAdminPage>
     final isAdmin = (u?.isAdmin == true);
     final isFinanciero = (u?.isFinanciero == true);
     final isStaff = (u?.isStaff == true);
+    final isAudioVisual = (u?.isAudioVisual == true);
 
     final all = <_AdminItem>[
       const _AdminItem(
@@ -264,6 +265,9 @@ class _HomeAdminPageState extends State<HomeAdminPage>
     }
     if (isStaff) {
       result.add(all[3]); // Check-In
+    }
+    if (isAudioVisual) {
+      result.add(all[4]); // Sorteo
     }
     return result;
   }

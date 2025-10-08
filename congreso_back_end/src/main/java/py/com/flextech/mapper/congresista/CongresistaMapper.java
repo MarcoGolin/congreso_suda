@@ -32,4 +32,6 @@ public interface CongresistaMapper {
 		  List<Usuario> consultaCongresistaPorCondicion(
 			      @Param("condicion") String condicion
 			  );
+		  
+		  List<Usuario> consultaCongresistaDisponiblesSorteo(String tipoSorteo);
 }

@@ -1,6 +1,7 @@
-import 'package:congreso_evento/modules/checkin/controllers/checkin_store.dart';
+import 'package:congreso_evento/modules/checkin/controllers/checkin_ctrl.dart';
 import 'package:congreso_evento/modules/checkin/enums/checkin_enums.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class ControlsBar extends StatelessWidget {
   const ControlsBar({
@@ -12,7 +13,7 @@ class ControlsBar extends StatelessWidget {
     required this.fmt,
   });
 
-  final CheckinStore store;
+  final CheckinCtrl store;
   final TextEditingController uuidController;
   final bool isLoading;
   final Future<void> Function() onSubmit;
@@ -20,36 +21,70 @@ class ControlsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tipo = store.selectedTipo.value;
-    return Card(
-      elevation: 0,
-      color: Colors.grey.shade50,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Wrap(
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Observer(
+        builder: (_) => Wrap(
           runSpacing: 8,
           spacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
           alignment: WrapAlignment.center,
           children: [
-            SizedBox(
-              width: 250,
-              child: DropdownButtonFormField<CheckinTipo>(
-                value: tipo,
-                isExpanded: true,
-                decoration: const InputDecoration(
-                  isDense: true,
-                  labelText: 'Tipo',
-                  border: OutlineInputBorder(),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: 250,
+                  child: DropdownButtonFormField<CheckinTipo>(
+                    value: store.selectedTipo,
+                    isExpanded: true,
+                    style: TextStyle(color: Colors.white, fontSize: 14),
+                    dropdownColor: Colors.grey[900],
+                    decoration: InputDecoration(
+                      isDense: true,
+                      labelText: 'Tipo',
+                      labelStyle: TextStyle(
+                        color: store.bloquearControles
+                            ? Colors.white30
+                            : Colors.white,
+                      ),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white54),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white54),
+                      ),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white30),
+                      ),
+                      fillColor: store.bloquearControles
+                          ? Colors.white24
+                          : Colors.white10,
+                      filled: true,
+                    ),
+
+                    items: CheckinTipo.values
+                        .map(
+                          (t) =>
+                              DropdownMenuItem(value: t, child: Text(t.label)),
+                        )
+                        .toList(),
+                    onChanged: store.bloquearControles
+                        ? null
+                        : (t) => t == null ? null : store.setTipo(t),
+                  ),
                 ),
-                items: CheckinTipo.values
-                    .map(
-                      (t) => DropdownMenuItem(value: t, child: Text(t.label)),
-                    )
-                    .toList(),
-                onChanged: (t) => t == null ? null : store.setTipo(t),
-              ),
+                IconButton(
+                  color: Colors.white70,
+                  tooltip: store.bloquearControles
+                      ? 'Desbloquear controles'
+                      : 'Bloquear controles',
+                  onPressed: () => store.toggleBloquearControles(),
+                  icon: store.bloquearControles
+                      ? Icon(Icons.lock)
+                      : Icon(Icons.lock_open),
+                ),
+              ],
             ),
 
             // if (tipo == CheckinTipo.LIGA_ASISTENCIA)
@@ -71,25 +106,54 @@ class ControlsBar extends StatelessWidget {
             //       onChanged: store.setTallerId,
             //     ),
             //   ),
-            if (tipo == CheckinTipo.COFFEE_BREAK_ENTREGADO)
-              SizedBox(
-                width: 220,
-                child: DropdownButtonFormField<CoffeeBreak>(
-                  value: store.selectedCoffeeBreak.value,
-                  decoration: const InputDecoration(
-                    isDense: true,
-                    labelText: 'Coffee',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: CoffeeBreak.values
-                      .map(
-                        (c) => DropdownMenuItem(value: c, child: Text(c.label)),
-                      )
-                      .toList(),
-                  onChanged: store.setCoffee,
-                ),
-              ),
-
+            Observer(
+              builder: (_) {
+                if (store.selectedTipo == CheckinTipo.COFFEE_BREAK_ENTREGADO) {
+                  return SizedBox(
+                    width: 220,
+                    child: DropdownButtonFormField<CoffeeBreak>(
+                      value: store.selectedCoffeeBreak,
+                      style: TextStyle(color: Colors.white, fontSize: 14),
+                      dropdownColor: Colors.grey[900],
+                      decoration: InputDecoration(
+                        isDense: true,
+                        labelText: 'Coffee',
+                        labelStyle: TextStyle(
+                          color: store.bloquearControles
+                              ? Colors.white30
+                              : Colors.white,
+                        ),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white54),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white54),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white30),
+                        ),
+                        fillColor: store.bloquearControles
+                            ? Colors.white24
+                            : Colors.white10,
+                        filled: true,
+                      ),
+                      items: CoffeeBreak.values
+                          .map(
+                            (c) => DropdownMenuItem(
+                              value: c,
+                              child: Text(c.label),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: store.bloquearControles
+                          ? null
+                          : store.setCoffee,
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
             // // UUID manual compacto
             // SizedBox(
             //   width: 260,

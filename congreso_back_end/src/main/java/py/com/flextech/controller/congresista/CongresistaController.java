@@ -63,8 +63,9 @@ public class CongresistaController {
 	
 	@GetMapping("/consultaCongresistaPorTipo")
 	public GenericResponseEntity<?> consultaCongresistaPorTipo(
-	    @RequestParam(required = true)  String tipoUsuario) {
-	  return service.consultaCongresistaPorTipo(TipoUsuarioEnum.valueOf(tipoUsuario));
+	    @RequestParam(required = true)  String tipoUsuario,
+	    @RequestParam(required = true)  Boolean soloPagados) {
+	  return service.consultaCongresistaPorTipo(TipoUsuarioEnum.valueOf(tipoUsuario), soloPagados);
 	}
 
 	@GetMapping("/reenviarEmailInscripcion")

@@ -1,14 +1,13 @@
 import 'dart:async';
 
 import 'package:congreso_evento/modules/checkin/pages/widgets/controls_bar.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // HapticFeedback
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import '../controllers/checkin_store.dart';
+import '../controllers/checkin_ctrl.dart';
 
 class CheckinPage extends StatefulWidget {
   const CheckinPage({super.key});
@@ -17,7 +16,7 @@ class CheckinPage extends StatefulWidget {
 }
 
 class _CheckinPageState extends State<CheckinPage> with WidgetsBindingObserver {
-  final _store = Modular.get<CheckinStore>();
+  final _store = Modular.get<CheckinCtrl>();
   final _uuidController = TextEditingController();
 
   // Scanner optimizado: no duplica detecciones y arranca de una.
@@ -37,7 +36,7 @@ class _CheckinPageState extends State<CheckinPage> with WidgetsBindingObserver {
   int _cooldownSecondsLeft = 0;
 
   // Duración del cooldown en segundos (configurable)
-  static const int _cooldownDuration = 3;
+  static const int _cooldownDuration = 1;
 
   @override
   void initState() {
@@ -81,7 +80,7 @@ class _CheckinPageState extends State<CheckinPage> with WidgetsBindingObserver {
 
   Future<void> _onDetect(BarcodeCapture capture) async {
     // Evitar múltiples escaneos durante cooldown, procesamiento, pausa o carga
-    if (_processingScan || _isPaused || _store.loading.value || _inCooldown) {
+    if (_processingScan || _isPaused || _store.loading || _inCooldown) {
       return;
     }
 
@@ -99,7 +98,7 @@ class _CheckinPageState extends State<CheckinPage> with WidgetsBindingObserver {
 
     try {
       await _store.checkinWithUuid(code);
-      if (mounted && _store.errorMessage.value == null) {
+      if (mounted && _store.errorMessage == null) {
         _uuidController.text = code;
         // Feedback háptico suave en móvil si fue OK
         HapticFeedback.mediumImpact();
@@ -169,9 +168,9 @@ class _CheckinPageState extends State<CheckinPage> with WidgetsBindingObserver {
     return Scaffold(
       body: Observer(
         builder: (_) {
-          final isLoading = _store.loading.value;
-          final success = _store.lastResult.value;
-          final error = _store.errorMessage.value;
+          final isLoading = _store.loading;
+          final success = _store.lastResult;
+          final error = _store.errorMessage;
 
           final frameColor = isLoading
               ? Colors.amber
@@ -504,10 +503,10 @@ class _CheckinPageState extends State<CheckinPage> with WidgetsBindingObserver {
                       child: ControlsBar(
                         store: _store,
                         uuidController: _uuidController,
-                        isLoading: _store.loading.value,
+                        isLoading: _store.loading,
                         onSubmit: () async {
                           // Bloquear envío manual mientras se consulta o en cooldown
-                          if (_store.loading.value ||
+                          if (_store.loading ||
                               _inCooldown ||
                               _processingScan) {
                             return;
@@ -515,7 +514,7 @@ class _CheckinPageState extends State<CheckinPage> with WidgetsBindingObserver {
 
                           FocusScope.of(context).unfocus();
                           await _store.checkinWithUuid(_uuidController.text);
-                          if (mounted && _store.errorMessage.value == null) {
+                          if (mounted && _store.errorMessage == null) {
                             _uuidController.clear();
                             HapticFeedback.selectionClick();
                             // Iniciar cooldown también para manual
@@ -613,7 +612,7 @@ class _CheckinPageState extends State<CheckinPage> with WidgetsBindingObserver {
     final isTablet = size.shortestSide > 600;
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Botón de regreso
         Container(
@@ -646,25 +645,27 @@ class _CheckinPageState extends State<CheckinPage> with WidgetsBindingObserver {
   // Controles de cámara reutilizables
   Widget _buildCameraControls(bool isTablet) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        if (!kIsWeb)
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.3),
-                width: 1,
-              ),
-            ),
-            child: IconButton(
-              iconSize: isTablet ? 24 : 20,
-              padding: EdgeInsets.all(isTablet ? 16 : 12),
-              icon: const Icon(Icons.flash_on, color: Colors.white),
-              onPressed: () => _scanner.toggleTorch(),
-            ),
-          ),
-        SizedBox(width: isTablet ? 12 : 8),
+        // if (!kIsWeb)
+        //   Container(
+        //     decoration: BoxDecoration(
+        //       color: Colors.white.withOpacity(0.2),
+        //       borderRadius: BorderRadius.circular(isTablet ? 16 : 12),
+        //       border: Border.all(
+        //         color: Colors.white.withOpacity(0.3),
+        //         width: 1,
+        //       ),
+        //     ),
+        //     child: IconButton(
+        //       iconSize: isTablet ? 24 : 20,
+        //       padding: EdgeInsets.all(isTablet ? 16 : 12),
+        //       icon: const Icon(Icons.flash_on, color: Colors.white),
+        //       onPressed: () => _scanner.toggleTorch(),
+        //     ),
+        //   ),
+        // SizedBox(width: isTablet ? 12 : 8),
         Container(
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.2),

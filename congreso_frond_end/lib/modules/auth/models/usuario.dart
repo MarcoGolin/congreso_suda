@@ -37,6 +37,7 @@ class Usuario implements ISimpleListTile {
   bool? isCongresista = false;
   bool? isInvitado = false;
   bool? isDisertante = false;
+  bool? isAudioVisual = false;
 
   bool? isActivado = true;
 
@@ -66,6 +67,7 @@ class Usuario implements ISimpleListTile {
     this.isActivado = true,
     this.isInvitado = false,
     this.isDisertante = false,
+    this.isAudioVisual = false,
   });
   @override
   String get title => nombreCompleto ?? 'No Name';
@@ -121,6 +123,7 @@ class Usuario implements ISimpleListTile {
     bool? isInvitado,
     bool? isDisertante,
     bool? isActivado,
+    bool? isAudioVisual,
   }) {
     return Usuario(
       id: id ?? this.id,
@@ -148,6 +151,7 @@ class Usuario implements ISimpleListTile {
       isInvitado: isInvitado ?? this.isInvitado,
       isDisertante: isDisertante ?? this.isDisertante,
       isActivado: isActivado ?? this.isActivado,
+      isAudioVisual: isAudioVisual ?? this.isAudioVisual,
     );
   }
 }

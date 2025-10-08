@@ -17,28 +17,26 @@ extension CheckinTipoLabelX on CheckinTipo {
   String get label {
     switch (this) {
       case CheckinTipo.CONGRESO_ASISTENCIA:
-        return 'Asistencia Congreso';
+        return 'Acreditación';
       case CheckinTipo.KIT_ENTREGADO:
-        return 'Kit entregado';
+        return 'Kit Bienvenida';
       case CheckinTipo.COFFEE_BREAK_ENTREGADO:
-        return 'Coffee break entregado';
+        return 'Coffee break';
       // case CheckinTipo.LIGA_ASISTENCIA:
       //   return 'Asistencia Liga';
     }
   }
 }
 
-enum CoffeeBreak { MATUTINO, VESPERTINO, NOCTURNO }
+enum CoffeeBreak { MANHANA, TARDE }
 
 extension CoffeeBreakLabelX on CoffeeBreak {
   String get label {
     switch (this) {
-      case CoffeeBreak.MATUTINO:
-        return 'Matutino';
-      case CoffeeBreak.VESPERTINO:
-        return 'Vespertino';
-      case CoffeeBreak.NOCTURNO:
-        return 'Nocturno';
+      case CoffeeBreak.MANHANA:
+        return 'Mañana';
+      case CoffeeBreak.TARDE:
+        return 'Tarde';
     }
   }
 }

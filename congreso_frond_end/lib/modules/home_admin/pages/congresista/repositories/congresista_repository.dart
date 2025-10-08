@@ -83,11 +83,15 @@ class CongresistaRepository {
 
   Future<GenericResponseEntity?> consultaCongresistaPorTipo({
     required TipoUsuarioEnum tipoUsuario,
+    required bool soloPagados,
   }) async {
     try {
       final response = await api.get(
         '/congresista/consultaCongresistaPorTipo',
-        queryParameters: {'tipoUsuario': tipoUsuario.toJson()},
+        queryParameters: {
+          'tipoUsuario': tipoUsuario.toJson(),
+          'soloPagados': soloPagados,
+        },
       );
       GenericResponseEntity? genericResponse = response.data != null
           ? GenericResponseEntity.fromJson(response.data)

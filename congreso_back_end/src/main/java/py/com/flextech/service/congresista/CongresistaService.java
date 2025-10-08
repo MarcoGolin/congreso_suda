@@ -106,7 +106,7 @@ public class CongresistaService {
 		}
 		
 		
-		public GenericResponseEntity<List<Usuario>> consultaCongresistaPorTipo(TipoUsuarioEnum tpUsuario) {
+		public GenericResponseEntity<List<Usuario>> consultaCongresistaPorTipo(TipoUsuarioEnum tpUsuario, Boolean soloPagados) {
 			
 			  String condicion = "";
 			  
@@ -118,6 +118,10 @@ public class CongresistaService {
 				  condicion = "U.BO_DISERTANTE = TRUE";
 			  }else {
 				  condicion = "U.BO_CONGRESISTA = TRUE AND U.BO_STAFF = FALSE AND U.BO_INVITADO = FALSE AND U.BO_DISERTANTE = FALSE";
+			  }
+			  
+			  if(soloPagados) {
+				  condicion += " AND U.BO_IS_PAGO = TRUE OR U.BO_EXONERADO = TRUE";
 			  }
 			  
 			  List<Usuario> list = congresistaMapper.consultaCongresistaPorCondicion(condicion);
@@ -165,5 +169,6 @@ public class CongresistaService {
 			Usuario  usuario = repository.findByUuidBin(uuidStringToBytes(uuid)).get();
 			return new GenericResponseEntity<Usuario>("Contraseña establecida con Éxito!", 200, usuario);
 		}
+
 
 }

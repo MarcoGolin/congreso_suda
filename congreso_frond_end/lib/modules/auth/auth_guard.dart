@@ -72,10 +72,12 @@ class AuthGuard extends RouteGuard {
     bool? isAdminFlag;
     bool? isStaffFlag;
     bool? isFinancieroFlag;
+    bool? isAudioVisualFlag;
     try {
       isAdminFlag = (usuario as dynamic)?.isAdmin as bool?;
       isStaffFlag = (usuario as dynamic)?.isStaff as bool?;
       isFinancieroFlag = (usuario as dynamic)?.isFinanciero as bool?;
+      isAudioVisualFlag = (usuario as dynamic)?.isAudioVisual as bool?;
     } catch (_) {
       isAdminFlag = null;
     }
@@ -86,7 +88,8 @@ class AuthGuard extends RouteGuard {
         (usuario == null ||
             (isAdminFlag != true &&
                 isStaffFlag != true &&
-                isFinancieroFlag != true))) {
+                isFinancieroFlag != true &&
+                isAudioVisualFlag != true))) {
       // _log(
       //   'ACCESO ADMIN DENEGADO. Se setea redirect_path="/ingreso_restringido" y se retorna FALSE.',
       // );

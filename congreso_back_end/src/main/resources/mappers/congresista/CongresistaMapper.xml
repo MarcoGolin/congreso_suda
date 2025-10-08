@@ -31,6 +31,7 @@
 		<result property="isCongresista" column="BO_CONGRESISTA" />
 		<result property="isInvitado" column="BO_INVITADO" />
 		<result property="isDisertante" column="BO_DISERTANTE" />
+		<result property="isAudioVisual" column="BO_AUDIOVISUAL" />
 		
 		
 	</resultMap>
@@ -166,7 +167,7 @@
 
   
   
-  <select id="consultaCongresistaPorCondicion"
+   <select id="consultaCongresistaPorCondicion"
 	        resultMap="resultSimples"
 	        parameterType="map">
 	  <include refid="sqlDefault"/>
@@ -177,6 +178,30 @@
 	  </where>
 	  ORDER BY u.NOMBRE_COMPLETO DESC
 	</select>
+	
+	 <select id="consultaCongresistaDisponiblesSorteo"
+	        resultMap="resultSimples"
+	        parameterType="map">
+	        SELECT 
+	          u.ID_USUARIO,
+			  u.NOMBRE_COMPLETO,
+			  u.REGISTRO_ACADEMICO,
+			  u.INSTITUCION,
+			  u.SEMESTRE,
+			  u.SECCION
+			FROM
+			  sys_usuario u 
+			  LEFT JOIN aud_sorteo a 
+			    ON a.id_usuario = u.id_usuario 
+			  <where>
+			  	u.BO_IS_PAGO = TRUE 
+			  	<if test="tipoSorteo == 'Staff'">
+			  	  AND U.BO_STAFF = TRUE
+			  	</if>
+  				AND a.id_usuario IS NULL
+			  </where>
+	</select>
+	
 
 
 </mapper>
