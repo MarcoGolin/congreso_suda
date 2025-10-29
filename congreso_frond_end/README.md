@@ -1,16 +1,23 @@
-# congreso_evento
+# Dashboard Admin Module (Frontend)
 
-A new Flutter project.
+This module provides a dashboard for administrators to view key performance indicators (KPIs) of the event.
 
-## Getting Started
+## How to use
 
-This project is a starting point for a Flutter application.
+The dashboard is available at the `/admin/dashboard` route. You need to be logged in as an `ADMIN` or `STAFF` to access it.
 
-A few resources to get you started if this is your first Flutter project:
+The dashboard will fetch and display the following information for the selected date (defaults to today):
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+*   **Overview KPIs:** Attendance rate, morning check-ins, and afternoon check-ins.
+*   **Hourly Check-ins:** A bar chart showing the number of check-ins per hour.
+*   **Check-ins by Type:** A pie chart showing the distribution of check-ins by type.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+You can change the date by clicking on the calendar icon in the app bar.
+
+## How to run tests
+
+To run the tests for this module, you can run the following command:
+
+```bash
+flutter test test/modules/dashboard_admin/pages/home_admin_dashboard_page_test.dart
+```

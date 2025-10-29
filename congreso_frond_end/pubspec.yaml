@@ -1,7 +1,7 @@
 name: congreso_evento
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+48
+version: 1.0.0+51
 
 environment:
   sdk: ^3.8.0
@@ -41,6 +41,7 @@ dependencies:
   cached_network_image: ^3.4.1
   confetti: ^0.8.0
   dropdown_search: ^6.0.2
+  syncfusion_flutter_charts: ^31.1.23
 
 dev_dependencies:
   flutter_test:

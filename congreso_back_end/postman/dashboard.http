@@ -1,0 +1,29 @@
+@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc0MzA5NjAwMCwiaWF0IjoxNzE3MDk2MDAwLCJyb2xlcyI6WyJST0xFX0FETUlOIl19.example
+
+### Get Meta
+GET http://localhost:8080/api/dashboard/admin/v1/meta
+Authorization: Bearer {{token}}
+
+### Get Overview KPIs
+GET http://localhost:8080/api/dashboard/admin/v1/kpis/overview?date=2025-10-07
+Authorization: Bearer {{token}}
+
+### Get KPIs by Check-in Type
+GET http://localhost:8080/api/dashboard/admin/v1/kpis/by-checkin-type?date=2025-10-07
+Authorization: Bearer {{token}}
+
+### Get Hourly Series
+GET http://localhost:8080/api/dashboard/admin/v1/series/hourly?date=2025-10-07
+Authorization: Bearer {{token}}
+
+### Get Quarterly Series
+GET http://localhost:8080/api/dashboard/admin/v1/series/quarters?date=2025-10-07
+Authorization: Bearer {{token}}
+
+### Get Top Workshops
+GET http://localhost:8080/api/dashboard/admin/v1/tops/workshops?date=2025-10-07&limit=5
+Authorization: Bearer {{token}}
+
+### Get No-Shows
+GET http://localhost:8080/api/dashboard/admin/v1/noshow?date=2025-10-07
+Authorization: Bearer {{token}}

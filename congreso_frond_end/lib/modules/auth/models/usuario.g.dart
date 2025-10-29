@@ -39,6 +39,10 @@ Usuario _$UsuarioFromJson(Map<String, dynamic> json) => Usuario(
   isInvitado: json['isInvitado'] as bool? ?? false,
   isDisertante: json['isDisertante'] as bool? ?? false,
   isAudioVisual: json['isAudioVisual'] as bool? ?? false,
+  isCheckIn: json['isCheckIn'] as bool? ?? false,
+  checkin: (json['checkin'] as List<dynamic>?)
+      ?.map((e) => Checkin.fromJson(e as Map<String, dynamic>))
+      .toList(),
 );
 
 Map<String, dynamic> _$UsuarioToJson(Usuario instance) => <String, dynamic>{
@@ -73,7 +77,9 @@ Map<String, dynamic> _$UsuarioToJson(Usuario instance) => <String, dynamic>{
   'isInvitado': instance.isInvitado,
   'isDisertante': instance.isDisertante,
   'isAudioVisual': instance.isAudioVisual,
+  'isCheckIn': instance.isCheckIn,
   'isActivado': instance.isActivado,
+  'checkin': instance.checkin,
 };
 
 Value? _$JsonConverterFromJson<Json, Value>(

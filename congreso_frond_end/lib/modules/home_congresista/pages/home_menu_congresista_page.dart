@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
+import 'package:congreso_evento/modules/home_admin/pages/congresista/utils/carnet_pdf.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -57,6 +58,28 @@ class _HomeMenuCongresistaPageState extends State<HomeMenuCongresistaPage>
     super.dispose();
   }
 
+  Future<void> _generarCarnet() async {
+    if (!mounted) return;
+
+    setState(() => _loading = true);
+
+    try {
+      await buildCarnetImagen(_usuario!);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al generar carnet: No se pudo generar el PDF'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
+    }
+  }
+
   Future<void> _loadUser() async {
     final storage = const FlutterSecureStorage();
     try {
@@ -94,45 +117,46 @@ class _HomeMenuCongresistaPageState extends State<HomeMenuCongresistaPage>
     }
   }
 
-  Future<void> _confirmAndSignOut() async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Cerrar sesión'),
-        content: const Text('¿Seguro que querés cerrar tu sesión?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Cerrar sesión'),
-          ),
-        ],
-      ),
-    );
-    if (ok == true) {
-      await _signOut();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Panel del Congresista'),
-        backgroundColor: brandLight,
-        foregroundColor: Colors.white,
-        elevation: 0,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          title: const Text('Panel del Congresista'),
+          backgroundColor: brandLight,
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : (_usuario == null)
           ? const Center(
-              child: Text('No se pudo cargar la información del usuario'),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Procesando...'),
+                ],
+              ),
+            )
+          : (_usuario == null)
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  const Text('No se pudo cargar la información del usuario'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _loadUser,
+                    child: const Text('Reintentar'),
+                  ),
+                ],
+              ),
             )
           : RefreshIndicator(
               onRefresh: _loadUser,
@@ -197,6 +221,50 @@ class _HomeMenuCongresistaPageState extends State<HomeMenuCongresistaPage>
 
                         const SizedBox(height: 32),
 
+                        // Botón para generar carnet
+                        // Center(
+                        //   child: ElevatedButton.icon(
+                        //     onPressed: _generarCarnet,
+                        //     style: ElevatedButton.styleFrom(
+                        //       backgroundColor: brandPrimary,
+                        //       foregroundColor: Colors.white,
+                        //       padding: const EdgeInsets.symmetric(
+                        //         horizontal: 24,
+                        //         vertical: 12,
+                        //       ),
+                        //       shape: RoundedRectangleBorder(
+                        //         borderRadius: BorderRadius.circular(8),
+                        //       ),
+                        //     ),
+                        //     icon: const Icon(Icons.badge_outlined, size: 20),
+                        //     label: const Text(
+                        //       'Generar mi carnet',
+                        //       style: TextStyle(fontSize: 16),
+                        //     ),
+                        //   ),
+                        // ),
+                        _MenuCard(
+                          title: 'Carnet de congresista',
+                          subtitle: 'Ver y descargar carnet',
+                          icon: Icons.badge_outlined,
+                          color: const Color(0xFF7C3AED),
+                          onTap:
+                              _usuario!.isPago == true ||
+                                  _usuario!.isExonerado == true
+                              ? _generarCarnet
+                              : () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Debe completar el pago para generar el carnet',
+                                      ),
+                                      backgroundColor: Colors.orange,
+                                    ),
+                                  );
+                                },
+                        ),
+
+                        const SizedBox(height: 32),
                         Center(
                           child: Text(
                             'IVCUSMI 2025 • Congreso Internacional de Medicina',

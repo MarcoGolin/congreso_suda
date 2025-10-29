@@ -2,9 +2,11 @@
 
 import 'package:congreso_evento/core/pdf/pdf_render.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
+import 'package:congreso_evento/modules/home_admin/pages/congresista/utils/image_view_port.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:image/image.dart' as img;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -192,6 +194,39 @@ Future<Uint8List> buildCarnetPdf(Usuario user) async {
   return pdf.save();
 }
 
+Future<Uint8List> _buildCarnetJpg(Usuario user) async {
+  final fondos = await _loadFondosCarnet();
+  final fondo = user.isStaff! ? fondos.staff : fondos.participante;
+  final fonts = await _loadPdfFonts();
+
+  final pdf = pw.Document();
+  pdf.addPage(
+    pw.Page(
+      pageFormat: PdfPageFormat(
+        _CARD_W * PdfPageFormat.cm,
+        _CARD_H * PdfPageFormat.cm,
+      ),
+      margin: pw.EdgeInsets.all(0),
+      build: (_) => _buildCarnetWidget(user, fondo: fondo, fonts: fonts),
+    ),
+  );
+  return pdf.save();
+}
+
+Future<Uint8List> _pdfFirstPageToJpg(
+  Uint8List pdfBytes, {
+  double dpi = 220,
+}) async {
+  final raster = await Printing.raster(pdfBytes, dpi: dpi).first;
+  final png = await raster.toPng();
+  final decoded = img.decodePng(png);
+  if (decoded == null) {
+    throw Exception('PNG decode falló tras rasterizar.');
+  }
+  final jpg = img.encodeJpg(decoded, quality: 90);
+  return Uint8List.fromList(jpg);
+}
+
 /// Abre el preview (tu flujo actual)
 Future<void> printOrShareCarnet(Usuario user) async {
   final bytes = await buildCarnetPdf(user);
@@ -202,6 +237,20 @@ Future<void> printOrShareCarnet(Usuario user) async {
         pdf: bytes,
         isLoading: false,
         showFiltro: false,
+      ),
+    ),
+  );
+}
+
+Future<void> buildCarnetImagen(Usuario user) async {
+  final pdfBytes = await _buildCarnetJpg(user);
+  final jpgBytes = await _pdfFirstPageToJpg(pdfBytes, dpi: 300);
+  Modular.to.push(
+    MaterialPageRoute(
+      builder: (_) => ImageViewport(
+        bytes: jpgBytes,
+        fileNameWithExt: '${user.nombreCompleto}.jpg',
+        mimeType: 'image/jpeg',
       ),
     ),
   );

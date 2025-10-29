@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="py.com.flextech.mapper.checkin.CheckInMapper">
+	
+	
+	<resultMap id="resultSimples" type="Checkin">
+		<id property="id" column="ID_CHECKIN" />
+		<result property="fechaRegistro" column="FC_REGISTRO" />
+		<result property="tipo" column="TIPO" />
+		<result property="refriSlot" column="REFRI_SLOT" />
+		
+		<association property="usuarioOperador" javaType="Usuario">
+			<id property="id" column="ID_USUARIO" />
+			<result property="nombreCompleto" column="NOMBRE_COMPLETO" />
+		</association>
+
+	</resultMap>
+	
+	<sql id="sqlDefault">
+		SELECT 
+		  ch.*,
+		  u.NOMBRE_COMPLETO 
+		FROM
+		  ev_checkin ch 
+		  LEFT JOIN sys_usuario u 
+		    ON u.ID_USUARIO = ch.ID_USUARIO_OPERADOR 
+	</sql>
+	
+	
+	<select id="findByUsuario" resultMap="resultSimples"
+		parameterType="hashMap">
+		<include refid="sqlDefault" /> 
+		where ch.ID_USUARIO = #{idUsuario} 
+	</select>
+
+</mapper>

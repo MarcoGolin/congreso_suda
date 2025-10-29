@@ -6,6 +6,8 @@ import 'package:congreso_evento/core/js_cross_platform/js_cross_platform.dart'
 import 'package:congreso_evento/core/models/global_state_class.dart';
 import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
+import 'package:congreso_evento/modules/checkin/enums/checkin_enums.dart';
+import 'package:congreso_evento/modules/checkin/models/checkin.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/enums/tipo_usuario_enum.dart';
 import 'package:congreso_evento/modules/home_admin/pages/congresista/services/congresista_service.dart';
 import 'package:excel/excel.dart' as xl;
@@ -14,7 +16,6 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 
 part 'congresista_ctrl.g.dart';
 
@@ -592,34 +593,136 @@ abstract class CongresistaCtrlBase with Store {
   }
 
   Future<void> _generarExcelCompleto(List<Usuario> usuarios) async {
-    // Crear nuevo Excel
     final excel = xl.Excel.createExcel();
 
-    // Crear la sheet principal
-    final sheet = excel['Congresistas'];
+    // === Buffer de alertas (días abiertos) ===
+    final List<Map<String, dynamic>> alertas = [];
 
-    // Ordenar usuarios según el criterio seleccionado
+    // ===== utilidades =====
+    DateTime dateOnly(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
+    String fmtDT(DateTime? dt) =>
+        dt == null ? '' : DateFormat('dd/MM/yyyy HH:mm').format(dt);
+    String fmtH(DateTime? dt) =>
+        dt == null ? '' : DateFormat('HH:mm').format(dt);
+    String fmtHM(Duration d) =>
+        '${d.inHours}:${d.inMinutes.remainder(60).toString().padLeft(2, '0')}';
+    String fmtHMOrEmpty(Duration? d) => d == null ? '' : fmtHM(d);
+
+    String tipoLabel(CheckinTipo? t) {
+      if (t == null) return '';
+      switch (t) {
+        case CheckinTipo.CONGRESO_ASISTENCIA:
+          return 'Acreditación';
+        case CheckinTipo.KIT_ENTREGADO:
+          return 'Kit Bienvenida';
+        case CheckinTipo.COFFEE_BREAK_ENTREGADO:
+          return 'Coffee break';
+      }
+    }
+
+    String coffeeLabel(CoffeeBreak? c) {
+      if (c == null) return '';
+      switch (c) {
+        case CoffeeBreak.MANHANA:
+          return 'Mañana';
+        case CoffeeBreak.TARDE:
+          return 'Tarde';
+      }
+    }
+
+    // ===== suma por tramos alternados =====
+    _AsistCalc _sumarTramos(List<DateTime> marcasOrdenadas) {
+      int totalMin = 0;
+      int tramos = 0;
+      for (int i = 0; i + 1 < marcasOrdenadas.length; i += 2) {
+        final a = marcasOrdenadas[i];
+        final b = marcasOrdenadas[i + 1];
+        if (b.isAfter(a)) {
+          totalMin += b.difference(a).inMinutes;
+          tramos++;
+        }
+      }
+      final lecturas = marcasOrdenadas.length;
+      final abierto = lecturas.isOdd;
+      return _AsistCalc(Duration(minutes: totalMin), lecturas, tramos, abierto);
+    }
+
+    // ===== DEDUP: elimina lecturas consecutivas con delta < threshold =====
+    List<DateTime> _dedupMarcas(
+      List<DateTime> marcas, {
+      Duration threshold = const Duration(minutes: 2),
+    }) {
+      if (marcas.isEmpty) return const <DateTime>[];
+      marcas.sort();
+      final out = <DateTime>[marcas.first];
+      for (int i = 1; i < marcas.length; i++) {
+        final curr = marcas[i];
+        if (curr.difference(out.last) >= threshold) {
+          out.add(curr);
+        }
+      }
+      return out;
+    }
+
+    // ===== días detectados dinámicamente a partir de TODOS los checkins =====
+    final diasSet = <DateTime>{};
+    for (final u in usuarios) {
+      final list = u.checkin;
+      if (list == null || list.isEmpty) continue;
+      for (final c in list) {
+        final fr = c.fechaRegistro;
+        if (fr != null) diasSet.add(dateOnly(fr));
+      }
+    }
+    final diasOrdenados = diasSet.toList()..sort();
+
+    // ===== Hoja principal: Congresistas =====
+    final sheet = excel['Congresistas'];
     final usuariosOrdenados = _ordenarUsuarios(usuarios);
 
-    // Usar solo las columnas seleccionadas en el orden correcto
+    // Armado de headers base (tu lógica existente)
     final headers = <String>[];
     for (final categoria in categoriaColumnas.keys) {
       if (categoriasSeleccionadas[categoria] == true) {
         final columnasCategoria = columnasPorCategoria[categoria] ?? [];
         for (final columna in categoriaColumnas[categoria]!) {
-          if (columnasCategoria.contains(columna)) {
-            headers.add(columna);
-          }
+          if (columnasCategoria.contains(columna)) headers.add(columna);
         }
       }
     }
+    if (headers.isEmpty) headers.addAll(todasLasColumnas);
 
-    // Si no hay columnas seleccionadas, usar todas
-    if (headers.isEmpty) {
-      headers.addAll(todasLasColumnas);
+    void ensure(String h) {
+      if (!headers.contains(h)) headers.add(h);
     }
 
-    // Escribir headers
+    ensure('Checkins (total)');
+    ensure('Primer Checkin');
+    ensure('Último Checkin');
+    ensure('Total Horas (h:mm)'); // total general
+
+    // === columnas dinámicas por día ===
+    final colsPorDia = <String>[];
+    final etiquetasDias = <String>[];
+    for (int i = 0; i < diasOrdenados.length; i++) {
+      final d = diasOrdenados[i];
+      final etiqueta = 'D${i + 1} (${DateFormat('dd/MM').format(d)})';
+      etiquetasDias.add(etiqueta);
+      colsPorDia.addAll(<String>[
+        '$etiqueta Ingreso',
+        '$etiqueta Salida',
+        '$etiqueta Asist. #lecturas',
+        '$etiqueta Asist. #tramos',
+        '$etiqueta Asist. abierto',
+        '$etiqueta Horas (h:mm)',
+        '$etiqueta Kit',
+        '$etiqueta Coffee Mañana',
+        '$etiqueta Coffee Tarde',
+      ]);
+    }
+    headers.addAll(colsPorDia);
+
+    // Pintar headers
     for (int i = 0; i < headers.length; i++) {
       final cell = sheet.cell(
         xl.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0),
@@ -632,67 +735,394 @@ abstract class CongresistaCtrlBase with Store {
       );
     }
 
-    // Escribir datos
-    for (int rowIndex = 0; rowIndex < usuariosOrdenados.length; rowIndex++) {
-      final usuario = usuariosOrdenados[rowIndex];
-      final dataRow = rowIndex + 1;
+    // Índice de headers para acceso O(1)
+    final headerIndex = <String, int>{};
+    for (int i = 0; i < headers.length; i++) {
+      headerIndex[headers[i]] = i;
+    }
 
-      Map<String, String> datos = {
-        'ID': usuario.id?.toString() ?? '',
-        'UUID': usuario.uuid ?? '',
-        'Nombre Completo': usuario.nombreCompleto ?? '',
-        'Email': usuario.email ?? '',
-        'Teléfono': usuario.telefono ?? '',
-        'País': usuario.pais ?? '',
-        'Institución': usuario.institucion ?? '',
-        'Registro Académico': usuario.registroAcademico ?? '',
-        'Semestre': usuario.semestre ?? '',
-        'Sección': usuario.seccion ?? '',
-        'Tipo Usuario': _getTipoUsuarioTexto(usuario),
-        'Es Admin': (usuario.isAdmin == true) ? 'Sí' : 'No',
-        'Es Staff': (usuario.isStaff == true) ? 'Sí' : 'No',
-        'Es Financiero': (usuario.isFinanciero == true) ? 'Sí' : 'No',
-        'Es Invitado': (usuario.isInvitado == true) ? 'Sí' : 'No',
-        'Es Disertante': (usuario.isDisertante == true) ? 'Sí' : 'No',
-        'Es Congresista': (usuario.isCongresista == true) ? 'Sí' : 'No',
-        'Es Exonerado': (usuario.isExonerado == true) ? 'Sí' : 'No',
-        'Es Pago': (usuario.isPago == true) ? 'Sí' : 'No',
-        'Monto Pago': usuario.montoPago?.toString() ?? '',
-        'Fecha Pago': usuario.fechaPago != null
-            ? DateFormat('dd/MM/yyyy HH:mm').format(usuario.fechaPago!)
-            : '',
-        'Usuario Pago': usuario.usuarioPago ?? '',
-        'Fecha Registro': usuario.fechaRegistro != null
-            ? DateFormat('dd/MM/yyyy HH:mm').format(usuario.fechaRegistro!)
-            : '',
+    // Preconstruimos por día los índices de columnas que se pintarán en rojo si está "abierto"
+    final colsDiaIndex = <int, List<int>>{};
+    for (int i = 0; i < etiquetasDias.length; i++) {
+      final e = etiquetasDias[i];
+      colsDiaIndex[i] = <int>[
+        headerIndex['$e Ingreso']!,
+        headerIndex['$e Salida']!,
+        headerIndex['$e Asist. #lecturas']!,
+        headerIndex['$e Asist. #tramos']!,
+        headerIndex['$e Asist. abierto']!,
+        headerIndex['$e Horas (h:mm)']!,
+      ];
+    }
+
+    // Estilos
+    final rojoFondo = xl.ExcelColor.fromHexString('#FFEBEE'); // rojo claro
+    final rojoTexto = xl.ExcelColor.fromHexString('#B71C1C'); // rojo intenso
+    final zebra = xl.ExcelColor.fromHexString('#F9FAFB');
+
+    // Escribir filas
+    for (int rowIndex = 0; rowIndex < usuariosOrdenados.length; rowIndex++) {
+      final u = usuariosOrdenados[rowIndex];
+      final checks = u.checkin ?? const <Checkin>[];
+
+      // Preordenamos una vez por fecha
+      final checksSorted = [...checks]
+        ..sort(
+          (a, b) => (a.fechaRegistro ?? DateTime(1970)).compareTo(
+            b.fechaRegistro ?? DateTime(1970),
+          ),
+        );
+
+      // Resumen global
+      final total = checksSorted.length;
+      final first = checksSorted.isNotEmpty
+          ? checksSorted.first.fechaRegistro
+          : null;
+      final last = checksSorted.isNotEmpty
+          ? checksSorted.last.fechaRegistro
+          : null;
+
+      final datos = <String, String>{
+        'ID': u.id?.toString() ?? '',
+        'UUID': u.uuid ?? '',
+        'Nombre Completo': u.nombreCompleto ?? '',
+        'Email': u.email ?? '',
+        'Teléfono': u.telefono ?? '',
+        'País': u.pais ?? '',
+        'Institución': u.institucion ?? '',
+        'Registro Académico': u.registroAcademico ?? '',
+        'Semestre': u.semestre ?? '',
+        'Sección': u.seccion ?? '',
+        'Tipo Usuario': _getTipoUsuarioTexto(u),
+        'Es Admin': (u.isAdmin == true) ? 'Sí' : 'No',
+        'Es Staff': (u.isStaff == true) ? 'Sí' : 'No',
+        'Es Financiero': (u.isFinanciero == true) ? 'Sí' : 'No',
+        'Es Invitado': (u.isInvitado == true) ? 'Sí' : 'No',
+        'Es Disertante': (u.isDisertante == true) ? 'Sí' : 'No',
+        'Es Congresista': (u.isCongresista == true) ? 'Sí' : 'No',
+        'Es Exonerado': (u.isExonerado == true) ? 'Sí' : 'No',
+        'Es Pago': (u.isPago == true) ? 'Sí' : 'No',
+        'Monto Pago': u.montoPago?.toString() ?? '',
+        'Fecha Pago': fmtDT(u.fechaPago),
+        'Usuario Pago': u.usuarioPago ?? '',
+        'Fecha Registro': fmtDT(u.fechaRegistro),
+        'Checkins (total)': '$total',
+        'Primer Checkin': fmtDT(first),
+        'Último Checkin': fmtDT(last),
       };
 
+      int totalMinutos = 0;
+      // Guardamos por día si quedó abierto para pintar
+      final diasAbiertos = <int, bool>{};
+
+      for (int i = 0; i < diasOrdenados.length; i++) {
+        final d = diasOrdenados[i];
+
+        // Filtrado del día (ya ordenado)
+        final delDia = <Checkin>[];
+        for (final c in checksSorted) {
+          final fr = c.fechaRegistro;
+          if (fr == null) continue;
+          if (dateOnly(fr) == d) delDia.add(c);
+          if (dateOnly(fr).isAfter(d)) break; // corto temprano
+        }
+
+        // Asistencia: dedup de marcas (delta < 2 min) ANTES de sumar tramos
+        final asistMarcas = <DateTime>[];
+        for (final c in delDia) {
+          if (c.tipo == CheckinTipo.CONGRESO_ASISTENCIA &&
+              c.fechaRegistro != null) {
+            asistMarcas.add(c.fechaRegistro!);
+          }
+        }
+        final marcasDedup = _dedupMarcas(
+          asistMarcas,
+          threshold: const Duration(minutes: 2),
+        );
+        final calc = _sumarTramos(marcasDedup);
+
+        final ingreso = marcasDedup.isNotEmpty ? marcasDedup.first : null;
+        final salida = marcasDedup.isNotEmpty ? marcasDedup.last : null;
+
+        // Kit / Coffee: si hay múltiples, tomamos la PRIMERA ocurrencia real del día
+        DateTime? kitHora;
+        DateTime? coffeeManhaHora;
+        DateTime? coffeeTardeHora;
+        for (final c in delDia) {
+          if (c.tipo == CheckinTipo.KIT_ENTREGADO && kitHora == null) {
+            kitHora = c.fechaRegistro;
+          } else if (c.tipo == CheckinTipo.COFFEE_BREAK_ENTREGADO &&
+              c.refriSlot == CoffeeBreak.MANHANA &&
+              coffeeManhaHora == null) {
+            coffeeManhaHora = c.fechaRegistro;
+          } else if (c.tipo == CheckinTipo.COFFEE_BREAK_ENTREGADO &&
+              c.refriSlot == CoffeeBreak.TARDE &&
+              coffeeTardeHora == null) {
+            coffeeTardeHora = c.fechaRegistro;
+          }
+        }
+
+        totalMinutos += calc.duracion.inMinutes;
+
+        final e = etiquetasDias[i];
+        datos['$e Ingreso'] = fmtH(ingreso);
+        datos['$e Salida'] = fmtH(salida);
+        datos['$e Asist. #lecturas'] = calc.lecturas == 0
+            ? ''
+            : '${calc.lecturas}';
+        datos['$e Asist. #tramos'] = calc.tramos == 0 ? '' : '${calc.tramos}';
+        datos['$e Asist. abierto'] = calc.abierto ? 'Sí' : '';
+        datos['$e Horas (h:mm)'] = fmtHMOrEmpty(calc.duracion);
+        datos['$e Kit'] = fmtH(kitHora);
+        datos['$e Coffee Mañana'] = fmtH(coffeeManhaHora);
+        datos['$e Coffee Tarde'] = fmtH(coffeeTardeHora);
+
+        if (calc.abierto) {
+          diasAbiertos[i] = true;
+          alertas.add({
+            'usuarioId': u.id,
+            'nombre': u.nombreCompleto ?? '',
+            'uuid': u.uuid ?? '',
+            'dia': d,
+            'etiqueta': e,
+            'lecturas': calc.lecturas,
+            'tramos': calc.tramos,
+            'primer': ingreso,
+            'ultimo': salida,
+            'duracion': calc.duracion,
+          });
+        }
+      }
+
+      // Total general
+      final totalHoras = Duration(minutes: totalMinutos);
+      datos['Total Horas (h:mm)'] = fmtHM(totalHoras);
+
+      // Escribir fila
+      final dataRow = rowIndex + 1;
       for (int colIndex = 0; colIndex < headers.length; colIndex++) {
-        final columna = headers[colIndex];
+        final h = headers[colIndex];
         final cell = sheet.cell(
           xl.CellIndex.indexByColumnRow(
             columnIndex: colIndex,
             rowIndex: dataRow,
           ),
         );
-        cell.value = xl.TextCellValue(datos[columna] ?? '');
-        if (rowIndex % 2 == 0) {
-          cell.cellStyle = xl.CellStyle(
-            backgroundColorHex: xl.ExcelColor.fromHexString('#F9FAFB'),
-          );
+        cell.value = xl.TextCellValue(datos[h] ?? '');
+        if (rowIndex.isEven) {
+          cell.cellStyle = xl.CellStyle(backgroundColorHex: zebra);
         }
       }
+
+      // Pintar en rojo los días abiertos
+      diasAbiertos.forEach((iDia, _) {
+        for (final colIdx in colsDiaIndex[iDia]!) {
+          final cell = sheet.cell(
+            xl.CellIndex.indexByColumnRow(
+              columnIndex: colIdx,
+              rowIndex: dataRow,
+            ),
+          );
+          cell.cellStyle = xl.CellStyle(
+            backgroundColorHex: rojoFondo,
+            fontColorHex: rojoTexto,
+            bold: true,
+          );
+        }
+      });
     }
 
+    // Autofit
     for (int i = 0; i < headers.length; i++) {
       sheet.setColumnAutoFit(i);
     }
 
-    // Eliminar la hoja por defecto 'Sheet1' si existe
+    // ===== Hoja de Alertas (días abiertos) =====
+    final shAlert = excel['Alertas'];
+    final alertHeaders = <String>[
+      'Usuario ID',
+      'Nombre',
+      'UUID',
+      'Día',
+      'Etiqueta',
+      'Asist. #lecturas',
+      'Asist. #tramos',
+      'Primer',
+      'Último',
+      'Horas (h:mm)',
+      'Observación',
+    ];
+
+    for (int i = 0; i < alertHeaders.length; i++) {
+      final cell = shAlert.cell(
+        xl.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0),
+      );
+      cell.value = xl.TextCellValue(alertHeaders[i]);
+      cell.cellStyle = xl.CellStyle(
+        backgroundColorHex: xl.ExcelColor.fromHexString('#387f4d'),
+        fontColorHex: xl.ExcelColor.fromHexString('#FFFFFF'),
+        bold: true,
+      );
+    }
+
+    if (alertas.isEmpty) {
+      final cell = shAlert.cell(
+        xl.CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 1),
+      );
+      cell.value = xl.TextCellValue('Sin días abiertos');
+      for (int i = 0; i < alertHeaders.length; i++) {
+        shAlert.setColumnAutoFit(i);
+      }
+    } else {
+      alertas.sort((a, b) {
+        final n1 = (a['nombre'] as String).toLowerCase();
+        final n2 = (b['nombre'] as String).toLowerCase();
+        final c = n1.compareTo(n2);
+        if (c != 0) return c;
+        final d1 = a['dia'] as DateTime;
+        final d2 = b['dia'] as DateTime;
+        return d1.compareTo(d2);
+      });
+
+      final zebra = xl.ExcelColor.fromHexString('#F9FAFB');
+      final rojoFondo = xl.ExcelColor.fromHexString('#FFEBEE');
+      final rojoTexto = xl.ExcelColor.fromHexString('#B71C1C');
+
+      int rr = 1;
+      for (final a in alertas) {
+        final rowVals = <String>[
+          (a['usuarioId']?.toString() ?? ''),
+          (a['nombre'] as String?) ?? '',
+          (a['uuid'] as String?) ?? '',
+          DateFormat('dd/MM').format(a['dia'] as DateTime),
+          (a['etiqueta'] as String?) ?? '',
+          (a['lecturas']?.toString() ?? ''),
+          (a['tramos']?.toString() ?? ''),
+          fmtDT(a['primer'] as DateTime?),
+          fmtDT(a['ultimo'] as DateTime?),
+          fmtHM((a['duracion'] as Duration?) ?? Duration.zero),
+          'Abierto: faltó marcar salida/pareja',
+        ];
+
+        for (int i = 0; i < rowVals.length; i++) {
+          final cell = shAlert.cell(
+            xl.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: rr),
+          );
+          cell.value = xl.TextCellValue(rowVals[i]);
+        }
+        // resaltar toda la fila en rojo
+        for (int i = 0; i < alertHeaders.length; i++) {
+          final cell = shAlert.cell(
+            xl.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: rr),
+          );
+          cell.cellStyle = xl.CellStyle(
+            backgroundColorHex: rojoFondo,
+            fontColorHex: rojoTexto,
+            bold: true,
+          );
+        }
+        rr++;
+      }
+
+      for (int i = 0; i < alertHeaders.length; i++) {
+        shAlert.setColumnAutoFit(i);
+      }
+    }
+
+    // ===== Hoja Detalle por Usuario =====
+    final det = excel['Detalle por Usuario'];
+    final detHeaders = <String>[
+      'Usuario ID',
+      'RA',
+      'Nombre',
+      'Fecha',
+      'Día',
+      'Tipo',
+      'Coffee',
+      'Operador',
+      'Taller ID',
+    ];
+    for (int i = 0; i < detHeaders.length; i++) {
+      final cell = det.cell(
+        xl.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0),
+      );
+      cell.value = xl.TextCellValue(detHeaders[i]);
+      cell.cellStyle = xl.CellStyle(
+        backgroundColorHex: xl.ExcelColor.fromHexString('#387f4d'),
+        fontColorHex: xl.ExcelColor.fromHexString('#FFFFFF'),
+        bold: true,
+      );
+    }
+
+    int r = 1;
+    for (final u in usuariosOrdenados) {
+      final titulo =
+          '${u.nombreCompleto ?? ''}  (ID:${u.id ?? ''}  UUID:${u.uuid ?? ''})';
+      final cellTitle = det.cell(
+        xl.CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: r),
+      );
+      cellTitle.value = xl.TextCellValue(titulo);
+      cellTitle.cellStyle = xl.CellStyle(
+        bold: true,
+        backgroundColorHex: xl.ExcelColor.fromHexString('#E8F5E9'),
+      );
+      r++;
+
+      final list = (u.checkin ?? const <Checkin>[])
+        ..sort(
+          (a, b) => (a.fechaRegistro ?? DateTime(1970)).compareTo(
+            b.fechaRegistro ?? DateTime(1970),
+          ),
+        );
+
+      for (final c in list) {
+        final fecha = c.fechaRegistro;
+        final dia = fecha == null
+            ? ''
+            : DateFormat('dd/MM').format(dateOnly(fecha));
+        final row = <String>[
+          u.id?.toString() ?? '',
+          u.registroAcademico ?? '',
+          u.nombreCompleto ?? '',
+          fmtDT(fecha),
+          dia,
+          tipoLabel(c.tipo),
+          coffeeLabel(c.refriSlot),
+          (c as dynamic)?.usuarioOperador?.nombreCompleto ?? '',
+          c.tallerId?.toString() ?? '',
+        ];
+        for (int i = 0; i < row.length; i++) {
+          final cell = det.cell(
+            xl.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: r),
+          );
+          cell.value = xl.TextCellValue(row[i]);
+        }
+        if (r.isOdd) {
+          for (int i = 0; i < detHeaders.length; i++) {
+            det
+                .cell(
+                  xl.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: r),
+                )
+                .cellStyle = xl.CellStyle(
+              backgroundColorHex: zebra,
+            );
+          }
+        }
+        r++;
+      }
+      r++; // separador
+    }
+
+    for (int i = 0; i < detHeaders.length; i++) {
+      det.setColumnAutoFit(i);
+    }
+
+    // Remover Sheet1
     if (excel.sheets.containsKey('Sheet1')) {
       excel.delete('Sheet1');
     }
 
+    // Guardado
     final now = DateTime.now();
     final timestamp = DateFormat('yyyy-MM-dd_HHmm').format(now);
     final fileName = 'Congresistas_Completo_$timestamp.xlsx';
@@ -703,15 +1133,11 @@ abstract class CongresistaCtrlBase with Store {
         js.saveAs(Uint8List.fromList(bytes), fileName);
       } else {
         try {
-          final directory = await getApplicationDocumentsDirectory();
-          debugPrint('Guardando archivo en: ${directory.path}\\$fileName');
           final finalDir = await FilePicker.platform.saveFile(
             dialogTitle: 'Eliga una carpeta de destino:',
             fileName: fileName,
           );
-          if (finalDir == null) {
-            return;
-          }
+          if (finalDir == null) return;
           await File(finalDir).writeAsBytes(bytes);
           await OpenFile.open(finalDir);
         } catch (e) {
@@ -737,4 +1163,28 @@ abstract class CongresistaCtrlBase with Store {
     if (usuario.isCongresista == true) return 'Congresista';
     return 'No definido';
   }
+}
+
+class _AsistCalc {
+  final Duration duracion; // suma de pares
+  final int lecturas; // cantidad de marcas del día
+  final int tramos; // cantidad de pares (intervalos)
+  final bool abierto; // true si quedó una marca "colgada" (impar)
+  _AsistCalc(this.duracion, this.lecturas, this.tramos, this.abierto);
+}
+
+_AsistCalc _sumarTramos(List<DateTime> marcasOrdenadas) {
+  int totalMin = 0;
+  int tramos = 0;
+  for (int i = 0; i + 1 < marcasOrdenadas.length; i += 2) {
+    final a = marcasOrdenadas[i];
+    final b = marcasOrdenadas[i + 1];
+    if (b.isAfter(a)) {
+      totalMin += b.difference(a).inMinutes;
+      tramos++;
+    }
+  }
+  final lecturas = marcasOrdenadas.length;
+  final abierto = lecturas.isOdd;
+  return _AsistCalc(Duration(minutes: totalMin), lecturas, tramos, abierto);
 }

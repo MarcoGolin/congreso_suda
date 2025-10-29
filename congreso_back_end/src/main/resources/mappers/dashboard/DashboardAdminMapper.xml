@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="py.com.flextech.mapper.dashboard.DashboardAdminMapper">
+
+    <select id="countUniqueCheckinsToday" resultType="long">
+        SELECT COUNT(DISTINCT id_usuario)
+        FROM ev_checkin
+        WHERE fc_registro BETWEEN #{startOfDay} AND #{endOfDay}
+    </select>
+
+    <select id="countConfirmedParticipants" resultType="long">
+        SELECT COUNT(*)
+        FROM sys_usuario
+        WHERE bo_congresista = true
+    </select>
+
+    <select id="countMorningCheckins" resultType="long">
+        SELECT COUNT(DISTINCT id_usuario)
+        FROM ev_checkin
+        WHERE fc_registro BETWEEN #{startOfDay} AND #{noon}
+    </select>
+
+    <select id="countAfternoonCheckins" resultType="long">
+        SELECT COUNT(DISTINCT id_usuario)
+        FROM ev_checkin
+        WHERE fc_registro BETWEEN #{noon} AND #{endOfDay}
+    </select>
+
+    <select id="countByCheckinType" resultType="map">
+        SELECT tipo, COUNT(*) as count
+        FROM ev_checkin
+        WHERE fc_registro BETWEEN #{startOfDay} AND #{endOfDay}
+        GROUP BY tipo
+    </select>
+
+    <select id="countHourlyCheckins" resultType="map">
+        SELECT HOUR(fc_registro) as hour, COUNT(*) as count
+        FROM ev_checkin
+        WHERE fc_registro BETWEEN #{startOfDay} AND #{endOfDay}
+        GROUP BY hour
+        ORDER BY hour
+    </select>
+
+    <select id="countQuarterlyCheckins" resultType="map">
+        SELECT CONCAT(LPAD(HOUR(fc_registro), 2, '0'), ':', LPAD(FLOOR(MINUTE(fc_registro) / 15) * 15, 2, '0')) as slot,
+               COUNT(*) as count
+        FROM ev_checkin
+        WHERE fc_registro BETWEEN #{startOfDay} AND #{endOfDay}
+        GROUP BY slot
+        ORDER BY slot
+    </select>
+
+    <select id="findTopWorkshops" resultType="map">
+        SELECT t.titulo, COUNT(c.id_checkin) as count
+        FROM ev_checkin c
+        JOIN tr_taller t ON c.id_taller = t.id_taller
+        WHERE c.fc_registro BETWEEN #{startOfDay} AND #{endOfDay}
+        GROUP BY t.titulo
+        ORDER BY count DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="findNoShows" resultType="map">
+        SELECT p.id_usuario, p.nombre_completo
+        FROM sys_usuario p
+        WHERE p.bo_congresista = true
+          AND p.id_usuario NOT IN (
+            SELECT DISTINCT c.id_usuario
+            FROM ev_checkin c
+            WHERE c.fc_registro BETWEEN #{startOfDay} AND #{endOfDay}
+        )
+    </select>
+
+</mapper>

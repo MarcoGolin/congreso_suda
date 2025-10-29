@@ -32,12 +32,17 @@
 		<result property="isInvitado" column="BO_INVITADO" />
 		<result property="isDisertante" column="BO_DISERTANTE" />
 		<result property="isAudioVisual" column="BO_AUDIOVISUAL" />
+		<result property="isCheckIn" column="BO_IS_CHECK_IN" />
 		
 		
 	</resultMap>
 	
 	<resultMap id="resultCompleto" type="Usuario" extends="resultSimples">
-
+		
+		<collection property="checkin" ofType="Checkin"
+			jdbcType="VARCHAR" javaType="ArrayList"
+			select="py.com.flextech.mapper.checkin.CheckInMapper.findByUsuario"
+			column="{idUsuario=ID_USUARIO}" />
 
 	</resultMap>
 	
@@ -51,10 +56,9 @@
 	</sql>
 	
 	<select id="consultaCongresistaPorNombreORegistroAcademico"
-	        resultMap="resultSimples"
+	        resultMap="resultCompleto"
 	        parameterType="map">
 	  <include refid="sqlDefault"/>
-	
 	  <where>
 	    u.BO_CONGRESISTA = TRUE
 	
@@ -195,6 +199,9 @@
 			    ON a.id_usuario = u.id_usuario 
 			  <where>
 			  	u.BO_IS_PAGO = TRUE 
+			  	<if test="tipoSorteo == 'Congresista'">
+			  	  AND U.BO_CONGRESISTA = TRUE
+			  	</if>
 			  	<if test="tipoSorteo == 'Staff'">
 			  	  AND U.BO_STAFF = TRUE
 			  	</if>

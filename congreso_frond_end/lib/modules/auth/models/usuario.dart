@@ -2,6 +2,8 @@ import 'package:congreso_evento/core/date_time_converter.dart';
 import 'package:congreso_evento/core/i_simple_list_tile.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../checkin/models/checkin.dart';
+
 part 'usuario.g.dart';
 
 @DateTimeConverter()
@@ -38,8 +40,11 @@ class Usuario implements ISimpleListTile {
   bool? isInvitado = false;
   bool? isDisertante = false;
   bool? isAudioVisual = false;
+  bool? isCheckIn = false;
 
   bool? isActivado = true;
+
+  List<Checkin>? checkin;
 
   Usuario({
     this.id,
@@ -68,6 +73,8 @@ class Usuario implements ISimpleListTile {
     this.isInvitado = false,
     this.isDisertante = false,
     this.isAudioVisual = false,
+    this.isCheckIn = false,
+    this.checkin,
   });
   @override
   String get title => nombreCompleto ?? 'No Name';
@@ -93,6 +100,8 @@ class Usuario implements ISimpleListTile {
       return 'INVITADO';
     } else if (isDisertante == true) {
       return 'DISERTANTE';
+    } else if (isCheckIn == true) {
+      return 'CHECK IN';
     }
     return 'PARTICIPANTE';
   }
@@ -124,6 +133,8 @@ class Usuario implements ISimpleListTile {
     bool? isDisertante,
     bool? isActivado,
     bool? isAudioVisual,
+    bool? isCheckIn,
+    List<Checkin>? checkin,
   }) {
     return Usuario(
       id: id ?? this.id,
@@ -152,6 +163,8 @@ class Usuario implements ISimpleListTile {
       isDisertante: isDisertante ?? this.isDisertante,
       isActivado: isActivado ?? this.isActivado,
       isAudioVisual: isAudioVisual ?? this.isAudioVisual,
+      isCheckIn: isCheckIn ?? this.isCheckIn,
+      checkin: checkin ?? this.checkin,
     );
   }
 }

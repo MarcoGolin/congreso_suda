@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:congreso_evento/modules/auth/models/usuario.dart';
+import 'package:congreso_evento/modules/home_admin/pages/congresista/utils/carnet_pdf.dart';
 import 'package:congreso_evento/modules/home_congresista/pages/home_congresista_ctrl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -115,6 +116,10 @@ class _HomeCongresistaPageState extends State<HomeCongresistaPage> {
     if (ok == true) {
       await _signOut();
     }
+  }
+
+  Future<void> _generarCarnet() async {
+    await printOrShareCarnet(_usuario!);
   }
 
   @override
@@ -268,7 +273,30 @@ class _HomeCongresistaPageState extends State<HomeCongresistaPage> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
+
+                  // Botón Generar Carnet
+                  FilledButton.icon(
+                    onPressed:
+                        _usuario!.isPago == true ||
+                            _usuario!.isExonerado == true
+                        ? () => _generarCarnet()
+                        : null,
+                    icon: const Icon(Icons.badge_outlined),
+                    label: const Text('Generar Carnet'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: brandPrimary,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: Colors.grey[300],
+                      disabledForegroundColor: Colors.grey[600],
+                      minimumSize: const Size(double.infinity, 48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
 
                   // Botón Cerrar sesión (ancho completo)
                   FilledButton.icon(

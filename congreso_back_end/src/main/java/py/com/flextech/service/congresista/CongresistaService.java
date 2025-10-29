@@ -121,7 +121,7 @@ public class CongresistaService {
 			  }
 			  
 			  if(soloPagados) {
-				  condicion += " AND U.BO_IS_PAGO = TRUE OR U.BO_EXONERADO = TRUE";
+				  condicion += " AND ( U.BO_IS_PAGO = TRUE OR U.BO_EXONERADO = TRUE) ";
 			  }
 			  
 			  List<Usuario> list = congresistaMapper.consultaCongresistaPorCondicion(condicion);

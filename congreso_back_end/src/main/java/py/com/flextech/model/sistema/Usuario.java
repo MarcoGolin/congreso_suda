@@ -2,20 +2,22 @@ package py.com.flextech.model.sistema;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -23,6 +25,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import py.com.flextech.model.checkin.Checkin;
 
 @Entity
 @Table(name = "SYS_USUARIO")
@@ -140,6 +143,13 @@ public class Usuario  implements Serializable , UserDetails  {
 	
 	@Column(name = "BO_AUDIOVISUAL")
 	private Boolean isAudioVisual;
+
+	@Column(name = "BO_IS_CHECK_IN")
+	private Boolean isCheckIn;
+	
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+	private List<Checkin> checkin;
+
 	
 	@JsonIgnore
 	public Usuario(Long id) {

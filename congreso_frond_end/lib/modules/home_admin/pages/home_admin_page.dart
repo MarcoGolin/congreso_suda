@@ -221,7 +221,7 @@ class _HomeAdminPageState extends State<HomeAdminPage>
     // Ajustá estos getters si tus campos tienen otros nombres.
     final isAdmin = (u?.isAdmin == true);
     final isFinanciero = (u?.isFinanciero == true);
-    final isStaff = (u?.isStaff == true);
+    final isCheckIn = (u?.isCheckIn == true);
     final isAudioVisual = (u?.isAudioVisual == true);
 
     final all = <_AdminItem>[
@@ -255,6 +255,12 @@ class _HomeAdminPageState extends State<HomeAdminPage>
         subtitle: 'Gestión y realización de sorteos',
         route: '/sorteo',
       ),
+      const _AdminItem(
+        icon: Icons.dashboard_outlined,
+        title: 'Dashboard',
+        subtitle: 'Estadísticas y KPIs del evento',
+        route: '/admin/dashboard/',
+      ),
     ];
 
     if (isAdmin) return all;
@@ -263,7 +269,7 @@ class _HomeAdminPageState extends State<HomeAdminPage>
     if (isFinanciero) {
       result.add(all[0]); // Pagos
     }
-    if (isStaff) {
+    if (isCheckIn) {
       result.add(all[3]); // Check-In
     }
     if (isAudioVisual) {

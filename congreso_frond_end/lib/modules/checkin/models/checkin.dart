@@ -1,6 +1,16 @@
+import 'package:congreso_evento/modules/auth/models/usuario.dart';
+
 import '../enums/checkin_enums.dart';
 
 class Checkin {
+  final int? id;
+  final DateTime? fechaRegistro;
+  final CheckinTipo? tipo;
+  final int? usuarioId;
+  final int? tallerId;
+  final CoffeeBreak? refriSlot;
+  final Usuario? usuarioOperador;
+
   Checkin({
     this.id,
     this.fechaRegistro,
@@ -8,16 +18,8 @@ class Checkin {
     this.usuarioId,
     this.tallerId,
     this.refriSlot,
-    this.usuarioOperadorId,
+    this.usuarioOperador,
   });
-
-  final int? id;
-  final DateTime? fechaRegistro;
-  final CheckinTipo? tipo;
-  final int? usuarioId;
-  final int? tallerId;
-  final CoffeeBreak? refriSlot;
-  final int? usuarioOperadorId;
 
   factory Checkin.fromJson(Map<String, dynamic> json) {
     return Checkin(
@@ -29,11 +31,9 @@ class Checkin {
       usuarioId: _readInt(json, 'usuarioId', alt: 'usuario_id'),
       tallerId: _readInt(json, 'tallerId', alt: 'taller_id'),
       refriSlot: _parseCoffee(json['refriSlot'] ?? json['refri_slot']),
-      usuarioOperadorId: _readInt(
-        json,
-        'usuarioOperadorId',
-        alt: 'usuario_operador_id',
-      ),
+      usuarioOperador: json['usuarioOperador'] != null
+          ? Usuario.fromJson(json['usuarioOperador'])
+          : null,
     );
   }
 
@@ -45,7 +45,7 @@ class Checkin {
       'usuarioId': usuarioId,
       'tallerId': tallerId,
       'refriSlot': refriSlot?.toBackend(),
-      'usuarioOperadorId': usuarioOperadorId,
+      'usuarioOperador': usuarioOperador?.toJson(),
     };
   }
 

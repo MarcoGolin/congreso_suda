@@ -8,6 +8,7 @@ import 'package:congreso_evento/modules/home/home_page_ctrl.dart';
 import 'package:congreso_evento/modules/home/repositories/organizadores_repository.dart';
 import 'package:congreso_evento/modules/home/service/organizadores_service.dart';
 import 'package:congreso_evento/modules/home_admin/home_admin_module.dart';
+import 'package:congreso_evento/modules/dashboard_admin/dashboard_admin_module.dart';
 import 'package:congreso_evento/modules/home_congresista/home_congresista_module.dart';
 import 'package:congreso_evento/modules/inscripcion/Inscripcion_module.dart';
 import 'package:congreso_evento/modules/sorteo/sorteo_module.dart';
@@ -64,6 +65,12 @@ class AppModule extends Module {
     r.module(
       '/home_admin',
       module: HomeAdminModule(),
+      guards: [AuthGuard()],
+      transition: TransitionType.rightToLeft,
+    );
+    r.module(
+      '/admin/dashboard',
+      module: DashboardAdminModule(),
       guards: [AuthGuard()],
       transition: TransitionType.rightToLeft,
     );
