@@ -67,4 +67,7 @@ public class TallerInscripto {
 	@Column(name = "BO_EXONERADO")
 	private Boolean isExonerado;
 
+	@Column(name = "BO_JUNTA_DIRECTIVA")
+	private Boolean isJuntaDirectiva;
+
 }

@@ -19,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import py.com.flextech.model.checkin.Checkin;
+import py.com.flextech.model.taller.Taller;
 
 @Entity
 @Table(name = "SYS_USUARIO")
@@ -150,13 +152,15 @@ public class Usuario  implements Serializable , UserDetails  {
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
 	private List<Checkin> checkin;
 
+	@Transient
+	@OneToMany(mappedBy = "responsable", cascade = CascadeType.ALL)
+	private List<Taller> talleresAsignados;
+
 	
 	@JsonIgnore
 	public Usuario(Long id) {
 		this.id = id;
 	}
-
-
 
 	@JsonIgnore
 	@Override

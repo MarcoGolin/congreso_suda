@@ -3,18 +3,18 @@ import 'package:congreso_evento/modules/auth/auth_guard.dart';
 import 'package:congreso_evento/modules/auth/pages/ingreso_restringido/ingreso_restringido_page.dart';
 import 'package:congreso_evento/modules/auth/pages/login/auth/auth_loader_page.dart';
 import 'package:congreso_evento/modules/auth/pages/login/login_page.dart';
+import 'package:congreso_evento/modules/dashboard_admin/dashboard_admin_module.dart';
 import 'package:congreso_evento/modules/home/home_page.dart';
 import 'package:congreso_evento/modules/home/home_page_ctrl.dart';
 import 'package:congreso_evento/modules/home/repositories/organizadores_repository.dart';
 import 'package:congreso_evento/modules/home/service/organizadores_service.dart';
 import 'package:congreso_evento/modules/home_admin/home_admin_module.dart';
-import 'package:congreso_evento/modules/dashboard_admin/dashboard_admin_module.dart';
 import 'package:congreso_evento/modules/home_congresista/home_congresista_module.dart';
 import 'package:congreso_evento/modules/inscripcion/Inscripcion_module.dart';
 import 'package:congreso_evento/modules/sorteo/sorteo_module.dart';
 import 'package:congreso_evento/modules/talleres/repositories/taller_repository.dart';
-import 'package:congreso_evento/modules/talleres/service/taller_service.dart';
-import 'package:congreso_evento/modules/talleres/services/taller_inscripcion_service.dart';
+import 'package:congreso_evento/modules/talleres/services/taller_inscripto_service.dart';
+import 'package:congreso_evento/modules/talleres/services/taller_service.dart';
 import 'package:congreso_evento/modules/talleres/stores/mis_talleres_store.dart';
 import 'package:congreso_evento/modules/talleres/taller_module.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/trabajo_cientifico_module.dart';
@@ -36,7 +36,7 @@ class AppModule extends Module {
     i.addLazySingleton(TallerRepository.new);
 
     // Mis talleres
-    i.addLazySingleton(TallerInscripcionService.new);
+    i.addLazySingleton(TallerInscriptoService.new);
     i.addLazySingleton(MisTalleresStore.new);
 
     i.addLazySingleton(CheckinService.new);

@@ -1,11 +1,14 @@
 import 'package:congreso_evento/core/date_time_converter.dart';
+import 'package:congreso_evento/modules/auth/models/usuario.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import '../../../core/searcher/models/i_list_tile.dart';
 
 part 'taller.g.dart';
 
 @DateTimeConverter()
 @JsonSerializable()
-class Taller {
+class Taller implements IListTile {
   final int id;
   final String? titulo;
   final String? descripcion;
@@ -15,7 +18,7 @@ class Taller {
   final double? costo;
   final String? flayer;
   final String? contacto;
-  final String? responsable;
+  final Usuario? responsable;
 
   Taller({
     required this.id,
@@ -29,6 +32,12 @@ class Taller {
     required this.contacto,
     required this.responsable,
   });
+
+  @override
+  String get title => titulo ?? '';
+
+  @override
+  String get subTitle => descripcion ?? '';
 
   factory Taller.fromJson(Map<String, dynamic> json) => _$TallerFromJson(json);
   Map<String, dynamic> toJson() => _$TallerToJson(this);

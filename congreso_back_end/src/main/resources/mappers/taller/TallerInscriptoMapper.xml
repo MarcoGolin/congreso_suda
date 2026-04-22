@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="py.com.flextech.mapper.taller.TallerInscriptoMapper">
+
+
+
+	<resultMap id="resultSimples" type="TallerInscripto">
+		<id property="id" column="ID_TALLER_INSCR" />
+		<result property="fecha" column="FECHA" />
+
+		<result property="fechaPago" column="FC_PAGO" />
+		<result property="vlPago" column="VL_PAGO" />
+		<result property="nrComprobante" column="NR_COMPROBANTE" />
+		<result property="usuarioPago" column="USUARIO_PAGO" />
+		<result property="isExonerado" column="BO_EXONERADO" />
+		<result property="isJuntaDirectiva" column="BO_JUNTA_DIRECTIVA" />
+		
+		
+	    <association property="taller" javaType="Taller">
+			<id property="id" column="ID_TALLER" />
+			<result property="titulo" column="TITULO" />
+		</association>
+
+	    <association property="usuario" javaType="Usuario">
+			<id property="id" column="ID_USUARIO" />
+			<result property="nombreCompleto" column="NOMBRE_COMPLETO" />
+			<result property="registroAcademico" column="REGISTRO_ACADEMICO" />
+		</association>
+	</resultMap>
+	
+	<resultMap id="resultCompleto" type="TallerInscripto" extends="resultSimples">
+	</resultMap>
+	
+	
+
+	<sql id="sqlDefault">
+		SELECT 
+		  ti.*,
+		  u.NOMBRE_COMPLETO,
+		  u.REGISTRO_ACADEMICO
+		FROM
+		  tr_taller_inscripto ti 
+		  INNER JOIN sys_usuario u 
+		    ON u.ID_USUARIO = ti.ID_USUARIO 
+		  INNER JOIN tr_taller t 
+		    ON t.ID_TALLER = ti.ID_TALLER 
+	</sql>
+	
+	<select id="consultaParticipantesDelTaller"
+	        resultMap="resultCompleto">
+	  <include refid="sqlDefault"/>
+	  <where>
+	    <if test="idTaller != null">
+	      ti.ID_TALLER = #{idTaller}
+	    </if>
+	  </where>
+	</select>
+
+
+</mapper>

@@ -1117,6 +1117,150 @@ abstract class CongresistaCtrlBase with Store {
       det.setColumnAutoFit(i);
     }
 
+    // ===== Hoja Resumen: Pago/Exonerados =====
+    final shResumen = excel['Resumen Pago-Exonerados'];
+
+    // Headers base
+    final resumenHeaders = <String>[
+      'Usuario ID',
+      'RA',
+      'Nombre Completo',
+      'Es Pago',
+      'Es Exonerado',
+      'Monto Pago',
+      'Fecha Pago',
+      'Total Horas (h:mm)',
+    ];
+
+    // Agrego columnas por día: "D# Asistió" y "D# Horas (h:mm)"
+    final etiquetasResumenDias = <String>[];
+    for (int i = 0; i < diasOrdenados.length; i++) {
+      final d = diasOrdenados[i];
+      final etiqueta = 'D${i + 1} (${DateFormat('dd/MM').format(d)})';
+      etiquetasResumenDias.add(etiqueta);
+      resumenHeaders.addAll(<String>[
+        '$etiqueta Asistió',
+        '$etiqueta Horas (h:mm)',
+      ]);
+    }
+
+    // Pintar headers
+    for (int i = 0; i < resumenHeaders.length; i++) {
+      final cell = shResumen.cell(
+        xl.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0),
+      );
+      cell.value = xl.TextCellValue(resumenHeaders[i]);
+      cell.cellStyle = xl.CellStyle(
+        backgroundColorHex: xl.ExcelColor.fromHexString('#387f4d'),
+        fontColorHex: xl.ExcelColor.fromHexString('#FFFFFF'),
+        bold: true,
+      );
+    }
+
+    final zebraResumen = xl.ExcelColor.fromHexString('#F9FAFB');
+
+    int rrResumen = 1;
+    final usuariosOrdenadosResumen = _ordenarUsuarios(usuarios);
+
+    for (final u in usuariosOrdenadosResumen) {
+      final bool esPago =
+          (u.isPago == true) ||
+          ((u.montoPago ?? 0) > 0) ||
+          (u.fechaPago != null);
+      final bool esExonerado = (u.isExonerado == true);
+
+      // Filtro: incluir solo Pago o Exonerado
+      if (!(esPago || esExonerado)) continue;
+
+      final checks = u.checkin ?? const <Checkin>[];
+      final checksSorted = [...checks]
+        ..sort(
+          (a, b) => (a.fechaRegistro ?? DateTime(1970)).compareTo(
+            b.fechaRegistro ?? DateTime(1970),
+          ),
+        );
+
+      // Calcular total general de minutos sumando por día (solo asistencia)
+      int totalMinutosGeneral = 0;
+
+      // Armar fila base
+      final fila = List<String>.filled(resumenHeaders.length, '');
+      int col(String h) => resumenHeaders.indexOf(h);
+
+      fila[col('Usuario ID')] = u.id?.toString() ?? '';
+      fila[col('RA')] = u.registroAcademico ?? '';
+      fila[col('Nombre Completo')] = u.nombreCompleto ?? '';
+      fila[col('Es Pago')] = esPago ? 'Sí' : 'No';
+      fila[col('Es Exonerado')] = esExonerado ? 'Sí' : 'No';
+      fila[col('Monto Pago')] = (u.montoPago?.toString() ?? '');
+      fila[col('Fecha Pago')] = fmtDT(u.fechaPago);
+
+      // Recorrer días
+      for (int i = 0; i < diasOrdenados.length; i++) {
+        final d = diasOrdenados[i];
+        final etiqueta = etiquetasResumenDias[i];
+
+        // Filtrar lecturas del día
+        final delDia = <Checkin>[];
+        for (final c in checksSorted) {
+          final fr = c.fechaRegistro;
+          if (fr == null) continue;
+          final frDay = DateTime(fr.year, fr.month, fr.day);
+          if (frDay == d) delDia.add(c);
+          if (frDay.isAfter(d)) break;
+        }
+
+        // Solo marcas de asistencia
+        final marcas = <DateTime>[];
+        for (final c in delDia) {
+          if (c.tipo == CheckinTipo.CONGRESO_ASISTENCIA &&
+              c.fechaRegistro != null) {
+            marcas.add(c.fechaRegistro!);
+          }
+        }
+
+        // Dedup + suma por tramos alternados (misma lógica)
+        final marcasDedup = _dedupMarcas(
+          marcas,
+          threshold: const Duration(minutes: 2),
+        );
+        final calc = _sumarTramos(marcasDedup);
+
+        // Asistió si hubo al menos 1 lectura válida
+        final asistio = calc.lecturas > 0;
+
+        // Guardar en columnas del día
+        fila[col('$etiqueta Asistió')] = asistio ? 'Sí' : 'No';
+        fila[col('$etiqueta Horas (h:mm)')] = asistio
+            ? fmtHM(calc.duracion)
+            : '';
+
+        totalMinutosGeneral += calc.duracion.inMinutes;
+      }
+
+      // Total general
+      fila[col('Total Horas (h:mm)')] = fmtHM(
+        Duration(minutes: totalMinutosGeneral),
+      );
+
+      // Escribir la fila
+      for (int c = 0; c < resumenHeaders.length; c++) {
+        final cell = shResumen.cell(
+          xl.CellIndex.indexByColumnRow(columnIndex: c, rowIndex: rrResumen),
+        );
+        cell.value = xl.TextCellValue(fila[c]);
+        if (rrResumen.isOdd) {
+          cell.cellStyle = xl.CellStyle(backgroundColorHex: zebraResumen);
+        }
+      }
+      rrResumen++;
+    }
+
+    // Autofit columnas
+    for (int i = 0; i < resumenHeaders.length; i++) {
+      shResumen.setColumnAutoFit(i);
+    }
+
     // Remover Sheet1
     if (excel.sheets.containsKey('Sheet1')) {
       excel.delete('Sheet1');

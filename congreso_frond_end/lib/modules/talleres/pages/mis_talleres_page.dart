@@ -135,7 +135,7 @@ class _MisTalleresPageState extends State<MisTalleresPage> {
               if (taller.taller.responsable != null)
                 _DetalleRow(
                   label: 'Responsable:',
-                  value: taller.taller.responsable!,
+                  value: taller.taller.responsable?.nombreCompleto ?? '',
                 ),
               if (taller.taller.contacto != null &&
                   taller.taller.contacto!.isNotEmpty)

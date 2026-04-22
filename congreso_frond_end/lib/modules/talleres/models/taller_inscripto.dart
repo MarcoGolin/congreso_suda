@@ -19,6 +19,8 @@ class TallerInscripto {
   final String? usuarioPago;
   final bool? isExonerado;
 
+  final bool? isJuntaDirectiva;
+
   TallerInscripto({
     this.id = 0,
     required this.fecha,
@@ -29,10 +31,37 @@ class TallerInscripto {
     this.nrComprobante,
     this.usuarioPago,
     this.isExonerado,
+    this.isJuntaDirectiva = false,
   });
 
   factory TallerInscripto.fromJson(Map<String, dynamic> json) =>
       _$TallerInscriptoFromJson(json);
 
   Map<String, dynamic> toJson() => _$TallerInscriptoToJson(this);
+
+  TallerInscripto copyWith({
+    int? id,
+    DateTime? fecha,
+    Taller? taller,
+    Usuario? usuario,
+    DateTime? fechaPago,
+    double? vlPago,
+    String? nrComprobante,
+    String? usuarioPago,
+    bool? isExonerado,
+    bool? isJuntaDirectiva,
+  }) {
+    return TallerInscripto(
+      id: id ?? this.id,
+      fecha: fecha ?? this.fecha,
+      taller: taller ?? this.taller,
+      usuario: usuario ?? this.usuario,
+      fechaPago: fechaPago ?? this.fechaPago,
+      vlPago: vlPago ?? this.vlPago,
+      nrComprobante: nrComprobante ?? this.nrComprobante,
+      usuarioPago: usuarioPago ?? this.usuarioPago,
+      isExonerado: isExonerado ?? this.isExonerado,
+      isJuntaDirectiva: isJuntaDirectiva ?? this.isJuntaDirectiva,
+    );
+  }
 }

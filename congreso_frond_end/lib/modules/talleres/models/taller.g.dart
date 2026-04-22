@@ -19,7 +19,9 @@ Taller _$TallerFromJson(Map<String, dynamic> json) => Taller(
   costo: (json['costo'] as num?)?.toDouble(),
   flayer: json['flayer'] as String?,
   contacto: json['contacto'] as String?,
-  responsable: json['responsable'] as String?,
+  responsable: json['responsable'] == null
+      ? null
+      : Usuario.fromJson(json['responsable'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$TallerToJson(Taller instance) => <String, dynamic>{
