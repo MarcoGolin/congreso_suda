@@ -19,6 +19,23 @@ class TallerRepository {
     }
   }
 
+  Future<GenericResponseEntity?> consultaTallerByDescripcion(
+    String descripcion,
+  ) async {
+    try {
+      final response = await api.get(
+        '/taller/consultaPorDescripcion',
+        queryParameters: {'descripcion': descripcion},
+      );
+      GenericResponseEntity? genericResponse = response.data != null
+          ? GenericResponseEntity.fromJson(response.data)
+          : null;
+      return genericResponse;
+    } on Exception catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
+
   Future<GenericResponseEntity?> inscribir({required int idTaller}) async {
     try {
       final response = await api.post(
@@ -59,6 +76,39 @@ class TallerRepository {
         '/tallerInscripto/consultarTalleresPorUsuario',
         // En tu backend uses @RequestAttribute Long idUsuario, así que el ID va en el header/token
         // Los query parameters no son necesarios ya que se obtiene del token
+      );
+      GenericResponseEntity? genericResponse = response.data != null
+          ? GenericResponseEntity.fromJson(response.data)
+          : null;
+      return genericResponse;
+    } on Exception catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
+
+  Future<GenericResponseEntity?> asignarResponsable({
+    required int idTaller,
+    required int? idUsuario,
+  }) async {
+    try {
+      final response = await api.post(
+        '/taller/asignarResponsable',
+        queryParameters: {'idTaller': idTaller, 'idUsuario': idUsuario},
+      );
+      GenericResponseEntity? genericResponse = response.data != null
+          ? GenericResponseEntity.fromJson(response.data)
+          : null;
+      return genericResponse;
+    } on Exception catch (e) {
+      throw RepositoryException.toException(e);
+    }
+  }
+
+  Future<GenericResponseEntity?> consultaTallerById(int idTaller) async {
+    try {
+      final response = await api.get(
+        '/taller/consultaTallerById',
+        queryParameters: {'idTaller': idTaller},
       );
       GenericResponseEntity? genericResponse = response.data != null
           ? GenericResponseEntity.fromJson(response.data)

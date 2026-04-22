@@ -4,12 +4,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -17,6 +20,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import py.com.flextech.model.sistema.Usuario;
+import py.com.flextech.model.sistema.serializer.UsuarioSerializer;
 
 
 @Entity
@@ -54,11 +59,9 @@ public class Taller {
 	@Column(name = "SALA")
 	private String sala;
 
-	@NotNull
 	@Column(name = "COSTO")
 	private BigDecimal costo;
 	
-	@NotNull
 	@Column(name = "FLAYER")
 	private String flayer;
 
@@ -66,13 +69,13 @@ public class Taller {
 	@Column(name = "BO_ACTIVO")
 	private Boolean isActivo;
 	
-	@NotNull
 	@Column(name = "CONTACTO")
 	private String contacto;
 
-	@NotNull
-	@Column(name = "RESPONSABLE")
-	private String responsable;
+	@JsonSerialize(using = UsuarioSerializer.class)
+	@ManyToOne
+	@JoinColumn(name = "ID_RESPONSABLE", referencedColumnName = "ID_USUARIO")
+	private Usuario responsable;
 	
 	@JsonIgnore
 	public Taller(Long id) {

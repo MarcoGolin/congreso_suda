@@ -8,11 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import py.com.flextech.model.dto.GenericResponseEntity;
-import py.com.flextech.model.organizadores.Organizadores;
 import py.com.flextech.model.sistema.Parametro;
+import py.com.flextech.model.sistema.Usuario;
 import py.com.flextech.model.taller.Taller;
-import py.com.flextech.repository.organizadores.OrganizadoresRepository;
 import py.com.flextech.repository.sistema.ParametroRepository;
+import py.com.flextech.repository.sistema.UsuarioRepository;
 import py.com.flextech.repository.taller.TallerRepository;
 
 
@@ -22,6 +22,7 @@ import py.com.flextech.repository.taller.TallerRepository;
 public class TallerService {
 	
 	private final TallerRepository repository;
+	private final UsuarioRepository usuarioRepository;
 	private final ParametroRepository parametroRepository;
 	
 	
@@ -34,5 +35,34 @@ public class TallerService {
 		}
 	    return new GenericResponseEntity<List<Taller>>("Consulta con Éxito!", 200, list);
 	}
+	
+	public GenericResponseEntity<List<Taller>> consultaPorDescripcion(String descripcion) {
+		List<Taller> list = new ArrayList<>();
+		list = repository.findAll();
+	    return new GenericResponseEntity<List<Taller>>("Consulta con Éxito!", 200, list);
+	}
+
+	public GenericResponseEntity<?> asignarResponsable(Long idUsuario, Long idTaller) {
+		Taller taller = repository.findById(idTaller).get();
+		if(idUsuario != null) {
+			taller.setResponsable(new Usuario(idUsuario));
+			Usuario u = usuarioRepository.findById(idUsuario).get();
+			u.setIsStaff(true);
+			u = usuarioRepository.save(u);
+		}else {
+			taller.setResponsable(null);
+		}
+		taller = repository.save(taller);
+		
+		return new GenericResponseEntity<Taller>("Guardo con Éxito!", 200, taller);
+	}
+
+	public GenericResponseEntity<Taller> consultaTallerById(Long idTaller) {
+		Taller taller = repository.findById(idTaller).get();
+		return new GenericResponseEntity<Taller>("Consulto con Éxito!", 200, taller);
+	}
+	
+	
+	
 	
 }

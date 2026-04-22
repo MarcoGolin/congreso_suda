@@ -1,5 +1,5 @@
 import 'package:congreso_evento/modules/talleres/models/taller_inscripto.dart';
-import 'package:congreso_evento/modules/talleres/services/taller_inscripcion_service.dart';
+import 'package:congreso_evento/modules/talleres/services/taller_inscripto_service.dart';
 import 'package:mobx/mobx.dart';
 
 part 'mis_talleres_store.g.dart';
@@ -7,7 +7,7 @@ part 'mis_talleres_store.g.dart';
 class MisTalleresStore = MisTalleresStoreBase with _$MisTalleresStore;
 
 abstract class MisTalleresStoreBase with Store {
-  final TallerInscripcionService service;
+  final TallerInscriptoService service;
 
   MisTalleresStoreBase(this.service);
 

@@ -1,5 +1,6 @@
 import 'package:congreso_evento/core/date_time_converter.dart';
-import 'package:congreso_evento/core/i_simple_list_tile.dart';
+import 'package:congreso_evento/core/searcher/models/i_list_tile.dart';
+import 'package:congreso_evento/modules/talleres/models/taller.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../checkin/models/checkin.dart';
@@ -8,7 +9,7 @@ part 'usuario.g.dart';
 
 @DateTimeConverter()
 @JsonSerializable()
-class Usuario implements ISimpleListTile {
+class Usuario implements IListTile {
   int? id;
   DateTime? fechaRegistro;
   String? nombreCompleto;
@@ -46,6 +47,8 @@ class Usuario implements ISimpleListTile {
 
   List<Checkin>? checkin;
 
+  List<Taller>? talleresAsignados;
+
   Usuario({
     this.id,
     this.nombreCompleto,
@@ -75,9 +78,13 @@ class Usuario implements ISimpleListTile {
     this.isAudioVisual = false,
     this.isCheckIn = false,
     this.checkin,
+    this.talleresAsignados,
   });
   @override
-  String get title => nombreCompleto ?? 'No Name';
+  String get title => nombreCompleto ?? '';
+
+  @override
+  String get subTitle => registroAcademico ?? '';
 
   factory Usuario.fromJson(Map<String, dynamic> json) =>
       _$UsuarioFromJson(json);
@@ -135,6 +142,7 @@ class Usuario implements ISimpleListTile {
     bool? isAudioVisual,
     bool? isCheckIn,
     List<Checkin>? checkin,
+    List<Taller>? talleresAsignados,
   }) {
     return Usuario(
       id: id ?? this.id,
@@ -165,6 +173,7 @@ class Usuario implements ISimpleListTile {
       isAudioVisual: isAudioVisual ?? this.isAudioVisual,
       isCheckIn: isCheckIn ?? this.isCheckIn,
       checkin: checkin ?? this.checkin,
+      talleresAsignados: talleresAsignados ?? this.talleresAsignados,
     );
   }
 }

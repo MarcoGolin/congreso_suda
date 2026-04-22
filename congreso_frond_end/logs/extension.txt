@@ -1,469 +1,505 @@
 !! ⚠️ PLEASE REVIEW THIS LOG FOR SENSITIVE INFORMATION BEFORE SHARING ⚠️ !!
-Dart Code extension: 3.120.1
-Flutter extension: 3.120.0 (not activated)
+Dart Code extension: 3.122.0
+Flutter extension: 3.122.0 (not activated)
 
 App: Visual Studio Code
 App Host: desktop
-Version: win 1.105.1
+Version: win 1.106.0
 
 
 Logging Categories:
     General
 
-Tue Oct 28 2025 [20:26:55 GMT-0300 (Paraguay Standard Time)] Log file started
-[8:26:55 PM] [General] [Info] Searching for SDKs...
-[8:26:55 PM] [General] [Info] Environment PATH:
-[8:26:55 PM] [General] [Info]     E:\SDK\PYTHON\Scripts\
-[8:26:55 PM] [General] [Info]     E:\SDK\PYTHON\
-[8:26:55 PM] [General] [Info]     E:\IDE\eclipse\bin
-[8:26:55 PM] [General] [Info]     %LOCALAPPDATA%\Pub\Cache\bin
-[8:26:55 PM] [General] [Info]     C:\Python311\Scripts\
-[8:26:55 PM] [General] [Info]     C:\Python311\
-[8:26:55 PM] [General] [Info]     C:\Program Files\Python310\Scripts\
-[8:26:55 PM] [General] [Info]     C:\Program Files\Python310\
-[8:26:55 PM] [General] [Info]     C:\Windows\system32
-[8:26:55 PM] [General] [Info]     C:\Windows
-[8:26:55 PM] [General] [Info]     C:\Windows\System32\Wbem
-[8:26:55 PM] [General] [Info]     C:\Windows\System32\WindowsPowerShell\v1.0\
-[8:26:55 PM] [General] [Info]     C:\Windows\System32\OpenSSH\
-[8:26:55 PM] [General] [Info]     C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL
-[8:26:55 PM] [General] [Info]     C:\Program Files\Intel\Intel(R) Management Engine Components\DAL
-[8:26:55 PM] [General] [Info]     C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common
-[8:26:55 PM] [General] [Info]     C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR
-[8:26:55 PM] [General] [Info]     C:\Program Files\Git\cmd
-[8:26:55 PM] [General] [Info]     C:\ProgramData\chocolatey\bin
-[8:26:55 PM] [General] [Info]     C:\Users\user\AppData\Roaming\npm
-[8:26:55 PM] [General] [Info]     C:\WINDOWS\system32
-[8:26:55 PM] [General] [Info]     C:\WINDOWS
-[8:26:55 PM] [General] [Info]     C:\WINDOWS\System32\Wbem
-[8:26:55 PM] [General] [Info]     C:\WINDOWS\System32\WindowsPowerShell\v1.0\
-[8:26:55 PM] [General] [Info]     C:\WINDOWS\System32\OpenSSH\
-[8:26:55 PM] [General] [Info]     E:\SDK\ANDROID\platform-tools
-[8:26:55 PM] [General] [Info]     C:\Program Files (x86)\Certbot\bin
-[8:26:55 PM] [General] [Info]     C:\Program Files (x86)\dotnet\
-[8:26:55 PM] [General] [Info]     C:\Program Files\OpenSSL\bin
-[8:26:55 PM] [General] [Info]     E:\SDK\nuget
-[8:26:55 PM] [General] [Info]     E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm
-[8:26:55 PM] [General] [Info]     E:\SDK\DART\bin
-[8:26:55 PM] [General] [Info]     E:\SDK\JAVA_17\bin
-[8:26:55 PM] [General] [Info]     C:\Users\user\AppData\Local\Pub\Cache\bin
-[8:26:55 PM] [General] [Info]     C:\Program Files\MySQL\MySQL Server 8.0\bin
-[8:26:55 PM] [General] [Info]     C:\Program Files\PuTTY\
-[8:26:55 PM] [General] [Info]     C:\Program Files\TortoiseGit\bin
-[8:26:55 PM] [General] [Info]     C:\Program Files\TortoiseSVN\bin
-[8:26:55 PM] [General] [Info]     E:\SDK\NODE\
-[8:26:55 PM] [General] [Info]     C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\
-[8:26:55 PM] [General] [Info]     E:\SDK\PYTHON\Scripts\
-[8:26:55 PM] [General] [Info]     E:\SDK\PYTHON\
-[8:26:55 PM] [General] [Info]     E:\IDE\eclipse\bin
-[8:26:55 PM] [General] [Info]     C:\Users\user\AppData\Local\Pub\Cache\bin
-[8:26:55 PM] [General] [Info]     C:\Python311\Scripts\
-[8:26:55 PM] [General] [Info]     C:\Python311\
-[8:26:55 PM] [General] [Info]     C:\Program Files\Python310\Scripts\
-[8:26:55 PM] [General] [Info]     C:\Program Files\Python310\
-[8:26:55 PM] [General] [Info]     C:\Windows\system32
-[8:26:55 PM] [General] [Info]     C:\Windows
-[8:26:55 PM] [General] [Info]     C:\Windows\System32\Wbem
-[8:26:55 PM] [General] [Info]     C:\Windows\System32\WindowsPowerShell\v1.0\
-[8:26:55 PM] [General] [Info]     C:\Windows\System32\OpenSSH\
-[8:26:55 PM] [General] [Info]     C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL
-[8:26:55 PM] [General] [Info]     C:\Program Files\Intel\Intel(R) Management Engine Components\DAL
-[8:26:55 PM] [General] [Info]     C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common
-[8:26:55 PM] [General] [Info]     C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR
-[8:26:55 PM] [General] [Info]     C:\Program Files\Git\cmd
-[8:26:55 PM] [General] [Info]     C:\ProgramData\chocolatey\bin
-[8:26:55 PM] [General] [Info]     C:\Users\user\AppData\Roaming\npm
-[8:26:55 PM] [General] [Info]     C:\WINDOWS\system32
-[8:26:55 PM] [General] [Info]     C:\WINDOWS
-[8:26:55 PM] [General] [Info]     C:\WINDOWS\System32\Wbem
-[8:26:55 PM] [General] [Info]     C:\WINDOWS\System32\WindowsPowerShell\v1.0\
-[8:26:55 PM] [General] [Info]     C:\WINDOWS\System32\OpenSSH\
-[8:26:55 PM] [General] [Info]     E:\SDK\ANDROID\platform-tools
-[8:26:55 PM] [General] [Info]     C:\Program Files (x86)\Certbot\bin
-[8:26:55 PM] [General] [Info]     C:\Program Files (x86)\dotnet\
-[8:26:55 PM] [General] [Info]     C:\Program Files\OpenSSL\bin
-[8:26:55 PM] [General] [Info]     E:\SDK\nuget
-[8:26:55 PM] [General] [Info]     C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\
-[8:26:55 PM] [General] [Info]     E:\SDK\FVM\fvm-3.0.0-beta.5-wi
-[8:27:00 PM] [General] [Info] Took 4954ms to search for 1 projects (5 levels)
-[8:27:00 PM] [General] [Info]     Found projects:
-[8:27:00 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end
-[8:27:00 PM] [General] [Info] Took 30ms to filter out excluded projects (0 exclusion rules). 1 projects remain.
-[8:27:00 PM] [General] [Info] Found Flutter project at D:\GitHub\congreso\congreso_frond_end (Pubspec? true, Mobile? true, Create Trigger? false, Flutter Repo? false)
-[8:27:00 PM] [General] [Info] Searching for flutter.bat
-[8:27:00 PM] [General] [Info]     Looking for flutter.bat in:
-[8:27:00 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end
-[8:27:00 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end -> D:\GitHub\congreso\congreso_frond_end\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\
-[8:27:00 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end\.flutter
-[8:27:00 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end\.flutter -> D:\GitHub\congreso\congreso_frond_end\.flutter\bin
-[8:27:00 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end\vendor\flutter
-[8:27:00 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end\vendor\flutter -> D:\GitHub\congreso\congreso_frond_end\vendor\flutter\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\ -> E:\SDK\PYTHON\Scripts\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\ -> E:\SDK\PYTHON\bin
-[8:27:00 PM] [General] [Info]         E:\IDE\eclipse\bin
-[8:27:00 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end\%LOCALAPPDATA%\Pub\Cache\bin
-[8:27:00 PM] [General] [Info]         C:\Python311\Scripts\
-[8:27:00 PM] [General] [Info]         C:\Python311\Scripts\ -> C:\Python311\Scripts\bin
-[8:27:00 PM] [General] [Info]         C:\Python311\
-[8:27:00 PM] [General] [Info]         C:\Python311\ -> C:\Python311\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\Scripts\
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\Scripts\ -> C:\Program Files\Python310\Scripts\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\ -> C:\Program Files\Python310\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\system32
-[8:27:00 PM] [General] [Info]         C:\Windows\system32 -> C:\Windows\system32\bin
-[8:27:00 PM] [General] [Info]         C:\Windows
-[8:27:00 PM] [General] [Info]         C:\Windows -> C:\Windows\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\Wbem
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\Wbem -> C:\Windows\System32\Wbem\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\ -> C:\Windows\System32\WindowsPowerShell\v1.0\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\OpenSSH\
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\OpenSSH\ -> C:\Windows\System32\OpenSSH\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL
-[8:27:00 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files\Intel\Intel(R) Management Engine Components\DAL\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common -> C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR
-[8:27:00 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR -> C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Git\cmd
-[8:27:00 PM] [General] [Info]         C:\Program Files\Git\cmd -> C:\Program Files\Git\cmd\bin
-[8:27:00 PM] [General] [Info]         C:\ProgramData\chocolatey\bin
-[8:27:00 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm
-[8:27:00 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm -> C:\Users\user\AppData\Roaming\npm\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\system32
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\system32 -> C:\WINDOWS\system32\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS
-[8:27:00 PM] [General] [Info]         C:\WINDOWS -> C:\WINDOWS\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\Wbem
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\Wbem -> C:\WINDOWS\System32\Wbem\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\ -> C:\WINDOWS\System32\WindowsPowerShell\v1.0\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\ -> C:\WINDOWS\System32\OpenSSH\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools
-[8:27:00 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools -> E:\SDK\ANDROID\platform-tools\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Certbot\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\dotnet\
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\dotnet\ -> C:\Program Files (x86)\dotnet\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\OpenSSL\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\nuget
-[8:27:00 PM] [General] [Info]         E:\SDK\nuget -> E:\SDK\nuget\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm -> E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\DART\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\JAVA_17\bin
-[8:27:00 PM] [General] [Info]         C:\Users\user\AppData\Local\Pub\Cache\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\MySQL\MySQL Server 8.0\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\PuTTY\
-[8:27:00 PM] [General] [Info]         C:\Program Files\PuTTY\ -> C:\Program Files\PuTTY\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\TortoiseGit\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\TortoiseSVN\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\NODE\
-[8:27:00 PM] [General] [Info]         E:\SDK\NODE\ -> E:\SDK\NODE\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\ -> C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\ -> E:\SDK\PYTHON\Scripts\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\ -> E:\SDK\PYTHON\bin
-[8:27:00 PM] [General] [Info]         E:\IDE\eclipse\bin
-[8:27:00 PM] [General] [Info]         C:\Users\user\AppData\Local\Pub\Cache\bin
-[8:27:00 PM] [General] [Info]         C:\Python311\Scripts\
-[8:27:00 PM] [General] [Info]         C:\Python311\Scripts\ -> C:\Python311\Scripts\bin
-[8:27:00 PM] [General] [Info]         C:\Python311\
-[8:27:00 PM] [General] [Info]         C:\Python311\ -> C:\Python311\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\Scripts\
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\Scripts\ -> C:\Program Files\Python310\Scripts\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\ -> C:\Program Files\Python310\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\system32
-[8:27:00 PM] [General] [Info]         C:\Windows\system32 -> C:\Windows\system32\bin
-[8:27:00 PM] [General] [Info]         C:\Windows
-[8:27:00 PM] [General] [Info]         C:\Windows -> C:\Windows\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\Wbem
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\Wbem -> C:\Windows\System32\Wbem\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\ -> C:\Windows\System32\WindowsPowerShell\v1.0\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\OpenSSH\
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\OpenSSH\ -> C:\Windows\System32\OpenSSH\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL
-[8:27:00 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files\Intel\Intel(R) Management Engine Components\DAL\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common -> C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR
-[8:27:00 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR -> C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Git\cmd
-[8:27:00 PM] [General] [Info]         C:\Program Files\Git\cmd -> C:\Program Files\Git\cmd\bin
-[8:27:00 PM] [General] [Info]         C:\ProgramData\chocolatey\bin
-[8:27:00 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm
-[8:27:00 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm -> C:\Users\user\AppData\Roaming\npm\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\system32
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\system32 -> C:\WINDOWS\system32\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS
-[8:27:00 PM] [General] [Info]         C:\WINDOWS -> C:\WINDOWS\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\Wbem
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\Wbem -> C:\WINDOWS\System32\Wbem\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\ -> C:\WINDOWS\System32\WindowsPowerShell\v1.0\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\ -> C:\WINDOWS\System32\OpenSSH\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools
-[8:27:00 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools -> E:\SDK\ANDROID\platform-tools\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Certbot\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\dotnet\
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\dotnet\ -> C:\Program Files (x86)\dotnet\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\OpenSSL\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\nuget
-[8:27:00 PM] [General] [Info]         E:\SDK\nuget -> E:\SDK\nuget\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\ -> C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-wi
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-wi -> E:\SDK\FVM\fvm-3.0.0-beta.5-wi\bin
-[8:27:00 PM] [General] [Info]         C:\Users\user\flutter-sdk
-[8:27:00 PM] [General] [Info]         C:\Users\user\flutter-sdk -> C:\Users\user\flutter-sdk\bin
-[8:27:00 PM] [General] [Info]         /google/flutter
-[8:27:00 PM] [General] [Info]         /google/flutter -> \google\flutter\bin
-[8:27:00 PM] [General] [Info]         /opt/flutter
-[8:27:00 PM] [General] [Info]         /opt/flutter -> \opt\flutter\bin
-[8:27:00 PM] [General] [Info]     Found at:
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\
-[8:27:00 PM] [General] [Info]     Candidate paths to be post-filtered:
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\ -> E:\SDK\FVM\versions\3.35.2
-[8:27:00 PM] [General] [Info]     Found at E:\SDK\FVM\versions\3.35.2\bin\ -> E:\SDK\FVM\versions\3.35.2
-[8:27:00 PM] [General] [Info]     Returning SDK path E:\SDK\FVM\versions\3.35.2 for flutter.bat
-[8:27:00 PM] [General] [Info] Searching for dart.exe
-[8:27:00 PM] [General] [Info]     Looking for dart.exe in:
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk -> E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\FLUTTER\dev\tools\dart-sdk
-[8:27:00 PM] [General] [Info]         E:\SDK\FLUTTER\dev\tools\dart-sdk -> E:\SDK\FLUTTER\dev\tools\dart-sdk\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\ -> E:\SDK\PYTHON\Scripts\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\ -> E:\SDK\PYTHON\bin
-[8:27:00 PM] [General] [Info]         E:\IDE\eclipse\bin
-[8:27:00 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end\%LOCALAPPDATA%\Pub\Cache\bin
-[8:27:00 PM] [General] [Info]         C:\Python311\Scripts\
-[8:27:00 PM] [General] [Info]         C:\Python311\Scripts\ -> C:\Python311\Scripts\bin
-[8:27:00 PM] [General] [Info]         C:\Python311\
-[8:27:00 PM] [General] [Info]         C:\Python311\ -> C:\Python311\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\Scripts\
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\Scripts\ -> C:\Program Files\Python310\Scripts\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\ -> C:\Program Files\Python310\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\system32
-[8:27:00 PM] [General] [Info]         C:\Windows\system32 -> C:\Windows\system32\bin
-[8:27:00 PM] [General] [Info]         C:\Windows
-[8:27:00 PM] [General] [Info]         C:\Windows -> C:\Windows\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\Wbem
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\Wbem -> C:\Windows\System32\Wbem\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\ -> C:\Windows\System32\WindowsPowerShell\v1.0\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\OpenSSH\
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\OpenSSH\ -> C:\Windows\System32\OpenSSH\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL
-[8:27:00 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files\Intel\Intel(R) Management Engine Components\DAL\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common -> C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR
-[8:27:00 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR -> C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Git\cmd
-[8:27:00 PM] [General] [Info]         C:\Program Files\Git\cmd -> C:\Program Files\Git\cmd\bin
-[8:27:00 PM] [General] [Info]         C:\ProgramData\chocolatey\bin
-[8:27:00 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm
-[8:27:00 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm -> C:\Users\user\AppData\Roaming\npm\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\system32
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\system32 -> C:\WINDOWS\system32\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS
-[8:27:00 PM] [General] [Info]         C:\WINDOWS -> C:\WINDOWS\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\Wbem
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\Wbem -> C:\WINDOWS\System32\Wbem\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\ -> C:\WINDOWS\System32\WindowsPowerShell\v1.0\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\ -> C:\WINDOWS\System32\OpenSSH\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools
-[8:27:00 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools -> E:\SDK\ANDROID\platform-tools\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Certbot\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\dotnet\
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\dotnet\ -> C:\Program Files (x86)\dotnet\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\OpenSSL\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\nuget
-[8:27:00 PM] [General] [Info]         E:\SDK\nuget -> E:\SDK\nuget\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm -> E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\DART\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\JAVA_17\bin
-[8:27:00 PM] [General] [Info]         C:\Users\user\AppData\Local\Pub\Cache\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\MySQL\MySQL Server 8.0\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\PuTTY\
-[8:27:00 PM] [General] [Info]         C:\Program Files\PuTTY\ -> C:\Program Files\PuTTY\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\TortoiseGit\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\TortoiseSVN\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\NODE\
-[8:27:00 PM] [General] [Info]         E:\SDK\NODE\ -> E:\SDK\NODE\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\ -> C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\ -> E:\SDK\PYTHON\Scripts\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\
-[8:27:00 PM] [General] [Info]         E:\SDK\PYTHON\ -> E:\SDK\PYTHON\bin
-[8:27:00 PM] [General] [Info]         E:\IDE\eclipse\bin
-[8:27:00 PM] [General] [Info]         C:\Users\user\AppData\Local\Pub\Cache\bin
-[8:27:00 PM] [General] [Info]         C:\Python311\Scripts\
-[8:27:00 PM] [General] [Info]         C:\Python311\Scripts\ -> C:\Python311\Scripts\bin
-[8:27:00 PM] [General] [Info]         C:\Python311\
-[8:27:00 PM] [General] [Info]         C:\Python311\ -> C:\Python311\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\Scripts\
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\Scripts\ -> C:\Program Files\Python310\Scripts\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\
-[8:27:00 PM] [General] [Info]         C:\Program Files\Python310\ -> C:\Program Files\Python310\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\system32
-[8:27:00 PM] [General] [Info]         C:\Windows\system32 -> C:\Windows\system32\bin
-[8:27:00 PM] [General] [Info]         C:\Windows
-[8:27:00 PM] [General] [Info]         C:\Windows -> C:\Windows\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\Wbem
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\Wbem -> C:\Windows\System32\Wbem\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\ -> C:\Windows\System32\WindowsPowerShell\v1.0\bin
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\OpenSSH\
-[8:27:00 PM] [General] [Info]         C:\Windows\System32\OpenSSH\ -> C:\Windows\System32\OpenSSH\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL
-[8:27:00 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files\Intel\Intel(R) Management Engine Components\DAL\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common -> C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR
-[8:27:00 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR -> C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\Git\cmd
-[8:27:00 PM] [General] [Info]         C:\Program Files\Git\cmd -> C:\Program Files\Git\cmd\bin
-[8:27:00 PM] [General] [Info]         C:\ProgramData\chocolatey\bin
-[8:27:00 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm
-[8:27:00 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm -> C:\Users\user\AppData\Roaming\npm\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\system32
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\system32 -> C:\WINDOWS\system32\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS
-[8:27:00 PM] [General] [Info]         C:\WINDOWS -> C:\WINDOWS\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\Wbem
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\Wbem -> C:\WINDOWS\System32\Wbem\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\ -> C:\WINDOWS\System32\WindowsPowerShell\v1.0\bin
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\
-[8:27:00 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\ -> C:\WINDOWS\System32\OpenSSH\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools
-[8:27:00 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools -> E:\SDK\ANDROID\platform-tools\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Certbot\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\dotnet\
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\dotnet\ -> C:\Program Files (x86)\dotnet\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files\OpenSSL\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\nuget
-[8:27:00 PM] [General] [Info]         E:\SDK\nuget -> E:\SDK\nuget\bin
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\
-[8:27:00 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\ -> C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-wi
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-wi -> E:\SDK\FVM\fvm-3.0.0-beta.5-wi\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk -> E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk\bin
-[8:27:00 PM] [General] [Info]     Found at:
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk -> E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\DART\bin
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk -> E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk\bin
-[8:27:00 PM] [General] [Info]     Candidate paths to be post-filtered:
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk
-[8:27:00 PM] [General] [Info]         E:\SDK\DART\bin -> E:\SDK\DART
-[8:27:00 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk
-[8:27:00 PM] [General] [Info]     Found at E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk
-[8:27:00 PM] [General] [Info]     Returning SDK path E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk for dart.exe
-[8:27:00 PM] [General] [Info] Experiment random number is 43 for experiment 'sdkDaps'. Experiment is enabled for <= 100
-[8:27:00 PM] [General] [Info] Experiment 'sdkDaps' is activating (not first time)
-[8:27:00 PM] [General] [Info] Experiment random number is 43 for experiment 'sdkDaps'. Experiment is enabled for <= 100
-[8:27:00 PM] [General] [Info] Experiment 'sdkDaps' is activating (not first time)
-[8:27:00 PM] [General] [Info] Experiment random number is 43 for experiment 'sdkDaps'. Experiment is enabled for <= 10
-[8:27:00 PM] [General] [Info] Experiment 'sdkDaps' does not apply and will not be activated
-[8:27:00 PM] [General] [Info] !! ⚠️ PLEASE REVIEW THIS LOG FOR SENSITIVE INFORMATION BEFORE SHARING ⚠️ !!
-Dart Code extension: 3.120.1
-Flutter extension: 3.120.0 (not activated)
+Thu Nov 13 2025 [20:05:24 GMT-0300 (Paraguay Standard Time)] Log file started
+[8:05:24 PM] [General] [Info] Searching for SDKs...
+[8:05:24 PM] [General] [Info] Environment PATH:
+[8:05:24 PM] [General] [Info]     E:\SDK\PYTHON\Scripts\
+[8:05:24 PM] [General] [Info]     E:\SDK\PYTHON\
+[8:05:24 PM] [General] [Info]     E:\IDE\eclipse\bin
+[8:05:24 PM] [General] [Info]     %LOCALAPPDATA%\Pub\Cache\bin
+[8:05:24 PM] [General] [Info]     C:\Python311\Scripts\
+[8:05:24 PM] [General] [Info]     C:\Python311\
+[8:05:24 PM] [General] [Info]     C:\Program Files\Python310\Scripts\
+[8:05:24 PM] [General] [Info]     C:\Program Files\Python310\
+[8:05:24 PM] [General] [Info]     C:\Windows\system32
+[8:05:24 PM] [General] [Info]     C:\Windows
+[8:05:24 PM] [General] [Info]     C:\Windows\System32\Wbem
+[8:05:24 PM] [General] [Info]     C:\Windows\System32\WindowsPowerShell\v1.0\
+[8:05:24 PM] [General] [Info]     C:\Windows\System32\OpenSSH\
+[8:05:24 PM] [General] [Info]     C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL
+[8:05:24 PM] [General] [Info]     C:\Program Files\Intel\Intel(R) Management Engine Components\DAL
+[8:05:24 PM] [General] [Info]     C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common
+[8:05:24 PM] [General] [Info]     C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR
+[8:05:24 PM] [General] [Info]     C:\Program Files\Git\cmd
+[8:05:24 PM] [General] [Info]     C:\ProgramData\chocolatey\bin
+[8:05:24 PM] [General] [Info]     C:\Users\user\AppData\Roaming\npm
+[8:05:24 PM] [General] [Info]     C:\WINDOWS\system32
+[8:05:24 PM] [General] [Info]     C:\WINDOWS
+[8:05:24 PM] [General] [Info]     C:\WINDOWS\System32\Wbem
+[8:05:24 PM] [General] [Info]     C:\WINDOWS\System32\WindowsPowerShell\v1.0\
+[8:05:24 PM] [General] [Info]     C:\WINDOWS\System32\OpenSSH\
+[8:05:24 PM] [General] [Info]     E:\SDK\ANDROID\platform-tools
+[8:05:24 PM] [General] [Info]     C:\Program Files (x86)\Certbot\bin
+[8:05:24 PM] [General] [Info]     C:\Program Files (x86)\dotnet\
+[8:05:24 PM] [General] [Info]     C:\Program Files\OpenSSL\bin
+[8:05:24 PM] [General] [Info]     E:\SDK\nuget
+[8:05:24 PM] [General] [Info]     E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm
+[8:05:24 PM] [General] [Info]     E:\SDK\DART\bin
+[8:05:24 PM] [General] [Info]     E:\SDK\JAVA_17\bin
+[8:05:24 PM] [General] [Info]     C:\Users\user\AppData\Local\Pub\Cache\bin
+[8:05:24 PM] [General] [Info]     C:\Program Files\MySQL\MySQL Server 8.0\bin
+[8:05:24 PM] [General] [Info]     C:\Program Files\PuTTY\
+[8:05:24 PM] [General] [Info]     C:\Program Files\TortoiseGit\bin
+[8:05:24 PM] [General] [Info]     C:\Program Files\TortoiseSVN\bin
+[8:05:24 PM] [General] [Info]     E:\SDK\NODE\
+[8:05:24 PM] [General] [Info]     C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\
+[8:05:24 PM] [General] [Info]     E:\SDK\FVM\default\bin
+[8:05:24 PM] [General] [Info]     E:\SDK\PYTHON\Scripts\
+[8:05:24 PM] [General] [Info]     E:\SDK\PYTHON\
+[8:05:24 PM] [General] [Info]     E:\IDE\eclipse\bin
+[8:05:24 PM] [General] [Info]     C:\Users\user\AppData\Local\Pub\Cache\bin
+[8:05:24 PM] [General] [Info]     C:\Python311\Scripts\
+[8:05:24 PM] [General] [Info]     C:\Python311\
+[8:05:24 PM] [General] [Info]     C:\Program Files\Python310\Scripts\
+[8:05:24 PM] [General] [Info]     C:\Program Files\Python310\
+[8:05:24 PM] [General] [Info]     C:\Windows\system32
+[8:05:24 PM] [General] [Info]     C:\Windows
+[8:05:24 PM] [General] [Info]     C:\Windows\System32\Wbem
+[8:05:24 PM] [General] [Info]     C:\Windows\System32\WindowsPowerShell\v1.0\
+[8:05:24 PM] [General] [Info]     C:\Windows\System32\OpenSSH\
+[8:05:24 PM] [General] [Info]     C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL
+[8:05:24 PM] [General] [Info]     C:\Program Files\Intel\Intel(R) Management Engine Components\DAL
+[8:05:24 PM] [General] [Info]     C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common
+[8:05:24 PM] [General] [Info]     C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR
+[8:05:24 PM] [General] [Info]     C:\Program Files\Git\cmd
+[8:05:24 PM] [General] [Info]     C:\ProgramData\chocolatey\bin
+[8:05:24 PM] [General] [Info]     C:\Users\user\AppData\Roaming\npm
+[8:05:24 PM] [General] [Info]     C:\WINDOWS\system32
+[8:05:24 PM] [General] [Info]     C:\WINDOWS
+[8:05:24 PM] [General] [Info]     C:\WINDOWS\System32\Wbem
+[8:05:24 PM] [General] [Info]     C:\WINDOWS\System32\WindowsPowerShell\v1.0\
+[8:05:24 PM] [General] [Info]     C:\WINDOWS\System32\OpenSSH\
+[8:05:24 PM] [General] [Info]     E:\SDK\ANDROID\platform-tools
+[8:05:24 PM] [General] [Info]     C:\Program Files (x86)\Certbot\bin
+[8:05:24 PM] [General] [Info]     C:\Program Files (x86)\dotnet\
+[8:05:24 PM] [General] [Info]     C:\Program Files\OpenSSL\bin
+[8:05:24 PM] [General] [Info]     E:\SDK\nuget
+[8:05:24 PM] [General] [Info]     E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm
+[8:05:24 PM] [General] [Info]     E:\SDK\JAVA_17\bin
+[8:05:24 PM] [General] [Info]     C:\Users\user\AppData\Local\Pub\Cache\bin
+[8:05:24 PM] [General] [Info]     C:\Program Files\MySQL\MySQL Server 8.0\bin
+[8:05:24 PM] [General] [Info]     C:\Program Files\PuTTY\
+[8:05:24 PM] [General] [Info]     C:\Program Files\TortoiseGit\bin
+[8:05:24 PM] [General] [Info]     C:\Program Files\TortoiseSVN\bin
+[8:05:24 PM] [General] [Info]     E:\SDK\NODE\
+[8:05:24 PM] [General] [Info]     C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\
+[8:05:24 PM] [General] [Info]     E:\SDK\FVM\fvm-3.0.0-beta.5-wi
+[8:05:24 PM] [General] [Info]     C:\Users\user\AppData\Local\GitHubDesktop\bin
+[8:05:24 PM] [General] [Info]     C:\Users\user\AppData\Local\Programs\Microsoft VS Code\bin
+[8:05:24 PM] [General] [Info]     E:\Pub\Cache\bin
+[8:05:45 PM] [General] [Info] Took 20651ms to search for 1 projects (5 levels)
+[8:05:45 PM] [General] [Info]     Found projects:
+[8:05:45 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end
+[8:05:45 PM] [General] [Info] Took 32ms to filter out excluded projects (0 exclusion rules). 1 projects remain.
+[8:05:45 PM] [General] [Info] Found Flutter project at D:\GitHub\congreso\congreso_frond_end (Pubspec? true, Mobile? true, Create Trigger? false, Flutter Repo? false)
+[8:05:45 PM] [General] [Info] Searching for flutter.bat
+[8:05:45 PM] [General] [Info]     Looking for flutter.bat in:
+[8:05:45 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end
+[8:05:45 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end -> D:\GitHub\congreso\congreso_frond_end\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\
+[8:05:45 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end\.flutter
+[8:05:45 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end\.flutter -> D:\GitHub\congreso\congreso_frond_end\.flutter\bin
+[8:05:45 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end\vendor\flutter
+[8:05:45 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end\vendor\flutter -> D:\GitHub\congreso\congreso_frond_end\vendor\flutter\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\ -> E:\SDK\PYTHON\Scripts\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\ -> E:\SDK\PYTHON\bin
+[8:05:45 PM] [General] [Info]         E:\IDE\eclipse\bin
+[8:05:45 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end\%LOCALAPPDATA%\Pub\Cache\bin
+[8:05:45 PM] [General] [Info]         C:\Python311\Scripts\
+[8:05:45 PM] [General] [Info]         C:\Python311\Scripts\ -> C:\Python311\Scripts\bin
+[8:05:45 PM] [General] [Info]         C:\Python311\
+[8:05:45 PM] [General] [Info]         C:\Python311\ -> C:\Python311\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\Scripts\
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\Scripts\ -> C:\Program Files\Python310\Scripts\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\ -> C:\Program Files\Python310\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\system32
+[8:05:45 PM] [General] [Info]         C:\Windows\system32 -> C:\Windows\system32\bin
+[8:05:45 PM] [General] [Info]         C:\Windows
+[8:05:45 PM] [General] [Info]         C:\Windows -> C:\Windows\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\Wbem
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\Wbem -> C:\Windows\System32\Wbem\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\ -> C:\Windows\System32\WindowsPowerShell\v1.0\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\OpenSSH\
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\OpenSSH\ -> C:\Windows\System32\OpenSSH\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL
+[8:05:45 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files\Intel\Intel(R) Management Engine Components\DAL\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common -> C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR
+[8:05:45 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR -> C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Git\cmd
+[8:05:45 PM] [General] [Info]         C:\Program Files\Git\cmd -> C:\Program Files\Git\cmd\bin
+[8:05:45 PM] [General] [Info]         C:\ProgramData\chocolatey\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm -> C:\Users\user\AppData\Roaming\npm\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\system32
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\system32 -> C:\WINDOWS\system32\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS
+[8:05:45 PM] [General] [Info]         C:\WINDOWS -> C:\WINDOWS\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\Wbem
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\Wbem -> C:\WINDOWS\System32\Wbem\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\ -> C:\WINDOWS\System32\WindowsPowerShell\v1.0\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\ -> C:\WINDOWS\System32\OpenSSH\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools
+[8:05:45 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools -> E:\SDK\ANDROID\platform-tools\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Certbot\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\dotnet\
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\dotnet\ -> C:\Program Files (x86)\dotnet\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\OpenSSL\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\nuget
+[8:05:45 PM] [General] [Info]         E:\SDK\nuget -> E:\SDK\nuget\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm -> E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\DART\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\JAVA_17\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Local\Pub\Cache\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\MySQL\MySQL Server 8.0\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\PuTTY\
+[8:05:45 PM] [General] [Info]         C:\Program Files\PuTTY\ -> C:\Program Files\PuTTY\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\TortoiseGit\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\TortoiseSVN\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\NODE\
+[8:05:45 PM] [General] [Info]         E:\SDK\NODE\ -> E:\SDK\NODE\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\ -> C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\default\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\ -> E:\SDK\PYTHON\Scripts\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\ -> E:\SDK\PYTHON\bin
+[8:05:45 PM] [General] [Info]         E:\IDE\eclipse\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Local\Pub\Cache\bin
+[8:05:45 PM] [General] [Info]         C:\Python311\Scripts\
+[8:05:45 PM] [General] [Info]         C:\Python311\Scripts\ -> C:\Python311\Scripts\bin
+[8:05:45 PM] [General] [Info]         C:\Python311\
+[8:05:45 PM] [General] [Info]         C:\Python311\ -> C:\Python311\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\Scripts\
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\Scripts\ -> C:\Program Files\Python310\Scripts\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\ -> C:\Program Files\Python310\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\system32
+[8:05:45 PM] [General] [Info]         C:\Windows\system32 -> C:\Windows\system32\bin
+[8:05:45 PM] [General] [Info]         C:\Windows
+[8:05:45 PM] [General] [Info]         C:\Windows -> C:\Windows\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\Wbem
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\Wbem -> C:\Windows\System32\Wbem\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\ -> C:\Windows\System32\WindowsPowerShell\v1.0\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\OpenSSH\
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\OpenSSH\ -> C:\Windows\System32\OpenSSH\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL
+[8:05:45 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files\Intel\Intel(R) Management Engine Components\DAL\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common -> C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR
+[8:05:45 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR -> C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Git\cmd
+[8:05:45 PM] [General] [Info]         C:\Program Files\Git\cmd -> C:\Program Files\Git\cmd\bin
+[8:05:45 PM] [General] [Info]         C:\ProgramData\chocolatey\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm -> C:\Users\user\AppData\Roaming\npm\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\system32
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\system32 -> C:\WINDOWS\system32\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS
+[8:05:45 PM] [General] [Info]         C:\WINDOWS -> C:\WINDOWS\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\Wbem
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\Wbem -> C:\WINDOWS\System32\Wbem\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\ -> C:\WINDOWS\System32\WindowsPowerShell\v1.0\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\ -> C:\WINDOWS\System32\OpenSSH\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools
+[8:05:45 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools -> E:\SDK\ANDROID\platform-tools\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Certbot\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\dotnet\
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\dotnet\ -> C:\Program Files (x86)\dotnet\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\OpenSSL\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\nuget
+[8:05:45 PM] [General] [Info]         E:\SDK\nuget -> E:\SDK\nuget\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm -> E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\JAVA_17\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Local\Pub\Cache\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\MySQL\MySQL Server 8.0\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\PuTTY\
+[8:05:45 PM] [General] [Info]         C:\Program Files\PuTTY\ -> C:\Program Files\PuTTY\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\TortoiseGit\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\TortoiseSVN\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\NODE\
+[8:05:45 PM] [General] [Info]         E:\SDK\NODE\ -> E:\SDK\NODE\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\ -> C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-wi
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-wi -> E:\SDK\FVM\fvm-3.0.0-beta.5-wi\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Local\GitHubDesktop\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Local\Programs\Microsoft VS Code\bin
+[8:05:45 PM] [General] [Info]         E:\Pub\Cache\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\flutter-sdk
+[8:05:45 PM] [General] [Info]         C:\Users\user\flutter-sdk -> C:\Users\user\flutter-sdk\bin
+[8:05:45 PM] [General] [Info]         /google/flutter
+[8:05:45 PM] [General] [Info]         /google/flutter -> \google\flutter\bin
+[8:05:45 PM] [General] [Info]         /opt/flutter
+[8:05:45 PM] [General] [Info]         /opt/flutter -> \opt\flutter\bin
+[8:05:45 PM] [General] [Info]     Found at:
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\default\bin
+[8:05:45 PM] [General] [Info] Following symlink: E:\SDK\FVM\default\bin\flutter.bat -> E:\SDK\FVM\versions\3.35.7\bin\flutter.bat
+[8:05:45 PM] [General] [Info]     Candidate paths to be post-filtered:
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\ -> E:\SDK\FVM\versions\3.35.2
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\default\bin -> E:\SDK\FVM\versions\3.35.7
+[8:05:45 PM] [General] [Info]     Found at E:\SDK\FVM\versions\3.35.2\bin\ -> E:\SDK\FVM\versions\3.35.2
+[8:05:45 PM] [General] [Info]     Returning SDK path E:\SDK\FVM\versions\3.35.2 for flutter.bat
+[8:05:45 PM] [General] [Info] Searching for dart.exe
+[8:05:45 PM] [General] [Info]     Looking for dart.exe in:
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk -> E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\FLUTTER\dev\tools\dart-sdk
+[8:05:45 PM] [General] [Info]         E:\SDK\FLUTTER\dev\tools\dart-sdk -> E:\SDK\FLUTTER\dev\tools\dart-sdk\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\ -> E:\SDK\PYTHON\Scripts\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\ -> E:\SDK\PYTHON\bin
+[8:05:45 PM] [General] [Info]         E:\IDE\eclipse\bin
+[8:05:45 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end\%LOCALAPPDATA%\Pub\Cache\bin
+[8:05:45 PM] [General] [Info]         C:\Python311\Scripts\
+[8:05:45 PM] [General] [Info]         C:\Python311\Scripts\ -> C:\Python311\Scripts\bin
+[8:05:45 PM] [General] [Info]         C:\Python311\
+[8:05:45 PM] [General] [Info]         C:\Python311\ -> C:\Python311\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\Scripts\
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\Scripts\ -> C:\Program Files\Python310\Scripts\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\ -> C:\Program Files\Python310\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\system32
+[8:05:45 PM] [General] [Info]         C:\Windows\system32 -> C:\Windows\system32\bin
+[8:05:45 PM] [General] [Info]         C:\Windows
+[8:05:45 PM] [General] [Info]         C:\Windows -> C:\Windows\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\Wbem
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\Wbem -> C:\Windows\System32\Wbem\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\ -> C:\Windows\System32\WindowsPowerShell\v1.0\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\OpenSSH\
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\OpenSSH\ -> C:\Windows\System32\OpenSSH\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL
+[8:05:45 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files\Intel\Intel(R) Management Engine Components\DAL\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common -> C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR
+[8:05:45 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR -> C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Git\cmd
+[8:05:45 PM] [General] [Info]         C:\Program Files\Git\cmd -> C:\Program Files\Git\cmd\bin
+[8:05:45 PM] [General] [Info]         C:\ProgramData\chocolatey\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm -> C:\Users\user\AppData\Roaming\npm\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\system32
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\system32 -> C:\WINDOWS\system32\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS
+[8:05:45 PM] [General] [Info]         C:\WINDOWS -> C:\WINDOWS\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\Wbem
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\Wbem -> C:\WINDOWS\System32\Wbem\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\ -> C:\WINDOWS\System32\WindowsPowerShell\v1.0\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\ -> C:\WINDOWS\System32\OpenSSH\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools
+[8:05:45 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools -> E:\SDK\ANDROID\platform-tools\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Certbot\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\dotnet\
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\dotnet\ -> C:\Program Files (x86)\dotnet\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\OpenSSL\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\nuget
+[8:05:45 PM] [General] [Info]         E:\SDK\nuget -> E:\SDK\nuget\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm -> E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\DART\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\JAVA_17\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Local\Pub\Cache\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\MySQL\MySQL Server 8.0\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\PuTTY\
+[8:05:45 PM] [General] [Info]         C:\Program Files\PuTTY\ -> C:\Program Files\PuTTY\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\TortoiseGit\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\TortoiseSVN\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\NODE\
+[8:05:45 PM] [General] [Info]         E:\SDK\NODE\ -> E:\SDK\NODE\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\ -> C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\default\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\Scripts\ -> E:\SDK\PYTHON\Scripts\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\
+[8:05:45 PM] [General] [Info]         E:\SDK\PYTHON\ -> E:\SDK\PYTHON\bin
+[8:05:45 PM] [General] [Info]         E:\IDE\eclipse\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Local\Pub\Cache\bin
+[8:05:45 PM] [General] [Info]         C:\Python311\Scripts\
+[8:05:45 PM] [General] [Info]         C:\Python311\Scripts\ -> C:\Python311\Scripts\bin
+[8:05:45 PM] [General] [Info]         C:\Python311\
+[8:05:45 PM] [General] [Info]         C:\Python311\ -> C:\Python311\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\Scripts\
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\Scripts\ -> C:\Program Files\Python310\Scripts\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\
+[8:05:45 PM] [General] [Info]         C:\Program Files\Python310\ -> C:\Program Files\Python310\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\system32
+[8:05:45 PM] [General] [Info]         C:\Windows\system32 -> C:\Windows\system32\bin
+[8:05:45 PM] [General] [Info]         C:\Windows
+[8:05:45 PM] [General] [Info]         C:\Windows -> C:\Windows\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\Wbem
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\Wbem -> C:\Windows\System32\Wbem\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\WindowsPowerShell\v1.0\ -> C:\Windows\System32\WindowsPowerShell\v1.0\bin
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\OpenSSH\
+[8:05:45 PM] [General] [Info]         C:\Windows\System32\OpenSSH\ -> C:\Windows\System32\OpenSSH\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL
+[8:05:45 PM] [General] [Info]         C:\Program Files\Intel\Intel(R) Management Engine Components\DAL -> C:\Program Files\Intel\Intel(R) Management Engine Components\DAL\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common -> C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR
+[8:05:45 PM] [General] [Info]         C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR -> C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\Git\cmd
+[8:05:45 PM] [General] [Info]         C:\Program Files\Git\cmd -> C:\Program Files\Git\cmd\bin
+[8:05:45 PM] [General] [Info]         C:\ProgramData\chocolatey\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Roaming\npm -> C:\Users\user\AppData\Roaming\npm\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\system32
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\system32 -> C:\WINDOWS\system32\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS
+[8:05:45 PM] [General] [Info]         C:\WINDOWS -> C:\WINDOWS\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\Wbem
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\Wbem -> C:\WINDOWS\System32\Wbem\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\WindowsPowerShell\v1.0\ -> C:\WINDOWS\System32\WindowsPowerShell\v1.0\bin
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\
+[8:05:45 PM] [General] [Info]         C:\WINDOWS\System32\OpenSSH\ -> C:\WINDOWS\System32\OpenSSH\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools
+[8:05:45 PM] [General] [Info]         E:\SDK\ANDROID\platform-tools -> E:\SDK\ANDROID\platform-tools\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Certbot\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\dotnet\
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\dotnet\ -> C:\Program Files (x86)\dotnet\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\OpenSSL\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\nuget
+[8:05:45 PM] [General] [Info]         E:\SDK\nuget -> E:\SDK\nuget\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm -> E:\SDK\FVM\fvm-3.0.0-beta.5-windows-x64\fvm\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\JAVA_17\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Local\Pub\Cache\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\MySQL\MySQL Server 8.0\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\PuTTY\
+[8:05:45 PM] [General] [Info]         C:\Program Files\PuTTY\ -> C:\Program Files\PuTTY\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\TortoiseGit\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files\TortoiseSVN\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\NODE\
+[8:05:45 PM] [General] [Info]         E:\SDK\NODE\ -> E:\SDK\NODE\bin
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\
+[8:05:45 PM] [General] [Info]         C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\ -> C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-wi
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\fvm-3.0.0-beta.5-wi -> E:\SDK\FVM\fvm-3.0.0-beta.5-wi\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Local\GitHubDesktop\bin
+[8:05:45 PM] [General] [Info]         C:\Users\user\AppData\Local\Programs\Microsoft VS Code\bin
+[8:05:45 PM] [General] [Info]         E:\Pub\Cache\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk -> E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk\bin
+[8:05:45 PM] [General] [Info]     Found at:
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk -> E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\DART\bin
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk -> E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk\bin
+[8:05:45 PM] [General] [Info]     Candidate paths to be post-filtered:
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk
+[8:05:45 PM] [General] [Info]         E:\SDK\DART\bin -> E:\SDK\DART
+[8:05:45 PM] [General] [Info]         E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk
+[8:05:45 PM] [General] [Info]     Found at E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk
+[8:05:45 PM] [General] [Info]     Returning SDK path E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk for dart.exe
+[8:05:45 PM] [General] [Info] Experiment random number is 43 for experiment 'sdkDaps'. Experiment is enabled for <= 100
+[8:05:45 PM] [General] [Info] Experiment 'sdkDaps' is activating (not first time)
+[8:05:45 PM] [General] [Info] Experiment random number is 43 for experiment 'sdkDaps'. Experiment is enabled for <= 100
+[8:05:45 PM] [General] [Info] Experiment 'sdkDaps' is activating (not first time)
+[8:05:45 PM] [General] [Info] Experiment random number is 43 for experiment 'sdkDaps'. Experiment is enabled for <= 10
+[8:05:45 PM] [General] [Info] Experiment 'sdkDaps' does not apply and will not be activated
+[8:05:45 PM] [General] [Info] !! ⚠️ PLEASE REVIEW THIS LOG FOR SENSITIVE INFORMATION BEFORE SHARING ⚠️ !!
+Dart Code extension: 3.122.0
+Flutter extension: 3.122.0 (not activated)
 
 App: Visual Studio Code
 App Host: desktop
-Version: win 1.105.1
+Version: win 1.106.0
 
 Workspace type: Flutter (LSP)
 Workspace name: congreso_frond_end
 
 Dart (3.9.0): E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk
 Flutter (3.35.2): E:\SDK\FVM\versions\3.35.2 (No device)
-[8:27:00 PM] [General] [Info] Returning cached results for project search
-[8:27:00 PM] [General] [Info] Checking 1 projects for supported platforms
-[8:27:00 PM] [General] [Info] Returning cached results for project search
-[8:27:00 PM] [General] [Info] Activating Flutter extension for Flutter project...
-[8:27:00 PM] [General] [Info] Version last used for Pub is 3.9.0 (3.9.0), current is 3.9.0 (3.9.0)
-[8:27:00 PM] [General] [Info] Found pub status for 1 folders:
-    D:\GitHub\congreso\congreso_frond_end (pubRequired?: GET, reason: The D:\GitHub\congreso\congreso_frond_end\pubspec.yaml file was modified (Wed Oct 08 2025 23:06:49 GMT-0300 (Paraguay Standard Time)) more recently than the D:\GitHub\congreso\congreso_frond_end\pubspec.lock file (Wed Oct 08 2025 22:58:19 GMT-0300 (Paraguay Standard Time)))
-[8:27:01 PM] [General] [Info] Loaded 20000 package names from vscode-userdata:/c%3A/Users/user/AppData/Roaming/Code/User/globalStorage/dart-code.dart-code/package_cache.json
-[8:27:09 PM] [General] [Info] Supported platforms for the workspace are
-[8:27:09 PM] [General] [Info] !! ⚠️ PLEASE REVIEW THIS LOG FOR SENSITIVE INFORMATION BEFORE SHARING ⚠️ !!
-Dart Code extension: 3.120.1
-Flutter extension: 3.120.0 (activated)
+[8:05:45 PM] [General] [Info] Returning cached results for project search
+[8:05:45 PM] [General] [Info] Checking 1 projects for supported platforms
+[8:05:45 PM] [General] [Info] Returning cached results for project search
+[8:05:45 PM] [General] [Info] Activating Flutter extension for Flutter project...
+[8:05:45 PM] [General] [Info] Version last used for Pub is 3.9.0 (3.9.0), current is 3.9.0 (3.9.0)
+[8:05:45 PM] [General] [Info] Found pub status for 0 folders:
+[8:05:46 PM] [General] [Info] Loaded 20000 package names from vscode-userdata:/c%3A/Users/user/AppData/Roaming/Code/User/globalStorage/dart-code.dart-code/package_cache.json
+[8:05:47 PM] [General] [Info] !! ⚠️ PLEASE REVIEW THIS LOG FOR SENSITIVE INFORMATION BEFORE SHARING ⚠️ !!
+Dart Code extension: 3.122.0
+Flutter extension: 3.122.0 (activated)
 
 App: Visual Studio Code
 App Host: desktop
-Version: win 1.105.1
+Version: win 1.106.0
 
 Workspace type: Flutter (LSP)
 Workspace name: congreso_frond_end
 
 Dart (3.9.0): E:\SDK\FVM\versions\3.35.2\bin\cache\dart-sdk
 Flutter (3.35.2): E:\SDK\FVM\versions\3.35.2 (No device)
-[8:27:09 PM] [General] [Info] Returning cached results for project search
-[8:27:09 PM] [General] [Info] Returning cached results for project search
-[8:27:09 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
-[8:27:09 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
-[8:27:09 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
-[8:27:09 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
-[8:27:09 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
-[8:27:09 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
-[8:27:09 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
-[8:27:09 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
-[8:27:10 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
-[8:27:30 PM] [General] [Info] Returning cached results for project search
-[8:33:15 PM] [General] [Info] Took 22ms to search for 1 projects (5 levels)
-[8:33:15 PM] [General] [Info]     Found projects:
-[8:33:15 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end
-[8:33:15 PM] [General] [Info] Took 1ms to filter out excluded projects (0 exclusion rules). 1 projects remain.
-[8:36:42 PM] [General] [Info] Returning cached results for project search
-[8:36:42 PM] [General] [Info] Returning cached results for project search
-[8:40:28 PM] [General] [Info] Took 21ms to search for 1 projects (5 levels)
-[8:40:28 PM] [General] [Info]     Found projects:
-[8:40:28 PM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end
-[8:40:28 PM] [General] [Info] Took 1ms to filter out excluded projects (0 exclusion rules). 1 projects remain.
-[8:40:36 PM] [General] [Info] Starting debug session...
-[8:40:36 PM] [General] [Info]     workspace: D:\GitHub\congreso\congreso_frond_end
-[8:40:36 PM] [General] [Info] Setting cwd based on likely entry point: D:\GitHub\congreso\congreso_frond_end
-[8:40:36 PM] [General] [Info] Using found common entry point: D:\GitHub\congreso\congreso_frond_end\lib\main.dart
-[8:40:36 PM] [General] [Info] Using workspace as cwd: D:\GitHub\congreso\congreso_frond_end
-[8:40:36 PM] [General] [Info] Detected launch project as Flutter
-[8:40:36 PM] [General] [Info] Using Flutter debug adapter for this session
-[8:40:38 PM] [General] [Info] Saving windows as preferred device
-[8:40:38 PM] [General] [Info] Returning cached results for project search
-[8:40:38 PM] [General] [Info] Checking 1 projects for supported platforms
-[8:40:38 PM] [General] [Info] Supported platforms for the workspace are web, windows
-[8:40:38 PM] [General] [Info] Getting DevTools server address to pass to Flutter...
-[8:40:38 PM] [General] [Info] Checking for errors before launching
-[8:40:38 PM] [General] [Info] Debug session starting...
+[8:05:50 PM] [General] [Info] Supported platforms for the workspace are
+[8:05:53 PM] [General] [Info] Returning cached results for project search
+[8:05:53 PM] [General] [Info] Returning cached results for project search
+[8:05:56 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
+[8:05:56 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
+[8:05:56 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
+[8:05:56 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
+[8:05:56 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
+[8:05:56 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
+[8:05:56 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
+[8:05:56 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
+[8:05:56 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
+[8:05:56 PM] [General] [Info] Returning cached promise for getSupportedPlatforms()
+[8:06:09 PM] [General] [Info] Returning cached results for project search
+[8:06:11 PM] [General] [Info] Returning cached results for project search
+[8:07:34 PM] [General] [Info] Starting debug session...
+[8:07:34 PM] [General] [Info]     workspace: D:\GitHub\congreso\congreso_frond_end
+[8:07:34 PM] [General] [Info] Setting cwd based on likely entry point: D:\GitHub\congreso\congreso_frond_end
+[8:07:34 PM] [General] [Info] Using found common entry point: D:\GitHub\congreso\congreso_frond_end\lib\main.dart
+[8:07:34 PM] [General] [Info] Using workspace as cwd: D:\GitHub\congreso\congreso_frond_end
+[8:07:34 PM] [General] [Info] Detected launch project as Flutter
+[8:07:34 PM] [General] [Info] Using Flutter debug adapter for this session
+[8:07:36 PM] [General] [Info] Saving windows as preferred device
+[8:07:36 PM] [General] [Info] Returning cached results for project search
+[8:07:36 PM] [General] [Info] Checking 1 projects for supported platforms
+[8:07:36 PM] [General] [Info] Supported platforms for the workspace are web, windows
+[8:07:36 PM] [General] [Info] Getting DevTools server address to pass to Flutter...
+[8:07:36 PM] [General] [Info] Checking for errors before launching
+[8:07:36 PM] [General] [Info] Debug session starting...
     {
-        "dartCodeDebugSessionID": "session-36039",
+        "dartCodeDebugSessionID": "session-b7914",
         "type": "dart",
         "request": "launch",
         "program": "D:\\GitHub\\congreso\\congreso_frond_end\\lib\\main.dart",
@@ -506,23 +542,275 @@ Flutter (3.35.2): E:\SDK\FVM\versions\3.35.2 (No device)
         "flutterTestLogFile": "D:\\GitHub\\congreso\\congreso_frond_end\\logs\\flutter_test.txt",
         "debuggerType": 2
     }
-[8:40:38 PM] [General] [Info] Using flutter debugger for Flutter
-[8:40:38 PM] [General] [Info] SDK DAP setting is true for debugger 2
-[8:40:38 PM] [General] [Info] Running SDK DAP Dart VM in undefined: E:\SDK\FVM\versions\3.35.2\bin\flutter.bat debug_adapter and options {"env":{"FLUTTER_HOST":"VSCode","PUB_ENVIRONMENT":"vscode.dart-code","FLUTTER_ROOT":"E:\\SDK\\FVM\\versions\\3.35.2"}}
-[8:40:39 PM] [General] [Info] Did not find session 41052277-f425-45c4-a414-63eff4b4f6f6 to handle dart.progressStart. There were 0 sessions:
-[8:40:39 PM] [General] [Info] Event will be queued and processed when the session start event fires
-[8:40:39 PM] [General] [Info] Processing delayed event dart.progressStart for session 41052277-f425-45c4-a414-63eff4b4f6f6
-[8:41:01 PM] [General] [Info] Skipping pubspec change for ignored folder D:\GitHub\congreso\congreso_frond_end\build\flutter_assets\pubspec.yaml
-[8:41:06 PM] [General] [Info] Skipping pubspec change for ignored folder D:\GitHub\congreso\congreso_frond_end\build\windows\x64\runner\Debug\data\flutter_assets\pubspec.yaml
-[8:41:08 PM] [General] [Info] Exposing URL: ws://127.0.0.1:61312/zAbJRv3lWwc%3D/ws
-[8:41:08 PM] [General] [Info] Mapping URI: http://127.0.0.1:61312/zAbJRv3lWwc%3D/ws
-[8:41:08 PM] [General] [Info] Exposing URL: ws://127.0.0.1:61312/zAbJRv3lWwc%3D/ws
-[8:41:08 PM] [General] [Info] Mapping URI: http://127.0.0.1:61312/zAbJRv3lWwc%3D/ws
-[8:41:08 PM] [General] [Info] Mapped URI: http://127.0.0.1:61312/zAbJRv3lWwc%3D/ws
-[8:41:08 PM] [General] [Info] Mapped URL: http://127.0.0.1:61312/zAbJRv3lWwc%3D/ws
-[8:41:08 PM] [General] [Info] Final URL: ws://127.0.0.1:61312/zAbJRv3lWwc=/ws
-[8:41:08 PM] [General] [Info] Mapped URI: http://127.0.0.1:61312/zAbJRv3lWwc%3D/ws
-[8:41:08 PM] [General] [Info] Mapped URL: http://127.0.0.1:61312/zAbJRv3lWwc%3D/ws
-[8:41:08 PM] [General] [Info] Final URL: ws://127.0.0.1:61312/zAbJRv3lWwc=/ws
-[10:16:33 PM] [General] [Info] Extension deactivate was called (isRestart: false)
-[10:16:33 PM] [General] [Error] Error cleaning up during extension shutdown: Canceled: Canceled
+[8:07:36 PM] [General] [Info] Using flutter debugger for Flutter
+[8:07:36 PM] [General] [Info] SDK DAP setting is true for debugger 2
+[8:07:36 PM] [General] [Info] Running SDK DAP Dart VM in undefined: E:\SDK\FVM\versions\3.35.2\bin\flutter.bat debug_adapter and options {"env":{"FLUTTER_HOST":"VSCode","PUB_ENVIRONMENT":"vscode.dart-code","FLUTTER_ROOT":"E:\\SDK\\FVM\\versions\\3.35.2"}}
+[8:07:38 PM] [General] [Info] Did not find session d28a0b59-449e-43ca-b6e6-601d79442de9 to handle dart.progressStart. There were 0 sessions:
+[8:07:38 PM] [General] [Info] Event will be queued and processed when the session start event fires
+[8:07:38 PM] [General] [Info] Processing delayed event dart.progressStart for session d28a0b59-449e-43ca-b6e6-601d79442de9
+[8:08:05 PM] [General] [Info] Skipping pubspec change for ignored folder D:\GitHub\congreso\congreso_frond_end\build\flutter_assets\pubspec.yaml
+[8:08:11 PM] [General] [Info] Skipping pubspec change for ignored folder D:\GitHub\congreso\congreso_frond_end\build\windows\x64\runner\Debug\data\flutter_assets\pubspec.yaml
+[8:08:13 PM] [General] [Info] Exposing URL: ws://127.0.0.1:63880/Rs_XY6A02Is%3D/ws
+[8:08:13 PM] [General] [Info] Mapping URI: http://127.0.0.1:63880/Rs_XY6A02Is%3D/ws
+[8:08:13 PM] [General] [Info] Exposing URL: ws://127.0.0.1:63880/Rs_XY6A02Is%3D/ws
+[8:08:13 PM] [General] [Info] Mapping URI: http://127.0.0.1:63880/Rs_XY6A02Is%3D/ws
+[8:08:13 PM] [General] [Info] Mapped URI: http://127.0.0.1:63880/Rs_XY6A02Is%3D/ws
+[8:08:13 PM] [General] [Info] Mapped URL: http://127.0.0.1:63880/Rs_XY6A02Is%3D/ws
+[8:08:13 PM] [General] [Info] Final URL: ws://127.0.0.1:63880/Rs_XY6A02Is=/ws
+[8:08:13 PM] [General] [Info] Mapped URI: http://127.0.0.1:63880/Rs_XY6A02Is%3D/ws
+[8:08:13 PM] [General] [Info] Mapped URL: http://127.0.0.1:63880/Rs_XY6A02Is%3D/ws
+[8:08:13 PM] [General] [Info] Final URL: ws://127.0.0.1:63880/Rs_XY6A02Is=/ws
+[8:18:40 PM] [General] [Info] Starting debug session...
+[8:18:40 PM] [General] [Info]     workspace: D:\GitHub\congreso\congreso_frond_end
+[8:18:40 PM] [General] [Info] Setting cwd based on likely entry point: D:\GitHub\congreso\congreso_frond_end
+[8:18:40 PM] [General] [Info] Using found common entry point: D:\GitHub\congreso\congreso_frond_end\lib\main.dart
+[8:18:40 PM] [General] [Info] Using workspace as cwd: D:\GitHub\congreso\congreso_frond_end
+[8:18:40 PM] [General] [Info] Detected launch project as Flutter
+[8:18:40 PM] [General] [Info] Using Flutter debug adapter for this session
+[8:18:40 PM] [General] [Info] Getting DevTools server address to pass to Flutter...
+[8:18:40 PM] [General] [Info] Checking for errors before launching
+[8:18:40 PM] [General] [Warn] Project has errors, prompting user
+[8:18:40 PM] [General] [Warn]     D:\GitHub\congreso\congreso_frond_end\lib\modules\talleres\pages\tallet_asignar_responsable\taller_inscripcion_ctrl.dart:11:5
+[8:18:40 PM] [General] [Warn]     Target of URI hasn't been generated: 'package:congreso_evento/modules/talleres/pages/taller_inscripcion_ctrl.g.dart'.
+[8:18:41 PM] [General] [Info] Aborting!
+[8:19:18 PM] [General] [Info] Starting debug session...
+[8:19:18 PM] [General] [Info]     workspace: D:\GitHub\congreso\congreso_frond_end
+[8:19:18 PM] [General] [Info] Setting cwd based on likely entry point: D:\GitHub\congreso\congreso_frond_end
+[8:19:18 PM] [General] [Info] Using found common entry point: D:\GitHub\congreso\congreso_frond_end\lib\main.dart
+[8:19:18 PM] [General] [Info] Using workspace as cwd: D:\GitHub\congreso\congreso_frond_end
+[8:19:18 PM] [General] [Info] Detected launch project as Flutter
+[8:19:18 PM] [General] [Info] Using Flutter debug adapter for this session
+[8:19:18 PM] [General] [Info] Getting DevTools server address to pass to Flutter...
+[8:19:18 PM] [General] [Info] Checking for errors before launching
+[8:19:18 PM] [General] [Info] Debug session starting...
+    {
+        "dartCodeDebugSessionID": "session-a46a0",
+        "type": "dart",
+        "request": "launch",
+        "program": "D:\\GitHub\\congreso\\congreso_frond_end\\lib\\main.dart",
+        "projectRootPath": "D:\\GitHub\\congreso\\congreso_frond_end",
+        "cwd": "D:\\GitHub\\congreso\\congreso_frond_end",
+        "name": "Flutter (Windows)",
+        "deviceId": "windows",
+        "deviceName": "Windows (windows-x64)",
+        "toolEnv": {
+            "FLUTTER_HOST": "VSCode",
+            "PUB_ENVIRONMENT": "vscode.dart-code",
+            "FLUTTER_ROOT": "E:\\SDK\\FVM\\versions\\3.35.2"
+        },
+        "sendLogsToClient": false,
+        "sendCustomProgressEvents": true,
+        "allowAnsiColorOutput": true,
+        "additionalProjectPaths": [
+            "D:\\GitHub\\congreso\\congreso_frond_end"
+        ],
+        "args": [],
+        "vmAdditionalArgs": [],
+        "toolArgs": [
+            "-d",
+            "windows",
+            "--devtools-server-address",
+            "http://127.0.0.1:9100/"
+        ],
+        "vmServicePort": 0,
+        "dartSdkPath": "E:\\SDK\\FVM\\versions\\3.35.2\\bin\\cache\\dart-sdk",
+        "maxLogLineLength": 2000,
+        "debugSdkLibraries": false,
+        "debugExternalPackageLibraries": true,
+        "showDartDeveloperLogs": true,
+        "evaluateGettersInDebugViews": true,
+        "showGettersInDebugViews": true,
+        "evaluateToStringInDebugViews": true,
+        "flutterSdkPath": "E:\\SDK\\FVM\\versions\\3.35.2",
+        "useInspectorNotificationsForWidgetErrors": false,
+        "flutterRunLogFile": "D:\\GitHub\\congreso\\congreso_frond_end\\logs\\flutter_run.txt",
+        "flutterTestLogFile": "D:\\GitHub\\congreso\\congreso_frond_end\\logs\\flutter_test.txt",
+        "debuggerType": 2
+    }
+[8:19:18 PM] [General] [Info] Using flutter debugger for Flutter
+[8:19:18 PM] [General] [Info] SDK DAP setting is true for debugger 2
+[8:19:18 PM] [General] [Info] Running SDK DAP Dart VM in undefined: E:\SDK\FVM\versions\3.35.2\bin\flutter.bat debug_adapter and options {"env":{"FLUTTER_HOST":"VSCode","PUB_ENVIRONMENT":"vscode.dart-code","FLUTTER_ROOT":"E:\\SDK\\FVM\\versions\\3.35.2"}}
+[8:19:20 PM] [General] [Info] Did not find session 120a9165-ed65-4c04-bf3f-53d568da0f03 to handle dart.progressStart. There were 0 sessions:
+[8:19:20 PM] [General] [Info] Event will be queued and processed when the session start event fires
+[8:19:20 PM] [General] [Info] Processing delayed event dart.progressStart for session 120a9165-ed65-4c04-bf3f-53d568da0f03
+[8:19:42 PM] [General] [Info] Skipping pubspec change for ignored folder D:\GitHub\congreso\congreso_frond_end\build\flutter_assets\pubspec.yaml
+[8:19:46 PM] [General] [Info] Skipping pubspec change for ignored folder D:\GitHub\congreso\congreso_frond_end\build\windows\x64\runner\Debug\data\flutter_assets\pubspec.yaml
+[8:19:48 PM] [General] [Info] Exposing URL: ws://127.0.0.1:64018/SGA9eOBs1zE%3D/ws
+[8:19:48 PM] [General] [Info] Mapping URI: http://127.0.0.1:64018/SGA9eOBs1zE%3D/ws
+[8:19:48 PM] [General] [Info] Exposing URL: ws://127.0.0.1:64018/SGA9eOBs1zE%3D/ws
+[8:19:48 PM] [General] [Info] Mapping URI: http://127.0.0.1:64018/SGA9eOBs1zE%3D/ws
+[8:19:48 PM] [General] [Info] Mapped URI: http://127.0.0.1:64018/SGA9eOBs1zE%3D/ws
+[8:19:48 PM] [General] [Info] Mapped URL: http://127.0.0.1:64018/SGA9eOBs1zE%3D/ws
+[8:19:48 PM] [General] [Info] Final URL: ws://127.0.0.1:64018/SGA9eOBs1zE=/ws
+[8:19:48 PM] [General] [Info] Mapped URI: http://127.0.0.1:64018/SGA9eOBs1zE%3D/ws
+[8:19:48 PM] [General] [Info] Mapped URL: http://127.0.0.1:64018/SGA9eOBs1zE%3D/ws
+[8:19:48 PM] [General] [Info] Final URL: ws://127.0.0.1:64018/SGA9eOBs1zE=/ws
+[10:41:58 PM] [General] [Info] Starting debug session...
+[10:41:58 PM] [General] [Info]     workspace: D:\GitHub\congreso\congreso_frond_end
+[10:41:58 PM] [General] [Info] Setting cwd based on likely entry point: D:\GitHub\congreso\congreso_frond_end
+[10:41:58 PM] [General] [Info] Using found common entry point: D:\GitHub\congreso\congreso_frond_end\lib\main.dart
+[10:41:58 PM] [General] [Info] Using workspace as cwd: D:\GitHub\congreso\congreso_frond_end
+[10:41:58 PM] [General] [Info] Detected launch project as Flutter
+[10:41:58 PM] [General] [Info] Using Flutter debug adapter for this session
+[10:41:58 PM] [General] [Info] Getting DevTools server address to pass to Flutter...
+[10:41:58 PM] [General] [Info] Checking for errors before launching
+[10:41:58 PM] [General] [Info] Debug session starting...
+    {
+        "dartCodeDebugSessionID": "session-4950e",
+        "type": "dart",
+        "request": "launch",
+        "program": "D:\\GitHub\\congreso\\congreso_frond_end\\lib\\main.dart",
+        "projectRootPath": "D:\\GitHub\\congreso\\congreso_frond_end",
+        "cwd": "D:\\GitHub\\congreso\\congreso_frond_end",
+        "name": "Flutter (Windows)",
+        "deviceId": "windows",
+        "deviceName": "Windows (windows-x64)",
+        "toolEnv": {
+            "FLUTTER_HOST": "VSCode",
+            "PUB_ENVIRONMENT": "vscode.dart-code",
+            "FLUTTER_ROOT": "E:\\SDK\\FVM\\versions\\3.35.2"
+        },
+        "sendLogsToClient": false,
+        "sendCustomProgressEvents": true,
+        "allowAnsiColorOutput": true,
+        "additionalProjectPaths": [
+            "D:\\GitHub\\congreso\\congreso_frond_end"
+        ],
+        "args": [],
+        "vmAdditionalArgs": [],
+        "toolArgs": [
+            "-d",
+            "windows",
+            "--devtools-server-address",
+            "http://127.0.0.1:9100/"
+        ],
+        "vmServicePort": 0,
+        "dartSdkPath": "E:\\SDK\\FVM\\versions\\3.35.2\\bin\\cache\\dart-sdk",
+        "maxLogLineLength": 2000,
+        "debugSdkLibraries": false,
+        "debugExternalPackageLibraries": true,
+        "showDartDeveloperLogs": true,
+        "evaluateGettersInDebugViews": true,
+        "showGettersInDebugViews": true,
+        "evaluateToStringInDebugViews": true,
+        "flutterSdkPath": "E:\\SDK\\FVM\\versions\\3.35.2",
+        "useInspectorNotificationsForWidgetErrors": false,
+        "flutterRunLogFile": "D:\\GitHub\\congreso\\congreso_frond_end\\logs\\flutter_run.txt",
+        "flutterTestLogFile": "D:\\GitHub\\congreso\\congreso_frond_end\\logs\\flutter_test.txt",
+        "debuggerType": 2
+    }
+[10:41:58 PM] [General] [Info] Using flutter debugger for Flutter
+[10:41:58 PM] [General] [Info] SDK DAP setting is true for debugger 2
+[10:41:58 PM] [General] [Info] Running SDK DAP Dart VM in undefined: E:\SDK\FVM\versions\3.35.2\bin\flutter.bat debug_adapter and options {"env":{"FLUTTER_HOST":"VSCode","PUB_ENVIRONMENT":"vscode.dart-code","FLUTTER_ROOT":"E:\\SDK\\FVM\\versions\\3.35.2"}}
+[10:42:00 PM] [General] [Info] Did not find session eb8fd5bd-6dab-49ac-928c-7e75069318d6 to handle dart.progressStart. There were 0 sessions:
+[10:42:00 PM] [General] [Info] Event will be queued and processed when the session start event fires
+[10:42:00 PM] [General] [Info] Processing delayed event dart.progressStart for session eb8fd5bd-6dab-49ac-928c-7e75069318d6
+[10:42:20 PM] [General] [Info] Skipping pubspec change for ignored folder D:\GitHub\congreso\congreso_frond_end\build\flutter_assets\pubspec.yaml
+[10:42:25 PM] [General] [Info] Skipping pubspec change for ignored folder D:\GitHub\congreso\congreso_frond_end\build\windows\x64\runner\Debug\data\flutter_assets\pubspec.yaml
+[10:42:26 PM] [General] [Info] Exposing URL: ws://127.0.0.1:52306/ovwZ3OGVc9Y%3D/ws
+[10:42:26 PM] [General] [Info] Mapping URI: http://127.0.0.1:52306/ovwZ3OGVc9Y%3D/ws
+[10:42:26 PM] [General] [Info] Exposing URL: ws://127.0.0.1:52306/ovwZ3OGVc9Y%3D/ws
+[10:42:26 PM] [General] [Info] Mapping URI: http://127.0.0.1:52306/ovwZ3OGVc9Y%3D/ws
+[10:42:27 PM] [General] [Info] Mapped URI: http://127.0.0.1:52306/ovwZ3OGVc9Y%3D/ws
+[10:42:27 PM] [General] [Info] Mapped URL: http://127.0.0.1:52306/ovwZ3OGVc9Y%3D/ws
+[10:42:27 PM] [General] [Info] Final URL: ws://127.0.0.1:52306/ovwZ3OGVc9Y=/ws
+[10:42:27 PM] [General] [Info] Mapped URI: http://127.0.0.1:52306/ovwZ3OGVc9Y%3D/ws
+[10:42:27 PM] [General] [Info] Mapped URL: http://127.0.0.1:52306/ovwZ3OGVc9Y%3D/ws
+[10:42:27 PM] [General] [Info] Final URL: ws://127.0.0.1:52306/ovwZ3OGVc9Y=/ws
+[12:21:47 AM] [General] [Info] Pubspec D:\GitHub\congreso\congreso_frond_end\pubspec.yaml was modified
+[12:21:49 AM] [General] [Info] Took 22ms to search for 1 projects (5 levels)
+[12:21:49 AM] [General] [Info]     Found projects:
+[12:21:49 AM] [General] [Info]         D:\GitHub\congreso\congreso_frond_end
+[12:21:49 AM] [General] [Info] Took 3ms to filter out excluded projects (0 exclusion rules). 1 projects remain.
+[12:21:49 AM] [General] [Info] Version last used for Pub is 3.9.0 (3.9.0), current is 3.9.0 (3.9.0)
+[12:21:49 AM] [General] [Info] Found pub status for 1 folders:
+    D:\GitHub\congreso\congreso_frond_end (pubRequired?: GET, reason: The D:\GitHub\congreso\congreso_frond_end\pubspec.yaml file was modified (Fri Nov 14 2025 00:21:47 GMT-0300 (Paraguay Standard Time)) more recently than the D:\GitHub\congreso\congreso_frond_end\.dart_tool\package_config.json file (Sun Nov 09 2025 22:56:36 GMT-0300 (Paraguay Standard Time)))
+[12:21:57 AM] [General] [Info] Returning cached results for project search
+[12:23:01 AM] [General] [Info] Skipping pubspec change for ignored folder D:\GitHub\congreso\congreso_frond_end\build\web\assets\pubspec.yaml
+[12:30:47 AM] [General] [Info] Starting debug session...
+[12:30:47 AM] [General] [Info]     workspace: D:\GitHub\congreso\congreso_frond_end
+[12:30:47 AM] [General] [Info] Setting cwd based on likely entry point: D:\GitHub\congreso\congreso_frond_end
+[12:30:47 AM] [General] [Info] Using found common entry point: D:\GitHub\congreso\congreso_frond_end\lib\main.dart
+[12:30:47 AM] [General] [Info] Using workspace as cwd: D:\GitHub\congreso\congreso_frond_end
+[12:30:47 AM] [General] [Info] Detected launch project as Flutter
+[12:30:47 AM] [General] [Info] Using Flutter debug adapter for this session
+[12:30:47 AM] [General] [Info] Getting DevTools server address to pass to Flutter...
+[12:30:47 AM] [General] [Info] Checking for errors before launching
+[12:30:47 AM] [General] [Warn] Project has errors, prompting user
+[12:30:47 AM] [General] [Warn]     D:\GitHub\congreso\congreso_frond_end\lib\modules\talleres\pages\tallet_asignar_responsable\taller_inscripcion_ctrl.dart:158:52
+[12:30:47 AM] [General] [Warn]     The named parameter 'isJuntaDirectiva' is required, but there's no corresponding argument.
+[12:30:49 AM] [General] [Info] Aborting!
+[12:31:01 AM] [General] [Info] Starting debug session...
+[12:31:01 AM] [General] [Info]     workspace: D:\GitHub\congreso\congreso_frond_end
+[12:31:01 AM] [General] [Info] Setting cwd based on likely entry point: D:\GitHub\congreso\congreso_frond_end
+[12:31:01 AM] [General] [Info] Using found common entry point: D:\GitHub\congreso\congreso_frond_end\lib\main.dart
+[12:31:01 AM] [General] [Info] Using workspace as cwd: D:\GitHub\congreso\congreso_frond_end
+[12:31:01 AM] [General] [Info] Detected launch project as Flutter
+[12:31:01 AM] [General] [Info] Using Flutter debug adapter for this session
+[12:31:01 AM] [General] [Info] Getting DevTools server address to pass to Flutter...
+[12:31:01 AM] [General] [Info] Checking for errors before launching
+[12:31:01 AM] [General] [Info] Debug session starting...
+    {
+        "dartCodeDebugSessionID": "session-877f1",
+        "type": "dart",
+        "request": "launch",
+        "program": "D:\\GitHub\\congreso\\congreso_frond_end\\lib\\main.dart",
+        "projectRootPath": "D:\\GitHub\\congreso\\congreso_frond_end",
+        "cwd": "D:\\GitHub\\congreso\\congreso_frond_end",
+        "name": "Flutter (Windows)",
+        "deviceId": "windows",
+        "deviceName": "Windows (windows-x64)",
+        "toolEnv": {
+            "FLUTTER_HOST": "VSCode",
+            "PUB_ENVIRONMENT": "vscode.dart-code",
+            "FLUTTER_ROOT": "E:\\SDK\\FVM\\versions\\3.35.2"
+        },
+        "sendLogsToClient": false,
+        "sendCustomProgressEvents": true,
+        "allowAnsiColorOutput": true,
+        "additionalProjectPaths": [
+            "D:\\GitHub\\congreso\\congreso_frond_end"
+        ],
+        "args": [],
+        "vmAdditionalArgs": [],
+        "toolArgs": [
+            "-d",
+            "windows",
+            "--devtools-server-address",
+            "http://127.0.0.1:9100/"
+        ],
+        "vmServicePort": 0,
+        "dartSdkPath": "E:\\SDK\\FVM\\versions\\3.35.2\\bin\\cache\\dart-sdk",
+        "maxLogLineLength": 2000,
+        "debugSdkLibraries": false,
+        "debugExternalPackageLibraries": true,
+        "showDartDeveloperLogs": true,
+        "evaluateGettersInDebugViews": true,
+        "showGettersInDebugViews": true,
+        "evaluateToStringInDebugViews": true,
+        "flutterSdkPath": "E:\\SDK\\FVM\\versions\\3.35.2",
+        "useInspectorNotificationsForWidgetErrors": false,
+        "flutterRunLogFile": "D:\\GitHub\\congreso\\congreso_frond_end\\logs\\flutter_run.txt",
+        "flutterTestLogFile": "D:\\GitHub\\congreso\\congreso_frond_end\\logs\\flutter_test.txt",
+        "debuggerType": 2
+    }
+[12:31:01 AM] [General] [Info] Using flutter debugger for Flutter
+[12:31:01 AM] [General] [Info] SDK DAP setting is true for debugger 2
+[12:31:01 AM] [General] [Info] Running SDK DAP Dart VM in undefined: E:\SDK\FVM\versions\3.35.2\bin\flutter.bat debug_adapter and options {"env":{"FLUTTER_HOST":"VSCode","PUB_ENVIRONMENT":"vscode.dart-code","FLUTTER_ROOT":"E:\\SDK\\FVM\\versions\\3.35.2"}}
+[12:31:03 AM] [General] [Info] Did not find session f21cafd3-895c-4c4f-819f-32d3c3e96646 to handle dart.progressStart. There were 0 sessions:
+[12:31:03 AM] [General] [Info] Event will be queued and processed when the session start event fires
+[12:31:03 AM] [General] [Info] Processing delayed event dart.progressStart for session f21cafd3-895c-4c4f-819f-32d3c3e96646
+[12:31:22 AM] [General] [Info] Skipping pubspec change for ignored folder D:\GitHub\congreso\congreso_frond_end\build\flutter_assets\pubspec.yaml
+[12:31:32 AM] [General] [Info] Skipping pubspec change for ignored folder D:\GitHub\congreso\congreso_frond_end\build\windows\x64\runner\Debug\data\flutter_assets\pubspec.yaml
+[12:31:34 AM] [General] [Info] Exposing URL: ws://127.0.0.1:64959/CEfUnt11oWI%3D/ws
+[12:31:34 AM] [General] [Info] Mapping URI: http://127.0.0.1:64959/CEfUnt11oWI%3D/ws
+[12:31:34 AM] [General] [Info] Exposing URL: ws://127.0.0.1:64959/CEfUnt11oWI%3D/ws
+[12:31:34 AM] [General] [Info] Mapping URI: http://127.0.0.1:64959/CEfUnt11oWI%3D/ws
+[12:31:34 AM] [General] [Info] Mapped URI: http://127.0.0.1:64959/CEfUnt11oWI%3D/ws
+[12:31:34 AM] [General] [Info] Mapped URL: http://127.0.0.1:64959/CEfUnt11oWI%3D/ws
+[12:31:34 AM] [General] [Info] Final URL: ws://127.0.0.1:64959/CEfUnt11oWI=/ws
+[12:31:34 AM] [General] [Info] Mapped URI: http://127.0.0.1:64959/CEfUnt11oWI%3D/ws
+[12:31:34 AM] [General] [Info] Mapped URL: http://127.0.0.1:64959/CEfUnt11oWI%3D/ws
+[12:31:34 AM] [General] [Info] Final URL: ws://127.0.0.1:64959/CEfUnt11oWI=/ws
+[12:48:44 AM] [General] [Info] Extension deactivate was called (isRestart: false)
+[12:48:45 AM] [General] [Error] Error cleaning up during extension shutdown: Canceled: Canceled

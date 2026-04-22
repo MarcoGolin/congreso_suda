@@ -20,6 +20,7 @@ TallerInscripto _$TallerInscriptoFromJson(Map<String, dynamic> json) =>
       nrComprobante: json['nrComprobante'] as String?,
       usuarioPago: json['usuarioPago'] as String?,
       isExonerado: json['isExonerado'] as bool?,
+      isJuntaDirectiva: json['isJuntaDirectiva'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$TallerInscriptoToJson(TallerInscripto instance) =>
@@ -36,6 +37,7 @@ Map<String, dynamic> _$TallerInscriptoToJson(TallerInscripto instance) =>
       'nrComprobante': instance.nrComprobante,
       'usuarioPago': instance.usuarioPago,
       'isExonerado': instance.isExonerado,
+      'isJuntaDirectiva': instance.isJuntaDirectiva,
     };
 
 Value? _$JsonConverterFromJson<Json, Value>(

@@ -5,7 +5,7 @@ import 'package:congreso_evento/modules/home_congresista/pages/home_congresista_
 import 'package:congreso_evento/modules/home_congresista/pages/home_congresista_page.dart';
 import 'package:congreso_evento/modules/home_congresista/pages/home_menu_congresista_page.dart';
 import 'package:congreso_evento/modules/talleres/pages/mis_talleres_page.dart';
-import 'package:congreso_evento/modules/talleres/services/taller_inscripcion_service.dart';
+import 'package:congreso_evento/modules/talleres/services/taller_inscripto_service.dart';
 import 'package:congreso_evento/modules/talleres/stores/mis_talleres_store.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/pages/mis_trabajos_cientificos_page.dart';
 import 'package:congreso_evento/modules/trabajo_cientifico/services/mis_trabajos_cientificos_service.dart';
@@ -21,7 +21,7 @@ class HomeCongresistaModule extends Module {
     i.addLazySingleton(CongresistaRepository.new);
 
     // Talleres inscriptos
-    i.addLazySingleton(TallerInscripcionService.new);
+    i.addLazySingleton(TallerInscriptoService.new);
     i.addLazySingleton(MisTalleresStore.new);
 
     i.addLazySingleton(MisTrabajosCientificosStore.new);

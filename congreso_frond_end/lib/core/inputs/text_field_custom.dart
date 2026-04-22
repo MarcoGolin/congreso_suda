@@ -15,6 +15,7 @@ class TextFieldCustom extends StatelessWidget {
   final void Function()? onTap;
   final TextCapitalization? textCapitalization;
   final bool? obscureText;
+  final bool? enabled;
 
   final int? maxLines;
   final int? maxLength;
@@ -26,6 +27,7 @@ class TextFieldCustom extends StatelessWidget {
     required this.label,
     required this.controller,
     this.validator,
+    this.enabled = true,
     this.keyboardType = TextInputType.text,
     this.maxLines,
     this.maxLength,
@@ -46,12 +48,13 @@ class TextFieldCustom extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: TextFormField(
+        enabled: enabled,
         autofillHints: autofillHints,
         controller: controller,
         obscureText: obscureText ?? false,
         focusNode: focusNode,
         keyboardType: keyboardType,
-        maxLines: maxLines ?? 1,
+        maxLines: maxLines,
         maxLength: maxLength,
         textInputAction: textInputAction ?? TextInputAction.next,
         textCapitalization: textCapitalization!,

@@ -1,5 +1,6 @@
 package py.com.flextech.config.security;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -15,8 +16,10 @@ import py.com.flextech.model.sistema.JwtRequest;
 import py.com.flextech.model.sistema.JwtResponse;
 import py.com.flextech.model.sistema.Usuario;
 import py.com.flextech.model.sistema.Versao;
+import py.com.flextech.model.taller.Taller;
 import py.com.flextech.repository.sistema.UsuarioRepository;
 import py.com.flextech.repository.sistema.VersaoRepository;
+import py.com.flextech.repository.taller.TallerRepository;
 import py.com.flextech.service.sistema.AuditoriaPlatformService;
 
 @Service
@@ -29,6 +32,7 @@ public class AuthenticationService {
 	private final VersaoRepository versaoRepository;
 	private final AuditoriaPlatformService auditoriaPlatformService;
 	private final BCryptPasswordEncoder  passwordEncoder;
+	private final TallerRepository  tallerRepository;
 
 	public ResponseEntity<?> signin(JwtRequest request) {
 	    final String invalidCredentialsMsg = "Usuario y/o Contraseña inválidos";
@@ -56,6 +60,11 @@ public class AuthenticationService {
 	    }
 
 	    Usuario usuario = optionalUsuario.get();
+	    
+	    List<Taller> talleresAsignados = tallerRepository.findByResponsable(usuario);
+	    if(talleresAsignados != null) {
+	    	usuario.setTalleresAsignados(talleresAsignados);
+	    }
 
 	    String jwt = jwtService.generateToken(usuario, request.getTimeOffSet());
 	    auditoriaPlatformService.save(usuario);

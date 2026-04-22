@@ -43,6 +43,9 @@ Usuario _$UsuarioFromJson(Map<String, dynamic> json) => Usuario(
   checkin: (json['checkin'] as List<dynamic>?)
       ?.map((e) => Checkin.fromJson(e as Map<String, dynamic>))
       .toList(),
+  talleresAsignados: (json['talleresAsignados'] as List<dynamic>?)
+      ?.map((e) => Taller.fromJson(e as Map<String, dynamic>))
+      .toList(),
 );
 
 Map<String, dynamic> _$UsuarioToJson(Usuario instance) => <String, dynamic>{
@@ -80,6 +83,7 @@ Map<String, dynamic> _$UsuarioToJson(Usuario instance) => <String, dynamic>{
   'isCheckIn': instance.isCheckIn,
   'isActivado': instance.isActivado,
   'checkin': instance.checkin,
+  'talleresAsignados': instance.talleresAsignados,
 };
 
 Value? _$JsonConverterFromJson<Json, Value>(

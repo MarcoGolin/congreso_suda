@@ -4,7 +4,7 @@ import 'package:congreso_evento/core/notifiier/default_state_notififier.dart';
 import 'package:congreso_evento/modules/home/model/organizadores.dart';
 import 'package:congreso_evento/modules/home/service/organizadores_service.dart';
 import 'package:congreso_evento/modules/talleres/models/taller.dart';
-import 'package:congreso_evento/modules/talleres/service/taller_service.dart';
+import 'package:congreso_evento/modules/talleres/services/taller_service.dart';
 import 'package:mobx/mobx.dart';
 
 part 'home_page_ctrl.g.dart';

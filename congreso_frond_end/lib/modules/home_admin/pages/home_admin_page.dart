@@ -218,11 +218,16 @@ class _HomeAdminPageState extends State<HomeAdminPage>
 
   // Reglas de visibilidad por rol
   List<_AdminItem> _allowedItems(Usuario? u) {
+    if (u == null) return [];
     // Ajustá estos getters si tus campos tienen otros nombres.
-    final isAdmin = (u?.isAdmin == true);
-    final isFinanciero = (u?.isFinanciero == true);
-    final isCheckIn = (u?.isCheckIn == true);
-    final isAudioVisual = (u?.isAudioVisual == true);
+    final isAdmin = (u.isAdmin == true);
+    final isFinanciero = (u.isFinanciero == true);
+    final isCheckIn = (u.isCheckIn == true);
+    final isAudioVisual = (u.isAudioVisual == true);
+
+    final talleresAsignados = u.talleresAsignados ?? [];
+
+    debugPrint('Talleres asignados: ${talleresAsignados.length}');
 
     final all = <_AdminItem>[
       const _AdminItem(
@@ -244,13 +249,25 @@ class _HomeAdminPageState extends State<HomeAdminPage>
         route: '/home_admin/trabajos/',
       ),
       const _AdminItem(
+        icon: Icons.work,
+        title: 'Participantes de Talleres',
+        subtitle: 'Gestión de inscripciones a talleres',
+        route: '/home_admin/taller/',
+      ),
+      const _AdminItem(
+        icon: Icons.work,
+        title: 'Asignar Responsables de Talleres',
+        subtitle: 'Gestión de inscripciones a talleres',
+        route: '/home_admin/taller/asignar_responsable/',
+      ),
+      const _AdminItem(
         icon: Icons.qr_code_scanner_outlined,
         title: 'Check-In',
         subtitle: 'Control de ingreso y presencia',
         route: '/checkin',
       ),
       const _AdminItem(
-        icon: Icons.qr_code_scanner_outlined,
+        icon: Icons.casino_outlined,
         title: 'Sorteo',
         subtitle: 'Gestión y realización de sorteos',
         route: '/sorteo',
@@ -262,19 +279,34 @@ class _HomeAdminPageState extends State<HomeAdminPage>
         route: '/admin/dashboard/',
       ),
     ];
-
-    if (isAdmin) return all;
-
     final result = <_AdminItem>[];
+
+    for (final item in talleresAsignados) {
+      result.add(
+        _AdminItem(
+          icon: Icons.people,
+          title: 'Informar participantes del:\n${item.title} ',
+          subtitle: item.subTitle,
+          route: '/home_admin/taller/${item.id}',
+        ),
+      );
+    }
+
+    if (isAdmin) {
+      result.addAll(all);
+      return result;
+    }
+
     if (isFinanciero) {
       result.add(all[0]); // Pagos
     }
     if (isCheckIn) {
-      result.add(all[3]); // Check-In
+      result.add(all[5]); // Check-In
     }
     if (isAudioVisual) {
-      result.add(all[4]); // Sorteo
+      result.add(all[6]); // Sorteo
     }
+
     return result;
   }
 }

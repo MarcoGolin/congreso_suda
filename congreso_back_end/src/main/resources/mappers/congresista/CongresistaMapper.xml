@@ -61,6 +61,8 @@
 	  <include refid="sqlDefault"/>
 	  <where>
 	    u.BO_CONGRESISTA = TRUE
+	    
+	    AND U.REGISTRO_ACADEMICO IS NOT NULL
 	
 	    <if test="nombre != null and nombre.trim() != ''">
 	      AND u.NOMBRE_COMPLETO LIKE CONCAT('%', #{nombre}, '%')

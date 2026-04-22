@@ -17,6 +17,7 @@ public class UsuarioSerializer extends JsonSerializer<Usuario> {
 		gen.writeStartObject();
 		gen.writeNumberField("id", value.getId());
 		gen.writeStringField("nombreCompleto", value.getNombreCompleto());
+		gen.writeStringField("registroAcademico", value.getRegistroAcademico());
 		gen.writeEndObject();
 	}
 
