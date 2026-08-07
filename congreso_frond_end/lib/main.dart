@@ -9,9 +9,16 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Throttle del VisibilityDetector: 100ms es suficiente para scroll-reveal
+  // sin saturar el event loop en web.
+  VisibilityDetectorController.instance.updateInterval =
+      const Duration(milliseconds: 100);
+
   await dotenv.load(fileName: ".env");
   await Supabase.initialize(
     url: 'https://lkuedzsknoimbhwlavcy.supabase.co',

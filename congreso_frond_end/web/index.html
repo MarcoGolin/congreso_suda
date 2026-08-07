@@ -48,9 +48,9 @@
   <meta name="twitter:description" content="9–11 de octubre de 2025 · Saltos del Guairá, Paraguay. Charlas, talleres y networking médico.">
   <meta name="twitter:image" content="https://congresounisud.com/assets/imagenes/logo/logo_congreso_solo.png">
 
-  <!-- Preload de activos críticos -->
-  <link rel="preload" as="image" href="assets/imagenes/logo/logo_congreso_largo.png?v=1" fetchpriority="high">
-  <link rel="preload" as="image" href="assets/imagenes/fondo/fondo_liviano.webp?v=1" fetchpriority="high">
+  <!-- Preload de activos críticos (el ?v=BUILD_TIMESTAMP se sustituye en cada build) -->
+  <link rel="preload" as="image" href="assets/assets/imagenes/logo/logo_congreso_largo.webp?v=BUILD_TIMESTAMP" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/assets/imagenes/fondo/fondo_liviano.webp?v=BUILD_TIMESTAMP" fetchpriority="high">
 
   <!-- Datos estructurados (Evento) -->
   <script type="application/ld+json">
@@ -99,7 +99,7 @@
     #preloader::before {
       content: "";
       position: absolute; inset: 0;
-      background: url("assets/imagenes/fondo/fondo_liviano.webp?v=1") center/cover no-repeat;
+      background: url("assets/assets/imagenes/fondo/fondo_liviano.webp?v=BUILD_TIMESTAMP") center/cover no-repeat;
       filter: brightness(.9);
       opacity: .55;
     }
@@ -123,13 +123,120 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     #preloader[aria-hidden="true"] { display: none; }
+
+    /* === UPDATE BANNER === */
+    #update-banner {
+      display: none;
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999999;
+      background: #E8F5E9;
+      color: #1b3a24;
+      padding: 14px 20px;
+      border-left: 4px solid #387f4d;
+      border-radius: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      animation: slideDown 0.3s ease-out;
+      align-items: center;
+      gap: 12px;
+    }
+    #update-banner.show { display: flex; }
+    #update-banner .update-icon { font-size: 20px; color: #387f4d; }
+    #update-banner button {
+      background: #387f4d;
+      color: #fff;
+      border: none;
+      padding: 7px 18px;
+      margin-left: 8px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      box-shadow: 0 2px 6px rgba(56, 127, 77, 0.45);
+      transition: background 0.2s;
+    }
+    #update-banner button:hover { background: #2e6b40; }
+    @keyframes slideDown {
+      from { transform: translate(-50%, -100%); opacity: 0; }
+      to { transform: translate(-50%, 0); opacity: 1; }
+    }
   </style>
+
+  <script>
+  (function () {
+    var currentBuild = null;
+
+    async function applyUpdate() {
+      try {
+        if ('serviceWorker' in navigator) {
+          var regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map(function (r) { return r.unregister(); }));
+        }
+        if ('caches' in window) {
+          var names = await caches.keys();
+          await Promise.all(names.map(function (n) { return caches.delete(n); }));
+        }
+        sessionStorage.clear();
+        window.location.href = window.location.origin + '/?_update=' + Date.now();
+      } catch (e) {
+        console.error('Congreso: applyUpdate error, forzando recarga:', e);
+        window.location.href = window.location.origin + '/?_update=' + Date.now();
+      }
+    }
+    window.applyUpdate = applyUpdate;
+
+    function checkForUpdate() {
+      fetch('version.json?_t=' + Date.now())
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (currentBuild === null) {
+            currentBuild = data.build_number;
+          } else if (data.build_number !== currentBuild) {
+            console.log('Congreso: nueva versión disponible (' + data.build_number + ')');
+            var banner = document.getElementById('update-banner');
+            if (banner) banner.classList.add('show');
+          }
+        })
+        .catch(function (err) {
+          if (err && err.message && !err.message.includes('404')) {
+            console.warn('Congreso: update check error', err);
+          }
+        });
+    }
+
+    setTimeout(checkForUpdate, 5000);
+    setInterval(checkForUpdate, 60000);
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('custom-sw.js')
+        .then(function (reg) {
+          console.log('Congreso SW registrado:', reg.scope);
+          setInterval(function () { reg.update(); }, 60000);
+        })
+        .catch(function (err) {
+          console.warn('Congreso SW registro falló:', err);
+        });
+    }
+  })();
+  </script>
 </head>
 <body class="preload-lock">
+  <!-- Update banner (se muestra cuando hay nueva versión disponible) -->
+  <div id="update-banner">
+    <span class="update-icon">&#x2728;</span>
+    <span>Nueva versión disponible</span>
+    <button onclick="applyUpdate()">Actualizar ahora</button>
+  </div>
+
   <!-- Preloader accesible -->
   <div id="preloader" role="status" aria-live="polite" aria-busy="true">
     <div class="splash-card">
-      <img src="assets/imagenes/logo/logo_congreso_largo.png?v=1" alt="IVCIUSMI 2025">
+      <img src="assets/assets/imagenes/logo/logo_congreso_largo.webp?v=BUILD_TIMESTAMP" alt="IVCIUSMI 2025">
       <div class="spinner" aria-hidden="true"></div>
     </div>
   </div>
@@ -161,8 +268,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
-  <!-- Bootstrap de Flutter -->
-  <script src="flutter_bootstrap.js" defer></script>
+  <!-- Bootstrap de Flutter (el ?v=BUILD_TIMESTAMP se sustituye en cada build para bustear caché) -->
+  <script src="flutter_bootstrap.js?v=BUILD_TIMESTAMP" async></script>
 
   <!-- Preloader: se apaga al primer frame o a los 6s -->
   <script>
@@ -195,7 +302,7 @@
       }, 6000);
 
       const hero = new Image();
-      hero.src = 'assets/imagenes/fondo/fondo_liviano.webp?v=1';
+      hero.src = 'assets/assets/imagenes/fondo/fondo_liviano.webp?v=BUILD_TIMESTAMP';
     })();
   </script>
 

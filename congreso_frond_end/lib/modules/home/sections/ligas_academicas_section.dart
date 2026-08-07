@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:congreso_evento/core/animations/scroll_reveal.dart';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class LigasAcademicasSection extends StatelessWidget {
   const LigasAcademicasSection({super.key});
@@ -16,29 +18,29 @@ class LigasAcademicasSection extends StatelessWidget {
     final isMobile = width < 900;
 
     final List<String> ligas = [
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LANEURUS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LADERMUS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LADAUS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAGOUS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAETUS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAPED-US-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAEME-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LADTOUS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAMICROUS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LACMUS-%20SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LIGAME-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LANTUS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAPSUSS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAIIUS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LACIS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAOH-US-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LACARDIUS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAFISIO-US-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAMEFUS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAMPREV-US-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAOT-US-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAPMUS-SDG.png',
-      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/NUTRILAUS-SDG.png',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LANEURUS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LADERMUS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LADAUS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAGOUS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAETUS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAPED-US-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAEME-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LADTOUS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAMICROUS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LACMUS-%20SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LIGAME-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LANTUS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAPSUSS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAIIUS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LACIS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAOH-US-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LACARDIUS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAFISIO-US-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAMEFUS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAMPREV-US-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAOT-US-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/LAPMUS-SDG.webp',
+      'https://lkuedzsknoimbhwlavcy.supabase.co/storage/v1/object/public/congreso/ligas_academicas/NUTRILAUS-SDG.webp',
     ];
 
     // tamaño responsivo para logos
@@ -60,9 +62,13 @@ class LigasAcademicasSection extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const HeaderSection(
+                  ScrollReveal(
+                    key: const Key('ligas-header'),
+                    delay: 100.ms,
+                    child: const HeaderSection(
                     title: 'Ligas Académicas',
                     color: brandLight,
+                  ),
                   ),
                   const SizedBox(height: 10),
 
@@ -159,9 +165,16 @@ class LigasAcademicasSection extends StatelessWidget {
                     runSpacing: 12,
                     alignment: WrapAlignment.center,
                     crossAxisAlignment: WrapCrossAlignment.center,
-                    children: ligas
-                        .map((liga) => _RoundLogo(url: liga, size: logoSize))
-                        .toList(),
+                    children: ligas.asMap().entries.map((entry) {
+                      final i = entry.key;
+                      final liga = entry.value;
+                      return ScrollReveal(
+                        key: Key('liga-logo-$i'),
+                        delay: (i * 40).ms,
+                        blurSigma: 0,
+                        child: _RoundLogo(url: liga, size: logoSize),
+                      );
+                    }).toList(),
                   ),
                 ],
               ),

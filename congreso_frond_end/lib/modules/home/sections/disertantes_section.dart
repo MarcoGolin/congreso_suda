@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:congreso_evento/core/animations/scroll_reveal.dart';
 import 'package:congreso_evento/core/empty_result.dart';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:congreso_evento/modules/disertante/model/disertante.dart';
@@ -8,6 +9,7 @@ import 'package:congreso_evento/modules/home/widgets/flayer_ligth_box.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 const _brandPrimary = Color(0xFF387f4d);
 const _brandPrimaryLight = Color(0xFFE9F5EE);
@@ -235,7 +237,10 @@ class _DisertantesCarouselSectionState
             child: Column(
               children: [
                 // Header + flechas
-                Container(
+                ScrollReveal(
+                  key: const Key('disertantes-header'),
+                  delay: 100.ms,
+                  child: Container(
                   constraints: const BoxConstraints(maxWidth: 1100),
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -264,6 +269,7 @@ class _DisertantesCarouselSectionState
                     ],
                   ),
                 ),
+                ), // fin ScrollReveal 'disertantes-header'
                 const SizedBox(height: 20),
                 // Carrusel + edge-scroll + control de scroll del usuario
                 MouseRegion(

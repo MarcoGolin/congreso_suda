@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:congreso_evento/core/animations/scroll_reveal.dart';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // TODO: Reemplazar por tus enlaces reales
@@ -75,7 +77,10 @@ class TrabajoCientificoSection extends StatelessWidget {
                     maxWidth: isMobile ? double.infinity : 1100,
                   ),
                   width: isMobile ? double.infinity : 580,
-                  child: FadeInLeft(
+                  child: ScrollReveal(
+                    key: const Key('trabajo-header'),
+                    delay: 100.ms,
+                    child: FadeInLeft(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -250,6 +255,7 @@ class TrabajoCientificoSection extends StatelessWidget {
                       ],
                     ),
                   ),
+                  ), // fin ScrollReveal 'trabajo-header'
                 ),
               ),
             ),

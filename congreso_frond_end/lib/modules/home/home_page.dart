@@ -14,10 +14,8 @@ import 'package:congreso_evento/modules/home/sections/trabajo_cientifico_section
 import 'package:congreso_evento/modules/home/sections/widgets/taller_inscripcion_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:yaml/yaml.dart';
 
 import '../auspiciantes/model/auspiciante.dart';
 import 'sections/actividades_ligas_section.dart';
@@ -37,7 +35,6 @@ class _HomePageState extends State<HomePage> {
 
   final GlobalKey _inicioSectionKey = GlobalKey();
   final GlobalKey _sobreSectionKey = GlobalKey();
-  // final GlobalKey _agendaSectionKey = GlobalKey();
   final GlobalKey _disertantesSectionKey = GlobalKey();
   final GlobalKey _trabajosCientificosSectionKey = GlobalKey();
   final GlobalKey _ligasAcademicasSectionKey = GlobalKey();
@@ -46,16 +43,14 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey _lugarEventoSectionKey = GlobalKey();
   final GlobalKey _comiteSectionKey = GlobalKey();
   final GlobalKey _auspiciantesSectionKey = GlobalKey();
-  // final GlobalKey _reconocimientosApoyoSectionKey = GlobalKey();
-
-  // final GlobalKey _precioSectionKey = GlobalKey();
   final GlobalKey _contactoSectionKey = GlobalKey();
 
   late final Map<String, GlobalKey> _sectionKeys;
 
-  bool _isAppBarTransparent = true;
+  // ValueNotifier: evita setState global del Scaffold al cambiar opacidad del AppBar
+  final ValueNotifier<bool> _appBarOpaque = ValueNotifier(false);
 
-  var _version = '';
+  static const _appVersion = 'V: 1.0.0+52';
 
   @override
   void initState() {
@@ -76,24 +71,17 @@ class _HomePageState extends State<HomePage> {
     };
     _scrollController.addListener(_onScroll);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // _ctrl.consultarOrganizadores();
-      // _ctrl.consultarTalleres();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       cierraPreLoader();
-      var y = await rootBundle.loadString("pubspec.yaml");
-      String nrBuild = loadYaml(y)["version"];
-
-      setState(() {
-        _version = 'V: $nrBuild';
-      });
     });
   }
 
   void _onScroll() {
-    final threshold = MediaQuery.of(context).size.height * 0.6; // 60% pantalla
-    final shouldBeTransparent = _scrollController.offset < threshold;
-    if (_isAppBarTransparent != shouldBeTransparent) {
-      setState(() => _isAppBarTransparent = shouldBeTransparent);
+    final threshold = MediaQuery.of(context).size.height * 0.6;
+    final shouldBeOpaque = _scrollController.offset >= threshold;
+    // ValueNotifier evita rebuild del Scaffold — solo reconstruye el AppBar
+    if (_appBarOpaque.value != shouldBeOpaque) {
+      _appBarOpaque.value = shouldBeOpaque;
     }
   }
 
@@ -103,7 +91,6 @@ class _HomePageState extends State<HomePage> {
 
     final ctx = key.currentContext;
     if (ctx == null) {
-      // La sección aún no está montada; reintentamos en el próximo frame
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => _navigateToSection(sectionName),
       );
@@ -114,22 +101,18 @@ class _HomePageState extends State<HomePage> {
     if (renderObject == null) return;
 
     final viewport = RenderAbstractViewport.of(renderObject);
-
-    // Offset para alinear el INICIO del widget en la parte superior
     final rawTarget = viewport.getOffsetToReveal(renderObject, 0.0).offset;
 
-    // Compensación dinámica por AppBar según tu umbral del 60%
     final screenH = MediaQuery.of(context).size.height;
     final threshold = screenH * 0.60;
     final topPadding = MediaQuery.of(context).padding.top;
-    const appBarH = kToolbarHeight; // 56
+    const appBarH = kToolbarHeight;
     const fudge = 6.0;
 
     final willBeOpaque = rawTarget >= threshold;
     final needsAppBar = willBeOpaque && sectionName != 'Inicio';
     final compensate = topPadding + (needsAppBar ? appBarH : 0) + fudge;
 
-    // Apuntar lo más arriba posible sin pasarse del final del scroll
     final maxExtent = sectionName != 'Contacto'
         ? _scrollController.position.maxScrollExtent
         : _scrollController.position.maxScrollExtent - 100;
@@ -146,18 +129,13 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    _appBarOpaque.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final textColor = const Color(0xFF73c165);
-
-    //cambiar color de appBar de acuerdo al scroll section
-    final appBarColor = _isAppBarTransparent
-        ? Colors.transparent
-        : Colors.white;
-    // final appBarColor = Colors.transparent;
+    const textColor = Color(0xFF73c165);
 
     final sections = [
       SizedBox(
@@ -170,7 +148,7 @@ class _HomePageState extends State<HomePage> {
         key: _disertantesSectionKey,
         child: DisertantesCarouselSection(
           titulo: 'Conocé a nuestros disertantes',
-          disertantes: Disertante.disertantesEjemplo, // tu lista (20+)
+          disertantes: Disertante.disertantesEjemplo,
         ),
       ),
       SizedBox(
@@ -185,31 +163,33 @@ class _HomePageState extends State<HomePage> {
         key: _actividadesLigasSectionKey,
         child: const ActividadesLigasSection(),
       ),
-      Observer(
-        builder: (_) {
-          if (_ctrl.talleres.isEmpty) return const SizedBox.shrink();
-          return SizedBox(
-            key: _tallerSectionKey,
-            child: TallerInscripcionSection(talleres: _ctrl.talleres),
-          );
-        },
+      // SizedBox con key estable FUERA del Observer → GlobalKey siempre registrada
+      SizedBox(
+        key: _tallerSectionKey,
+        child: Observer(
+          builder: (_) {
+            if (_ctrl.talleres.isEmpty) return const SizedBox.shrink();
+            return TallerInscripcionSection(talleres: _ctrl.talleres);
+          },
+        ),
       ),
-      Observer(
-        builder: (_) {
-          if (_ctrl.organizadores.isEmpty) return const SizedBox.shrink();
-          final lista = _ctrl.organizadores; // MobX observable
-          final isLoading = _ctrl.isLoading == true;
-          return SizedBox(
-            key: _comiteSectionKey,
-            child: ComiteSection(organizadores: lista, isLoading: isLoading),
-          );
-        },
+      SizedBox(
+        key: _comiteSectionKey,
+        child: Observer(
+          builder: (_) {
+            if (_ctrl.organizadores.isEmpty) return const SizedBox.shrink();
+            return ComiteSection(
+              organizadores: _ctrl.organizadores,
+              isLoading: _ctrl.isLoading,
+            );
+          },
+        ),
       ),
       SizedBox(
         key: _auspiciantesSectionKey,
         child: AuspiciantesCarouselSection(
           titulo: 'Auspiciantes',
-          sponsors: Auspiciante.all(), // tu lista (20+)
+          sponsors: Auspiciante.all(),
         ),
       ),
       SizedBox(key: _lugarEventoSectionKey, child: const LugarSection()),
@@ -217,27 +197,38 @@ class _HomePageState extends State<HomePage> {
     ];
 
     return Scaffold(
-      //  background: rgba(255,255,255,.06);
       backgroundColor: const Color(0xFF121A14),
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: appBarColor,
-        elevation: 0,
-        iconTheme: IconThemeData(color: textColor),
-        title: AnimatedDefaultTextStyle(
-          duration: const Duration(milliseconds: 300),
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.bold,
-            color: textColor,
-            fontSize: 24,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('#IVCIUSMI 2025'),
-              Text(_version, style: TextStyle(fontSize: 8, color: Colors.grey)),
-            ],
+      // PreferredSize + ValueListenableBuilder: solo el AppBar se reconstruye
+      // cuando cambia la opacidad — el Scaffold y las secciones NO rebuildan.
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: ValueListenableBuilder<bool>(
+          valueListenable: _appBarOpaque,
+          builder: (_, opaque, __) => AppBar(
+            backgroundColor:
+                opaque ? Colors.white : Colors.transparent,
+            elevation: 0,
+            iconTheme: const IconThemeData(color: textColor),
+            title: AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 300),
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.bold,
+                color: textColor,
+                fontSize: 24,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('#IVCIUSMI 2025'),
+                  Text(
+                    _appVersion,
+                    style: const TextStyle(fontSize: 8, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -251,12 +242,11 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.zero,
           controller: _scrollController,
           scrollDirection: Axis.vertical,
-          cacheExtent: MediaQuery.of(context).size.height * 3,
+          // Reducido de 3x a 1.5x: menos secciones fuera de viewport en memoria
+          cacheExtent: MediaQuery.of(context).size.height * 1.5,
           physics: const ClampingScrollPhysics(),
           itemCount: sections.length,
-          itemBuilder: (context, index) {
-            return sections[index];
-          },
+          itemBuilder: (context, index) => sections[index],
         ),
       ),
     );

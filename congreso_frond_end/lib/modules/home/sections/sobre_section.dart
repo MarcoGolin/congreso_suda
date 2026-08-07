@@ -1,6 +1,8 @@
+import 'package:congreso_evento/core/animations/scroll_reveal.dart';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:congreso_evento/core/image/overlapped_images.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class SobreSection extends StatelessWidget {
   const SobreSection({super.key});
@@ -31,7 +33,10 @@ class SobreSection extends StatelessWidget {
             runSpacing: 40,
             children: [
               // === Texto =====================================================
-              SizedBox(
+              ScrollReveal(
+                key: const Key('sobre-header'),
+                delay: 100.ms,
+                child: SizedBox(
                 width: isMobile ? double.infinity : 620,
                 child: Column(
                   crossAxisAlignment: isMobile
@@ -164,9 +169,14 @@ class SobreSection extends StatelessWidget {
                   ],
                 ),
               ),
+              ), // fin ScrollReveal 'sobre-header'
 
               // === Imágenes superpuestas ====================================
-              SizedBox(
+              ScrollReveal(
+                key: const Key('sobre-images'),
+                delay: 200.ms,
+                blurSigma: 0,
+                child: SizedBox(
                 width: isMobile ? size.width - 32 : 440,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -211,6 +221,7 @@ class SobreSection extends StatelessWidget {
                   ],
                 ),
               ),
+              ), // fin ScrollReveal 'sobre-images'
             ],
           ),
         ),

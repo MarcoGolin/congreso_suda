@@ -12,7 +12,9 @@ import py.com.flextech.model.sistema.Usuario;
 
 
 public interface TallerRepository extends JpaRepository<Taller, Long> {
-	
+
 	List<Taller> findByResponsable(Usuario responsable);
+
+	List<Taller> findByTituloContainingIgnoreCaseOrDescripcionContainingIgnoreCase(String titulo, String descripcion);
 
 }

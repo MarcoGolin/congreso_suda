@@ -14,7 +14,7 @@ public class DataBaseConfig {
     DataSource getDataSource() {
 		DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
 		//dataSourceBuilder.driverClassName("com.mysql.jdbc.Driver");
-		dataSourceBuilder.url("jdbc:mysql://localhost:3306/saas_congreso?useSSL=false&useUnicode=true&serverTimezone=America/Sao_Paulo");
+		dataSourceBuilder.url("jdbc:mysql://localhost:3306/saas_congreso?useSSL=false&useUnicode=true&serverTimezone=America/Sao_Paulo&allowPublicKeyRetrieval=true");
 		dataSourceBuilder.username("marco");
 		dataSourceBuilder.password("84125497");
 		return dataSourceBuilder.build();

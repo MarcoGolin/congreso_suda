@@ -1,0 +1,55 @@
+# .htaccess — Cache control + compression para Flutter Web (Congreso UNISUD)
+#
+# NOTA: Las rewrite rules para SPA (fallback a index.html) están en el vhost
+# /etc/apache2/sites-available/000-default-le-ssl.conf. Este archivo sólo
+# maneja cache, compresión y MIME types. Requiere AllowOverride All en el vhost.
+
+AddType application/wasm .wasm
+AddType application/javascript .js
+
+# === CACHE CONTROL ===
+<IfModule mod_headers.c>
+    # Archivos de entrada: SIEMPRE frescos (nunca del cache del navegador)
+    # index.html, version.json y manifest.json son el punto de entrada del update checker.
+    <FilesMatch "(index\.html|flutter_bootstrap\.js|flutter_service_worker\.js|version\.json|manifest\.json)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+
+    # main.dart.js: revalidar vía ETag (304 = cero bytes transferidos si no cambió).
+    # Evita re-descargar ~2MB gzip cuando la versión no cambió.
+    <FilesMatch "main\.dart\.js$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+
+    # Assets inmutables: cache 1 año + immutable (sin revalidación).
+    # WASM y canvaskit son los más grandes (~15MB total).
+    <FilesMatch "\.(wasm)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    <FilesMatch "canvaskit(\.js|\.wasm|_worker\.js)$|skwasm(\.js|\.wasm|_worker\.js)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # Fuentes: cache 1 año + immutable
+    <FilesMatch "\.(woff2?|ttf|otf)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # Imágenes e íconos: cache 1 año + immutable
+    <FilesMatch "\.(png|jpg|jpeg|gif|svg|ico|webp)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # Vary para correcta entrega comprimida vía proxies/CDN
+    <FilesMatch "\.(js|wasm|html|css|json)$">
+        Header append Vary Accept-Encoding
+    </FilesMatch>
+</IfModule>
+
+# === COMPRESIÓN GZIP (reduce main.dart.js de ~9MB a ~2MB) ===
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE application/javascript application/wasm text/html text/css application/json image/svg+xml
+</IfModule>

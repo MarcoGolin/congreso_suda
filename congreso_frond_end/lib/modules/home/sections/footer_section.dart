@@ -1,7 +1,9 @@
+import 'package:congreso_evento/core/animations/scroll_reveal.dart';
 import 'package:congreso_evento/core/web_helper/web_helper_stub.dart'
     if (dart.library.html) 'package:congreso_evento/core/web_helper/web_helper.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FooterSection extends StatelessWidget {
@@ -39,7 +41,10 @@ class FooterSection extends StatelessWidget {
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1100),
-          child: Column(
+          child: ScrollReveal(
+            key: const Key('footer-main'),
+            delay: 100.ms,
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // ======== Top content ========
@@ -233,6 +238,7 @@ class FooterSection extends StatelessWidget {
               ),
             ],
           ),
+          ), // fin ScrollReveal 'footer-main'
         ),
       ),
     );

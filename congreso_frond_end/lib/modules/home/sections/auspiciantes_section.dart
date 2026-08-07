@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:congreso_evento/core/animations/scroll_reveal.dart';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:congreso_evento/modules/auspiciantes/model/auspiciante.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class AuspiciantesCarouselSection extends StatelessWidget {
   final String titulo;
@@ -60,22 +62,31 @@ class AuspiciantesCarouselSection extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const HeaderSection(title: 'Auspiciantes', color: brandLight),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Container(
-                    width: 72,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      gradient: const LinearGradient(
-                        colors: [brandLight, brandPrimary],
-                      ),
+              ScrollReveal(
+                key: const Key('auspiciantes-header'),
+                delay: 100.ms,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const HeaderSection(title: 'Auspiciantes', color: brandLight),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Container(
+                          width: 72,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            gradient: const LinearGradient(
+                              colors: [brandLight, brandPrimary],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ), // fin ScrollReveal 'auspiciantes-header'
 
               // ===== Banda de PRINCIPALES (centrados, fila(s) separadas) =====
               const SizedBox(height: 20),
@@ -87,13 +98,20 @@ class AuspiciantesCarouselSection extends StatelessWidget {
                     runSpacing: 14,
                     alignment: WrapAlignment.center,
                     crossAxisAlignment: WrapCrossAlignment.center,
-                    children: principales.map((s) {
-                      return _HeroSponsorLogo(
-                        url: s.url,
-                        name: s.name,
-                        maxHeight: 120,
-                        // ancho flexible, pero acotamos para que luzcan uniformes
-                        maxWidth: _heroWidthForHeight(heroHeight),
+                    children: principales.asMap().entries.map((entry) {
+                      final i = entry.key;
+                      final s = entry.value;
+                      return ScrollReveal(
+                        key: Key('auspiciante-principal-$i'),
+                        delay: (i * 40).ms,
+                        blurSigma: 0,
+                        child: _HeroSponsorLogo(
+                          url: s.url,
+                          name: s.name,
+                          maxHeight: 120,
+                          // ancho flexible, pero acotamos para que luzcan uniformes
+                          maxWidth: _heroWidthForHeight(heroHeight),
+                        ),
                       );
                     }).toList(),
                   ),
@@ -112,14 +130,21 @@ class AuspiciantesCarouselSection extends StatelessWidget {
                   spacing: spacing,
                   runSpacing: spacing,
                   alignment: WrapAlignment.center,
-                  children: restantes.map((s) {
-                    return SizedBox(
-                      width: itemWidth,
-                      child: _LogoTile(
-                        url: s.url,
-                        name: s.name,
-                        maxHeight: maxLogoHeight,
-                        isPriority: false, // resto
+                  children: restantes.asMap().entries.map((entry) {
+                    final i = entry.key;
+                    final s = entry.value;
+                    return ScrollReveal(
+                      key: Key('auspiciante-resto-$i'),
+                      delay: (i * 30).ms,
+                      blurSigma: 0,
+                      child: SizedBox(
+                        width: itemWidth,
+                        child: _LogoTile(
+                          url: s.url,
+                          name: s.name,
+                          maxHeight: maxLogoHeight,
+                          isPriority: false, // resto
+                        ),
                       ),
                     );
                   }).toList(),

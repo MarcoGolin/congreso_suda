@@ -1,5 +1,5 @@
 {
-  "id": "https://congresounisud.com/",
+  "id": "https://www.congresounisud.com/",
   "name": "IVCIUSMI 2025 · Congreso de Medicina · UNISUD",
   "short_name": "IVCIUSMI 2025",
   "description": "Congreso de medicina de la UNISUD en Saltos del Guairá · 9–11 de octubre de 2025.",
@@ -17,7 +17,7 @@
   "icons": [
     { "src": "icons/Icon-192.png",          "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icons/Icon-512.png",          "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/maskable-512.png",      "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "icons/Icon-maskable-512.png",  "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
 
   "shortcuts": [

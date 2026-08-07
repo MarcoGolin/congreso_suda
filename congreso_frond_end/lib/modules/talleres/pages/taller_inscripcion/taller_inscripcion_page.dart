@@ -40,10 +40,9 @@ class _TallerInscripcionPageState extends State<TallerInscripcionPage>
   void initState() {
     super.initState();
     // Post-frame para asegurar Modular.args está listo también en web/deep-link
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadUser();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _loadUser();
       final idTaller = Modular.args.params['idTaller'] ?? '';
-      debugPrint('ID Taller desde ruta: $idTaller');
       if (idTaller.isNotEmpty) {
         _ctrl.consultaTallerById(idTaller: int.parse(idTaller));
       }
@@ -93,8 +92,9 @@ class _TallerInscripcionPageState extends State<TallerInscripcionPage>
         _usuario = Usuario.fromJson(map);
       }
     } catch (_) {
-      _usuario = null; // si hay json viejo/corrupto
+      _usuario = null;
     }
+    if (mounted) setState(() {});
   }
 
   @override
@@ -146,214 +146,230 @@ class _TallerInscripcionPageState extends State<TallerInscripcionPage>
                 ),
               ),
 
-              const SizedBox(height: 20),
-              const _SectionHeaderChip(title: 'Agregar Participante'),
-              const SizedBox(height: 12),
-
-              // Formulario de inscripción
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: _kBorder),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Observer(
-                      builder: (_) => CustomSearch<Usuario?>(
-                        label: 'Buscar congresista',
-                        search: (value) =>
-                            _ctrl.consultaCongresistaPorNombre(buscador: value),
-                        selected: _ctrl.congresista,
-                        onChanged: (data) => _ctrl.setCongresista = data,
-                        showClear: true,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Debe seleccionar un congresista';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Checkbox y botón en fila
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF7FBF8),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: _kBorder),
-                            ),
-                            child: CheckboxListTile(
-                              title: const Text(
-                                'Junta Directiva',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              subtitle: const Text(
-                                'Marcar si es miembro de la junta',
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              value: isJuntaDirectiva,
-                              activeColor: _brandPrimary,
-                              onChanged: (val) {
-                                if (val != null) {
-                                  setState(() {
-                                    isJuntaDirectiva = val;
-                                  });
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              _ctrl.inscribir(
-                                isJuntaDirectiva: isJuntaDirectiva,
-                              );
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: _brandPrimary,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 16,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            elevation: 2,
-                          ),
-                          icon: const Icon(Icons.person_add),
-                          label: const Text(
-                            'Inscribir',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 24),
-              const _SectionHeaderChip(title: 'Lista de Participantes'),
-              const SizedBox(height: 12),
-
-              // Lista de inscritos
+              // Secciones condicionales: solo se muestran cuando hay taller seleccionado
               Observer(
                 builder: (_) {
-                  final inscritos = _ctrl.inscriptos;
+                  if (_ctrl.taller == null) {
+                    return const _EmptyTallerState();
+                  }
 
-                  if (inscritos.isEmpty) {
-                    return Container(
-                      padding: const EdgeInsets.all(32),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: _kBorder),
-                      ),
-                      child: Center(
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 20),
+                      const _SectionHeaderChip(title: 'Agregar Participante'),
+                      const SizedBox(height: 12),
+
+                      // Formulario de inscripción
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: _kBorder),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.03),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
                         child: Column(
                           children: [
-                            Icon(
-                              Icons.people_outline,
-                              size: 64,
-                              color: _kMuted.withOpacity(0.5),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No hay participantes inscritos',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: _kMuted,
-                                fontWeight: FontWeight.w500,
+                            Observer(
+                              builder: (_) => CustomSearch<Usuario?>(
+                                label: 'Buscar congresista',
+                                search: (value) =>
+                                    _ctrl.consultaCongresistaPorNombre(
+                                      buscador: value,
+                                    ),
+                                selected: _ctrl.congresista,
+                                onChanged: (data) =>
+                                    _ctrl.setCongresista = data,
+                                showClear: true,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Debe seleccionar un congresista';
+                                  }
+                                  return null;
+                                },
                               ),
+                            ),
+                            const SizedBox(height: 12),
+
+                            // Checkbox y botón en fila
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF7FBF8),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: _kBorder),
+                                    ),
+                                    child: CheckboxListTile(
+                                      title: const Text(
+                                        'Junta Directiva',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      subtitle: const Text(
+                                        'Marcar si es miembro de la junta',
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                      value: isJuntaDirectiva,
+                                      activeColor: _brandPrimary,
+                                      onChanged: (val) {
+                                        if (val != null) {
+                                          setState(() {
+                                            isJuntaDirectiva = val;
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      _ctrl.inscribir(
+                                        isJuntaDirectiva: isJuntaDirectiva,
+                                      );
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: _brandPrimary,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    elevation: 2,
+                                  ),
+                                  icon: const Icon(Icons.person_add),
+                                  label: const Text(
+                                    'Inscribir',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                    );
-                  }
 
-                  // Separar por tipo
-                  final juntaDirectiva = inscritos
-                      .where((i) => i.isJuntaDirectiva == true)
-                      .toList();
-                  final participantes = inscritos
-                      .where((i) => i.isJuntaDirectiva != true)
-                      .toList();
+                      const SizedBox(height: 24),
+                      const _SectionHeaderChip(title: 'Lista de Participantes'),
+                      const SizedBox(height: 12),
 
-                  return Column(
-                    children: [
-                      // Junta Directiva
-                      if (juntaDirectiva.isNotEmpty) ...[
-                        _SubsectionHeader(
-                          title: 'Junta Directiva',
-                          count: juntaDirectiva.length,
-                          icon: Icons.stars,
-                          color: const Color(0xFFFBBF24),
-                        ),
-                        const SizedBox(height: 8),
-                        ...juntaDirectiva.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final inscripto = entry.value;
-                          return _InscriptoCard(
-                            numero: index + 1,
-                            inscripto: inscripto,
-                            onDelete: () =>
-                                _ctrl.remover(idInscripto: inscripto.id),
-                            isJuntaDirectiva: true,
+                      // Lista de inscritos
+                      Observer(
+                        builder: (_) {
+                          final inscritos = _ctrl.inscriptos;
+
+                          if (inscritos.isEmpty) {
+                            return Container(
+                              padding: const EdgeInsets.all(32),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: _kBorder),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  children: [
+                                    Icon(
+                                      Icons.people_outline,
+                                      size: 64,
+                                      color: _kMuted.withOpacity(0.5),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'No hay participantes inscritos',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: _kMuted,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+
+                          // Separar por tipo
+                          final juntaDirectiva = inscritos
+                              .where((i) => i.isJuntaDirectiva == true)
+                              .toList();
+                          final participantes = inscritos
+                              .where((i) => i.isJuntaDirectiva != true)
+                              .toList();
+
+                          return Column(
+                            children: [
+                              if (juntaDirectiva.isNotEmpty) ...[
+                                _SubsectionHeader(
+                                  title: 'Junta Directiva',
+                                  count: juntaDirectiva.length,
+                                  icon: Icons.stars,
+                                  color: const Color(0xFFFBBF24),
+                                ),
+                                const SizedBox(height: 8),
+                                ...juntaDirectiva.asMap().entries.map((entry) {
+                                  final index = entry.key;
+                                  final inscripto = entry.value;
+                                  return _InscriptoCard(
+                                    numero: index + 1,
+                                    inscripto: inscripto,
+                                    onDelete: () => _ctrl.remover(
+                                      idInscripto: inscripto.id,
+                                    ),
+                                    isJuntaDirectiva: true,
+                                  );
+                                }),
+                                const SizedBox(height: 16),
+                              ],
+                              if (participantes.isNotEmpty) ...[
+                                _SubsectionHeader(
+                                  title: 'Participantes',
+                                  count: participantes.length,
+                                  icon: Icons.people,
+                                  color: _brandPrimary,
+                                ),
+                                const SizedBox(height: 8),
+                                ...participantes.asMap().entries.map((entry) {
+                                  final index = entry.key;
+                                  final inscripto = entry.value;
+                                  return _InscriptoCard(
+                                    numero: index + 1,
+                                    inscripto: inscripto,
+                                    onDelete: () => _ctrl.remover(
+                                      idInscripto: inscripto.id,
+                                    ),
+                                    isJuntaDirectiva: false,
+                                  );
+                                }),
+                              ],
+                            ],
                           );
-                        }),
-                        const SizedBox(height: 16),
-                      ],
-
-                      // Participantes Regulares
-                      if (participantes.isNotEmpty) ...[
-                        _SubsectionHeader(
-                          title: 'Participantes',
-                          count: participantes.length,
-                          icon: Icons.people,
-                          color: _brandPrimary,
-                        ),
-                        const SizedBox(height: 8),
-                        ...participantes.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final inscripto = entry.value;
-                          return _InscriptoCard(
-                            numero: index + 1,
-                            inscripto: inscripto,
-                            onDelete: () =>
-                                _ctrl.remover(idInscripto: inscripto.id),
-                            isJuntaDirectiva: false,
-                          );
-                        }),
-                      ],
+                        },
+                      ),
+                      const SizedBox(height: 80),
                     ],
                   );
                 },
               ),
-              const SizedBox(height: 80),
             ],
           ),
         ),
@@ -447,6 +463,50 @@ class _SubsectionHeader extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _EmptyTallerState extends StatelessWidget {
+  const _EmptyTallerState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _kBorder),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.event_seat_outlined,
+              size: 72,
+              color: _kMuted.withOpacity(0.35),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Seleccioná un taller',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: _kInk,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Una vez elegido el taller podrás ver e inscribir participantes.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: _kMuted),
+            ),
+          ],
+        ),
       ),
     );
   }

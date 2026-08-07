@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:congreso_evento/core/animations/scroll_reveal.dart';
 import 'package:congreso_evento/modules/home/widgets/flayer_ligth_box.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 void _openFlyerLightbox(
   BuildContext context, {
@@ -54,7 +56,7 @@ class LigaActividad {
 
   String get flyerUrl {
     final file = (flyerOverride ?? ligaAcronimo).toUpperCase();
-    return '$_supabaseBase/$file.jpg';
+    return '$_supabaseBase/$file.webp';
   }
 }
 
@@ -123,7 +125,10 @@ class _ActividadesLigasSectionState extends State<ActividadesLigasSection>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  FadeInDown(
+                  ScrollReveal(
+                    key: const Key('actividades-header'),
+                    delay: 100.ms,
+                    child: FadeInDown(
                     duration: const Duration(milliseconds: 260),
                     child: Text(
                       'Actividades de Ligas Académicas',
@@ -134,6 +139,7 @@ class _ActividadesLigasSectionState extends State<ActividadesLigasSection>
                           ),
                     ),
                   ),
+                  ), // fin ScrollReveal 'actividades-header'
                   const SizedBox(height: 12),
 
                   // Selector de vista

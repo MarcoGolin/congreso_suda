@@ -1,7 +1,7 @@
 name: congreso_evento
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+52
+version: 1.0.0+54
 
 environment:
   sdk: ^3.8.0
@@ -39,6 +39,9 @@ dependencies:
   flutter_masked_text2: ^0.9.1
   excel: ^4.0.6
   cached_network_image: ^3.4.1
+  flutter_animate: ^4.5.0
+  visibility_detector: ^0.4.0+2
+  animations: ^2.0.11
   confetti: ^0.8.0
   dropdown_search: ^6.0.2
   syncfusion_flutter_charts: ^31.1.23
@@ -61,9 +64,7 @@ flutter:
     - .env
     - assets/imagenes/logo/
     - assets/imagenes/ligas_academicas/
-    - assets/imagenes/personas/
     - assets/imagenes/fondo/
-    - assets/imagenes/evento/
     - assets/carnet/
     - pubspec.yaml
 

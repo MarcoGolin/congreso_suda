@@ -37,8 +37,9 @@ public class TallerService {
 	}
 	
 	public GenericResponseEntity<List<Taller>> consultaPorDescripcion(String descripcion) {
-		List<Taller> list = new ArrayList<>();
-		list = repository.findAll();
+		List<Taller> list = (descripcion == null || descripcion.isBlank())
+				? repository.findAll()
+				: repository.findByTituloContainingIgnoreCaseOrDescripcionContainingIgnoreCase(descripcion, descripcion);
 	    return new GenericResponseEntity<List<Taller>>("Consulta con Éxito!", 200, list);
 	}
 

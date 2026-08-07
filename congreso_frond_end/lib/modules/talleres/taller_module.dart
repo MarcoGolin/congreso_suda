@@ -31,7 +31,8 @@ class TallerModule extends Module {
 
   @override
   void routes(r) {
-    r.child('/:idTaller', child: (context) => TallerInscripcionPage());
+    r.child('/', child: (context) => const TallerInscripcionPage());
+    r.child('/:idTaller', child: (context) => const TallerInscripcionPage());
     r.child(
       '/asignar_responsable/:idTaller',
       child: (context) => TallerAsignarResponsablePage(),

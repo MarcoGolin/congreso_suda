@@ -33,8 +33,8 @@ public class TallerInscriptoService {
 	
 	public GenericResponseEntity<TallerInscripto> inscribir(Long idUsuario, Long idTaller, Boolean isJuntaDirectiva) {
 		Usuario usuario = usuarioRepository.findById(idUsuario).get();
-		if(usuario.getIsPago() == false && usuario.getIsExonerado()) {
-			return new GenericResponseEntity<TallerInscripto>(usuario.getNombreCompleto() +  ", Esta pendiente el pago de su inscripcion al congreso para poder participar de los talleres!", 300, null);
+		if(Boolean.FALSE.equals(usuario.getIsPago()) && !Boolean.TRUE.equals(usuario.getIsExonerado())) {
+			return new GenericResponseEntity<TallerInscripto>(usuario.getNombreCompleto() + ", está pendiente el pago de su inscripción al congreso para poder participar de los talleres!", 300, null);
 		}
 		Taller taller = tallerRepository.findById(idTaller).get();
 		

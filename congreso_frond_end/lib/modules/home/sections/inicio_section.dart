@@ -16,7 +16,8 @@ class _InicioSectionState extends State<InicioSection>
     with AutomaticKeepAliveClientMixin {
   final DateTime _targetDate = DateTime(2025, 10, 09, 8, 0, 0);
 
-  double _backgroundOffset = 0.0; // This will control the parallax movement
+  // ValueNotifier evita setState global — solo repinta el subtree de la imagen
+  final ValueNotifier<double> _parallaxOffset = ValueNotifier(0.0);
 
   @override
   bool get wantKeepAlive => true;
@@ -26,24 +27,22 @@ class _InicioSectionState extends State<InicioSection>
   @override
   void initState() {
     super.initState();
-    // Listen to scroll events from the parent ScrollController
     widget.scrollController.addListener(_updateParallaxOffset);
   }
 
   @override
   void dispose() {
     widget.scrollController.removeListener(_updateParallaxOffset);
+    _parallaxOffset.dispose();
     super.dispose();
   }
 
   void _updateParallaxOffset() {
-    final parallaxFactor = 1.0; // 0 = imagen fija
+    // Factor 0.3: imagen se mueve a 30% de la velocidad del scroll → efecto suave
+    const parallaxFactor = 0.3;
     final newOffset = widget.scrollController.offset * parallaxFactor;
-
-    if ((newOffset - _backgroundOffset).abs() > 0.5) {
-      setState(() {
-        _backgroundOffset = newOffset;
-      });
+    if ((newOffset - _parallaxOffset.value).abs() > 0.5) {
+      _parallaxOffset.value = newOffset;
     }
   }
 
@@ -61,18 +60,19 @@ class _InicioSectionState extends State<InicioSection>
         return Stack(
           fit: StackFit.expand,
           children: [
-            // Fondo con parallax
-            // White filter with opacity
-            // Fondo con parallax
+            // RepaintBoundary: aisla el layer de la imagen del resto del Stack.
+            // AnimatedBuilder: solo repinta este subtree cuando cambia el offset.
             Positioned.fill(
-              child: Transform.translate(
-                offset: Offset(
-                  0,
-                  _backgroundOffset,
-                ), // mover en sentido inverso si querés efecto suave
-                child: Image.asset(
-                  'assets/imagenes/fondo/fondo_liviano.webp',
-                  fit: BoxFit.cover,
+              child: RepaintBoundary(
+                child: AnimatedBuilder(
+                  animation: _parallaxOffset,
+                  builder: (_, __) => Transform.translate(
+                    offset: Offset(0, _parallaxOffset.value),
+                    child: Image.asset(
+                      'assets/imagenes/fondo/fondo_liviano.webp',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
             ),

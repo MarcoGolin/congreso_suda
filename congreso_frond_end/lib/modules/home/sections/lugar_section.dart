@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:congreso_evento/core/animations/scroll_reveal.dart';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:congreso_evento/core/web_helper/web_helper_stub.dart'
     if (dart.library.html) 'package:congreso_evento/core/web_helper/web_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // para Clipboard
+import 'package:flutter_animate/flutter_animate.dart';
 
 class LugarSection extends StatefulWidget {
   const LugarSection({super.key});
@@ -73,7 +75,10 @@ class _LugarSectionState extends State<LugarSection>
           ),
 
           // Card centrada
-          Padding(
+          ScrollReveal(
+            key: const Key('lugar-content'),
+            delay: 100.ms,
+            child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 60),
             child: Card(
               elevation: 10,
@@ -97,6 +102,7 @@ class _LugarSectionState extends State<LugarSection>
               ),
             ),
           ),
+          ), // fin ScrollReveal 'lugar-content'
         ],
       ),
     );

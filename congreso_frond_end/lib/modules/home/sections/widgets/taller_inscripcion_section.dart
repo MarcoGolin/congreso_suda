@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:congreso_evento/modules/talleres/models/taller.dart';
 import 'package:flutter/foundation.dart';
@@ -540,13 +541,14 @@ class _TallerCardCompactState extends State<_TallerCardCompact> {
                       child:
                           (t.flayer!.isNotEmpty &&
                               (t.flayer!.startsWith('http') || kIsWeb))
-                          ? Image.network(
-                              t.flayer!,
+                          ? CachedNetworkImage(
+                              imageUrl: t.flayer!,
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) =>
+                              fadeInDuration: const Duration(milliseconds: 300),
+                              errorWidget: (_, __, ___) =>
                                   const _ImageFallbackSmall(),
-                              loadingBuilder: (c, w, p) =>
-                                  p == null ? w : const _ImageSkeletonSmall(),
+                              placeholder: (_, __) =>
+                                  const _ImageSkeletonSmall(),
                             )
                           : const _ImageFallbackSmall(),
                     ),
@@ -870,12 +872,12 @@ class _FlayerHero extends StatelessWidget {
       child: AspectRatio(
         aspectRatio: 16 / 9,
         child: (url.isNotEmpty && (url.startsWith('http') || kIsWeb))
-            ? Image.network(
-                url,
+            ? CachedNetworkImage(
+                imageUrl: url,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const _ImageFallback(),
-                loadingBuilder: (c, w, p) =>
-                    p == null ? w : const _ImageSkeleton(),
+                fadeInDuration: const Duration(milliseconds: 300),
+                errorWidget: (_, __, ___) => const _ImageFallback(),
+                placeholder: (_, __) => const _ImageSkeleton(),
               )
             : const _ImageFallback(),
       ),

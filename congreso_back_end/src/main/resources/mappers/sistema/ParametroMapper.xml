@@ -5,8 +5,6 @@
 
 	<resultMap id="resultSimples" type="Parametro">
 		<id property="id" column="ID_PARAMETRO" />
-		<result property="dtUltModificacao" column="DT_ULT_MODIF" />
-		<result property="vlComisionRifaVendida" column="VL_COMISION_RIFA_VENDIDA" />
 		
 
 	</resultMap>

@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:math';
 
+import 'package:congreso_evento/core/animations/scroll_reveal.dart';
 import 'package:congreso_evento/core/header_section.dart';
 import 'package:congreso_evento/modules/home/model/organizadores.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class ComiteSection extends StatelessWidget {
   final List<Organizadores> organizadores;
@@ -50,32 +52,41 @@ class ComiteSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              HeaderSection(title: 'Comité Organizador', color: brandLight),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Container(
-                    width: 64,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF73c165), Color(0xFF387f4d)],
-                      ),
+              ScrollReveal(
+                key: const Key('comite-header'),
+                delay: 100.ms,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    HeaderSection(title: 'Comité Organizador', color: brandLight),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Container(
+                          width: 64,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF73c165), Color(0xFF387f4d)],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Personas que hacen posible el #IVCIUSMI 2025',
+                            style: themeTitle.titleMedium?.copyWith(
+                              color: Colors.white70,
+                              fontFamily: 'Montserrat',
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'Personas que hacen posible el #IVCIUSMI 2025',
-                      style: themeTitle.titleMedium?.copyWith(
-                        color: Colors.white70,
-                        fontFamily: 'Montserrat',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ), // fin ScrollReveal 'comite-header'
               const SizedBox(height: 16),
 
               // Wrap centrado
@@ -94,16 +105,23 @@ class ComiteSection extends StatelessWidget {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 16,
                         runSpacing: 16,
-                        children: orderedItems.map((org) {
+                        children: orderedItems.asMap().entries.map((entry) {
+                          final i = entry.key;
+                          final org = entry.value;
                           final w = target + (org.destacar ? 12 : 0);
                           final h = (org.destacar ? 270 : 250).toDouble();
-                          return SizedBox(
-                            width: w,
-                            height: h,
-                            child: _OrganizerCard(
-                              organizador: org,
-                              destacado: org.destacar,
-                              loading: isLoading || organizadores.isEmpty,
+                          return ScrollReveal(
+                            key: Key('comite-card-$i'),
+                            delay: (i * 60).ms,
+                            blurSigma: 0,
+                            child: SizedBox(
+                              width: w,
+                              height: h,
+                              child: _OrganizerCard(
+                                organizador: org,
+                                destacado: org.destacar,
+                                loading: isLoading || organizadores.isEmpty,
+                              ),
                             ),
                           );
                         }).toList(),
